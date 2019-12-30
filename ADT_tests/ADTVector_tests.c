@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////
 //
-// Unit tests για την υλοποίηση του ADT Vector μέσω Dynamic Array.
+// Unit tests για τον ADT Vector.
+// Οποιαδήποτε υλοποίηση οφείλει να περνάει όλα τα tests.
 //
 //////////////////////////////////////////////////////////////////
 
@@ -8,17 +9,12 @@
 
 #include "ADTVector.h"
 
-// Στα unit tests θέλουμε να ελέγξουμε και "εσωτερικά" στοιχεία της υλοποίησης, (πχ το πώς μεταβάλλεται
-// η χωρητικότητα του dynamic array) παρόλο που δεν είναι ορατά στον χρήστη του module.
-#include "DynamicArray.h"
-
 
 void test_create(void) {
 	Vector vec = vector_create(0);
 
 	TEST_CHECK(vec != NULL);
 	TEST_CHECK(vector_size(vec) == 0);
-	TEST_CHECK(vec->capacity == VECTOR_MIN_CAPACITY);
 
 	vector_destroy(vec);
 }
@@ -33,9 +29,6 @@ void test_insert(void) {
 		TEST_CHECK(vector_size(vec) == i+1);			// Το size ενημερώθηκε;
 		TEST_CHECK(vector_get(vec, i) == &array[i]);	// Μπορούμε να κάνουμε get το στοιχείο που μόλις βάλαμε;
 	}
-
-	// Με αρχική χωρητικότητα 10, πρέπει να έχουν γίνει 8 διπλασιασμοί (2^8 = 128)
-	TEST_CHECK(vec->capacity == VECTOR_MIN_CAPACITY * 128);
 
 	// Δοκιμή ότι μετά τα resizes τα στοιχεία είναι ακόμα προσπελάσιμα
 	for(int i = 0; i < 1000; i++)
@@ -57,9 +50,6 @@ void test_remove(void) {
 		TEST_CHECK(vector_remove(vec) == &array[i]);
 		TEST_CHECK(vector_size(vec) == i);
 	}
-
-	// Η χωρητικότητα πρέπει να έχει μικρύνει
-	TEST_CHECK(vec->capacity < 2*VECTOR_MIN_CAPACITY);
 
 	vector_destroy(vec);
 }

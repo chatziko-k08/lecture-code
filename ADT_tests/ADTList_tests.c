@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////
 //
-// Unit tests για την υλοποίηση του ADT List μέσω Dynamic Array.
+// Unit tests για τον ADT List.
+// Οποιαδήποτε υλοποίηση οφείλει να περνάει όλα τα tests.
 //
 //////////////////////////////////////////////////////////////////
 
@@ -8,17 +9,12 @@
 
 #include "ADTList.h"
 
-// Στα unit tests θέλουμε να ελέγξουμε και "εσωτερικά" στοιχεία της υλοποίησης
-// παρόλο που δεν είναι ορατά στον χρήστη του module.
-#include "LinkedList.h"
-
 
 void test_create(void) {
 	List list = list_create();
 
 	TEST_CHECK(list != NULL);
 	TEST_CHECK(list_size(list) == 0);
-	TEST_CHECK(list->dummy->next == NULL);
 
 	list_destroy(list);
 }
