@@ -1,11 +1,8 @@
-# Διαδρομή προς το το βασικό directory
-ROOT = ../..
+# Λίστα με τα executables που θέλουμε να κάνουμε compile
+PROGS = unit_tests
 
-# Το όνομα του executable προγράμματος που θέλουμε να κάνουμε compile
-PROGRAM = unit_tests
-
-# Λίστα από .o files που χρειάζεται το πρόγραμμα
-OBJS = unit_tests.o ADTVector.o
+# Λίστα από .o files που χρειάζεται κάθε πρόγραμμα (μια μεταβλητή ανά executable)
+unit_tests_OBJS = unit_tests.o ADTVector.o
 
 # Ο βασικός κορμός του Makefile
-include $(ROOT)/common.make
+include ../../common.mk

@@ -1,15 +1,12 @@
-# Διαδρομή προς το το βασικό directory
-ROOT = ../..
+# Λίστα με τα executables που θέλουμε να κάνουμε compile
+PROGS = vector_example
 
-# Το όνομα του executable προγράμματος που θέλουμε να κάνουμε compile
-PROGRAM = vector_example
-
-# Λίστα από .o files που χρειάζεται το πρόγραμμα
+# Λίστα από .o files που χρειάζεται κάθε πρόγραμμα (μια μεταβλητή ανά executable)
 #
 # Εφόσον χρησιμοποιούμε το ADTVector, χρειαζόμαστε κάποια υλοποίησή του!
 # Επιλέγουμε την υλοποίησή του μέσω Dynamic Array που υπάρχει στο modules/UsingDynamicArray/ADTVector.o
 #
-OBJS = main.o $(MODULES)/UsingDynamicArray/ADTVector.o
+vector_example_OBJS = main.o $(MODULES)/UsingDynamicArray/ADTVector.o
 
 # Ο βασικός κορμός του Makefile
-include $(ROOT)/common.make
+include ../../common.mk

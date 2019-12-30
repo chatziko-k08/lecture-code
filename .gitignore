@@ -10,6 +10,7 @@
 # Εκτός από τα παρακάτω
 !*.c
 !*.h
+!*.mk
 !Makefile
 !.gitignore
 !README.md
