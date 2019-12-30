@@ -18,7 +18,7 @@
 typedef struct set* Set;
 
 // Δείκτης σε συνάρτηση που επισκέπτεται τα στoιχεία του συνόλου
-typedef void (*SetVisitFunc)(Set map, Pointer value);
+typedef void (*SetVisitFunc)(Set set, Pointer value);
 
 
 // Δημιουργεί και επιστρέφει ένα σύνολο, στο οποίο τα στοιχεία συγκρίνονται με βάση

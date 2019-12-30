@@ -106,7 +106,8 @@ void list_remove_after(List list, ListNode node) {
 }
 
 ListNode list_find(List list, Pointer value, CompareFunc compare) {
-	// διάσχιση όλης της λίστας
+	// διάσχιση όλης της λίστας, καλούμε την compare μέχρι να επιστρέψει 0
+	//
 	for(ListNode node = list->dummy->next; node != NULL; node = node->next)
 		if(compare(value, node->value) == 0)
 			return node;		// βρέθηκε
@@ -115,11 +116,16 @@ ListNode list_find(List list, Pointer value, CompareFunc compare) {
 }
 
 void list_destroy(List list) {
-	ListNode node = list->dummy;		// θέλουμε να διαγράψουμε _και_ τον dummy
-	while(node != NULL) {
-		ListNode next = node->next;		// Αποθήκευση _πριν_ κάνουμε free!
+	// Διασχίζουμε όλη τη λίστα και κάνουμε free όλους τους κόμβους,
+	// συμπεριλαμβανομένου και του dummy!
+	//
+	ListNode node = list->dummy;
+	while(node != NULL) {				// while αντί για for, γιατί θέλουμε να διαβάσουμε
+		ListNode next = node->next;		// το node->next _πριν_ κάνουμε free!
 		free(node);
 		node = next;
 	}
+
+	// Τέλος free το ίδιο το struct
 	free(list);
 }
