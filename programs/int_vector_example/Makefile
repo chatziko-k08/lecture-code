@@ -1,7 +1,4 @@
-# Λίστα με τα executables που θέλουμε να κάνουμε compile
-PROGS = int_vector_example
-
-# Λίστα από .o files που χρειάζεται κάθε πρόγραμμα (μια μεταβλητή ανά executable)
+# Λίστα με objects (.o) για κάθε εκτελέσιμο που θέλουμε να φτιάξουμε.
 #
 # Χρειαζόμαστε μια υλοοποίηση του ADTIntVector: χρησιμοποιούμε το modules/UsingADTVector/ADTIntVector.o
 # Το module όμως αυτό χρησιμοποιεί ADTVector, οπότε χρειαζόμαστε και το modules/UsingDynamicArray/ADTVector.o

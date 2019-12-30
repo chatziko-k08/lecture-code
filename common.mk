@@ -1,8 +1,31 @@
 # common.mk
 #
-# Ο βασικός κορμός όλων των Makefiles, ώστε να μην χρειάζεται επανάληψη των ίδιων εντολών.
-# Κάθε Makefile αρκεί να ορίσει τις μεταβλητές PROGS και <program>_OBJS, και να κάνει
-# include το common.mk.
+# Το αρχείο αυτό επιτρέπει την εύκολη δημιουργία Makefiles με πολλαπλά targets
+# αποφεύγοντας την επανάληψη των ίδιων εντολών. Χρησιμοποιείται φτιάχνοντας
+# ένα ή περισσότερα Makefiles, και μέσα στο κάθε Makefile:
+#
+# 1. προσθέτουμε για κάθε εκτελέσιμο <foo> μια μεταβλητή <foo>_OBJS με
+#    όλα τα objects (.o) που χρειάζονται για το πρόγραμμα. Πχ
+#    myprogram_OBJS = main.o module1.o module2.o
+#
+# 2. Κάνουμε: include common.mk
+#
+# Για κάθε εκτελέσιμο <foo> παράγονται τα εξής targets:
+#   <foo>           Κάνει compile το <foo>
+#   run-<foo>       Κάνει compile και εκτελεί το <foo>
+#   valgrind-<foo>  Κάνει compile και εκτελεί το <foo> μέσω valgrind
+#
+# Και επιπλέον παράγονται τα παρακάτω γενικά targets:
+#   all             Κάνει depend σε όλα τα targets <foo>
+#   run             Κάνει depend σε όλα τα targets run-<foo>
+#   valgrind        Κάνει depend σε όλα τα targets valgrind-<foo>
+#   clean           Διαγράφει όλα τα αρχεία που παράγονται από το make
+#
+# Το αρχείο αυτό χρησιμοποιεί κάποια advanced features του GNU make, ΔΕΝ απαιτείται
+# να κατανοήσετε όλες τις εντολές για να το χρησιμοποιήσετε (όχι ότι είναι δύσκολο
+# να το κάνετε αν θέλετε). Επίσης μπορείτε κάλλιστα τα χρησιμοποιήσετε τα απλούστερα
+# Makefiles που είδαμε στο μάθημα, αν προτιμάτε.
+
 
 ## Μεταβλητές ###########################################################
 
@@ -15,20 +38,31 @@ INCLUDE := $(MY_PATH)include
 #   -g         Δημιουργεί εκτελέσιμο κατάλληλο για debugging
 #   -I<dir>    Λέει στον compiler να ψάξει στο συγκεκριμένο directory για include files
 #   -Wall      Ενεργοποιεί όλα τα warnings
-#   -MDD -MP   Δημιουργεί ένα .d αρχείο με τα dependencies, το οποίο μπορούμε να κάνουμε include στο Makefile
+#   -MDD       Δημιουργεί ένα .d αρχείο με τα dependencies, το οποίο μπορούμε να κάνουμε include στο Makefile
 #
-CFLAGS += -g -Wall -MMD -MP -I$(INCLUDE)
+CFLAGS += -g -Wall -MMD -I$(INCLUDE)
 
 # Linker options
 #   -lm        Link με τη math library
 #
 LDFLAGS += -lm
 
+# Λίστα με όλα τα εκτελέσιμα <prog> για τα οποία υπάρχει μια μεταβλητή <prog>_OBJS
+PROGS := $(subst _OBJS,,$(filter %_OBJS,$(.VARIABLES)))
+
 # Μαζεύουμε όλα τα objects σε μία μεταβλητή
-OBJS = $(foreach prog, $(PROGS), $($(prog)_OBJS))
+OBJS := $(foreach prog, $(PROGS), $($(prog)_OBJS))
 
 # Για κάθε .o ο gcc παράγει ένα .d, τα αποθηκεύουμε εδώ
-DEPS = $(patsubst %.o,%.d,$(OBJS))
+DEPS := $(patsubst %.o,%.d,$(OBJS))
+
+# Για κάθε target <prog> φτιάχνουμε 2 targets run-<prog> και valgrind-<prog>.
+# Στις παρακάτω μεταβλητές φτιάχνουμε μια λίστα με όλα αυτά τα targets
+# Το "?=" σημαίνει "ανάθεση αν η μεταβλητή δεν έχει ήδη τιμή". Αυτό επιτρέπει
+# στο Makefile να ορίσει ποια targets θέλει να φτιαχτούν, πριν το include common.mk
+#
+RUN_TARGETS ?= $(foreach prog, $(PROGS), run-$(prog))
+VAL_TARGETS ?= $(foreach prog, $(PROGS), valgrind-$(prog))
 
 
 ## Κανόνες ###########################################################
@@ -57,20 +91,20 @@ $(PROGS): $$($$@_OBJS)
 clean:
 	rm -f $(PROGS) $(OBJS) $(DEPS)
 
-# Τα run και run-valgrind εκτελούν από default το πρώτο από τα PROGS
-# (αυτό μπορεί να αλλάξει ορίζοντας τις μεταβλητές RUN, RUN_VALGRIND πριν το include common.mk
+# Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target run-<prog> που το εκτελεί,
+# και ένα valgrind-<prog> που το εκτελεί μέσω valgrind.
 #
-RUN ?= ./$(firstword $(PROGS))
-RUN_VALGRIND ?= $(RUN) -E
+$(RUN_TARGETS): $$(subst run-,,$$@)
+	./$(subst run-,,$@)
 
-run: $(RUN)
-	$(RUN)
+$(VAL_TARGETS): $$(subst valgrind-,,$$@)
+	valgrind --error-exitcode=1 --leak-check=full ./$(subst valgrind-,,$@) -E
 
-run-valgrind: $(RUN)
-	valgrind --error-exitcode=1 --leak-check=full $(RUN_VALGRIND)
+run:      $(RUN_TARGETS)
+valgrind: $(VAL_TARGETS)
 
 # Δηλώνουμε ότι οι παρακάτω κανόνες είναι εικονικοί, δεν παράγουν αρχεία. Θέλουμε δηλαδή
 # το "make clean" να εκτελεστεί ακόμα και αν συμπτωματικά υπάρχει ένα αρχείο "clean" στο
 # τρέχον directory.
 #
-.PHONY: clean run run-valgrind
+.PHONY: clean run valgrind $(RUN_TARGETS) $(VAL_TARGETS)
