@@ -23,6 +23,7 @@ typedef struct vector* Vector;
 
 
 // Δημιουργεί και επιστρέφει ένα νεό vector μεγέθους size (τα στοιχεία δεν είναι αρχικοποιημένα).
+// Αν δεν υπάρχει διαθέσιμη μνήμη επιστρέφει NULL.
 
 Vector vector_create(int size);
 
@@ -35,19 +36,19 @@ int vector_size(Vector vec);
 
 void vector_set(Vector vec, int pos, Pointer value);
 
-// Επιστρέψει την τιμή της θέσης pos του vector vec.
-// Αν pos >= size το αποτέλεσμα δεν είναι ορισμένο.
+// Επιστρέφει την τιμή στη θέση pos του vector vec, ή NULL αν pos >= size.
 
 Pointer vector_get(Vector vec, int pos);
 
-// Προσθέτει την τιμή value στο τέλος του vector vec.
-// Το μέγεθος του vector μεγαλώνει κατά 1.
+// Προσθέτει την τιμή value στο τέλος του vector vec. Το μέγεθος του vector μεγαλώνει κατά 1.
+// Επιστρέφει 1 αν το insert πετύχει, διαφορετικά 0 (μοναδική περίπτωση αποτυχίας είναι όταν
+// απαιτείται δέσμευση μνήμης και δεν υπάρχει διαθέσιμη)
 
-void vector_insert(Vector vec, Pointer value);
+int vector_insert(Vector vec, Pointer value);
 
 // Αφαιρεί και επιστρέψει την τιμή της τελευταίας θέσης του vector.
 // Το μέγεθος του vector μικραίνει κατά 1.
-// Αν size == 0 το αποτέλεσμα δεν είναι ορισμένο.
+// Αν size == 0 επιστρέφει NULL.
 
 Pointer vector_remove(Vector vec);
 

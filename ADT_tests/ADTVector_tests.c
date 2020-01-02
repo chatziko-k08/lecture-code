@@ -51,12 +51,18 @@ void test_remove(void) {
 		TEST_CHECK(vector_size(vec) == i);
 	}
 
+	// remove σε κενό vector
+	TEST_CHECK(vector_remove(vec) == NULL);
+
 	vector_destroy(vec);
 }
 
 void test_get_set(void) {
 	Vector vec = vector_create(0);
 	int array[1000];
+
+	// get σε κενό vector
+	TEST_CHECK(vector_get(vec, 0) == NULL);
 
 	// insert πολλαπλά NULL, θα τα αλλάξουμε μετά με set
 	for(int i = 0; i < 1000; i++)
@@ -68,7 +74,32 @@ void test_get_set(void) {
 		TEST_CHECK(vector_get(vec, i) == &array[i]);
 	}
 
+	// get εκτός μεγέθους κενό vector
+	TEST_CHECK(vector_get(vec, -1) == NULL);
+	TEST_CHECK(vector_get(vec, 1000) == NULL);
+
 	vector_destroy(vec);
+}
+
+int compare_ints(void* a, void* b) {
+	return *(int*)a - *(int*)b;
+}
+
+void test_find(void) {
+	Vector vec = vector_create(1000);
+	int array[1000];
+
+	// set για προσθήκη δεδομένων
+	for(int i = 0; i < 1000; i++) {
+		array[i] = i;
+		vector_set(vec, i, &array[i]);
+	}
+
+	for(int i = 0; i < 1000; i++)
+		TEST_CHECK(vector_find(vec, &i, compare_ints) == i);
+
+	int not_exists = -12;
+	TEST_CHECK(vector_find(vec, &not_exists, compare_ints) == -1);
 }
 
 // destroy
@@ -83,5 +114,6 @@ TEST_LIST = {
 	{ "insert", test_insert },
 	{ "remove", test_remove },
 	{ "get_set", test_get_set },
+	{ "find", test_find },
 	{ NULL, NULL } // τερματίζουμε τη λίστα με NULL
 };
