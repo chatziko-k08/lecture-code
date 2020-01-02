@@ -60,17 +60,17 @@ ListNode list_last(List list) {
 }
 
 ListNode list_next(List list, ListNode node) {
-	assert(node != NULL);
+	assert(node != NULL);	// LCOV_EXCL_LINE (αγνοούμε το branch από τα coverage reports, είναι δύσκολο να τεστάρουμε το false γιατί θα κρασάρει το test)
 	return node->next;
 }
 
 Pointer list_get(List list, ListNode node) {
-	assert(node != NULL);
+	assert(node != NULL);	// LCOV_EXCL_LINE
 	return node->value;
 }
 
 void list_set(List list, ListNode node, Pointer value) {
-	assert(node != NULL);
+	assert(node != NULL);	// LCOV_EXCL_LINE
 	node->value = value;
 }
 
@@ -104,7 +104,7 @@ void list_remove_after(List list, ListNode node) {
 
 	// Ο κόμβος προς διαγραφή είναι ο επόμενος του node, ο οποίος πρέπει να υπάρχει
 	ListNode removed = node->next;
-	assert(removed != NULL);
+	assert(removed != NULL);		// LCOV_EXCL_LINE
 
 	// Σύνδεση του node με τον επόμενο του removed
 	node->next = removed->next;		// πριν το free!
