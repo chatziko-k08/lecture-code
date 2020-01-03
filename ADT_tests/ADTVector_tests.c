@@ -100,6 +100,8 @@ void test_find(void) {
 
 	int not_exists = -12;
 	TEST_CHECK(vector_find(vec, &not_exists, compare_ints) == -1);
+
+	vector_destroy(vec);
 }
 
 // destroy
