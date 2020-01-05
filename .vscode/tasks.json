@@ -1,0 +1,62 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "make",
+			"type": "shell",
+			"command": "make",
+			"options": {
+				"cwd": "${workspaceRoot}/${config:c_project.dir}"
+			},
+			"args": [
+				"${config:c_project.program}"
+			],
+			"group": "build",
+			"presentation": {
+				"clear": true
+			},
+			"problemMatcher": {
+				"base": "$gcc",
+				"fileLocation": [
+					"relative",
+					"${workspaceRoot}/${config:c_project.dir}"
+				]
+			}
+		},
+		{
+			"label": "run",
+			"type": "shell",
+			"command": "./${config:c_project.program}",
+			"args": [
+				"${config:c_project.arg}"
+			],
+			"options": {
+				"cwd": "${workspaceRoot}/${config:c_project.dir}"
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"clear": true
+			},
+			"dependsOn": "make"
+		},
+		{
+			"label": "build open file with gcc",
+			"type": "shell",
+			"command": "gcc",
+			"args": [
+				"-g",
+				"-Wall",
+				"-o",
+				"${fileBasenameNoExtension}",
+				"${file}"
+			],
+			"problemMatcher": {
+				"base": "$gcc",
+				"fileLocation": "absolute"
+			}
+		}
+	]
+}
