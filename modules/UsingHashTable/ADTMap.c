@@ -7,3 +7,9 @@
 #include "ADTMap.h"
 
 // TODO, υλοποίηση με open addressing (linear probing)
+// Στο χρήστη επιτρέπουμε να προσθέσει NULL ως τιμή στο hash table, οπότε δεν
+// μπορούμε να μαρκάρουμε τις κενές θέσεις με NULL. Μια απλή λύση είναι να χρησιμοποιούμε
+// για empty marker έναν pointer που σίγουρα δεν έχει στη διάθεσή του ο χρήστης, πχ
+// pointer σε μια dummy global μεταβλητή "empty" του module.
+
+Pointer empty = &empty;
