@@ -64,7 +64,7 @@ void vector_set(Vector vec, int pos, Pointer value) {
 	vec->array[pos] = value;
 }
 
-int vector_insert(Vector vec, Pointer value) {
+bool vector_insert(Vector vec, Pointer value) {
 	// Μεγαλώνουμε τον πίνακα (αν χρειαστεί), ώστε να χωράει τουλάχιστον size στοιχεία
 	// Διπλασιάζουμε κάθε φορά το capacity (σημαντικό για την πολυπλοκότητα!)
 	if(vec->capacity == vec->size) {
@@ -74,7 +74,7 @@ int vector_insert(Vector vec, Pointer value) {
 		// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία
 		// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
 		if(new_array == NULL)
-			return 0;			// αποτυχία, επιστρέφουμε χωρίς καμία τροποποίηση στο υπάρχον vector
+			return false;			// αποτυχία, επιστρέφουμε χωρίς καμία τροποποίηση στο υπάρχον vector
 		// LCONV_EXCL_STOP
 
 		// Έχουμε πλέον μεγαλύτερη μνήμη που περιέχει τα προηγούμενα περιεχόμενα.
@@ -86,7 +86,7 @@ int vector_insert(Vector vec, Pointer value) {
 	vec->array[vec->size] = value;
 	vec->size++;
 
-	return 1;
+	return true;
 }
 
 Pointer vector_remove(Vector vec) {

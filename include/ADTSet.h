@@ -30,9 +30,9 @@ Set set_create(CompareFunc compare);
 
 int set_size(Set set);
 
-// Επιστρέφει 1 αν το set περιέχει τιμή ίση με value (με βάση τη compare) αλλιώς 0
+// Επιστρέφει true αν το set περιέχει τιμή ίση με value (με βάση τη compare) αλλιώς false
 
-int set_exists(Set set, Pointer value);
+bool set_exists(Set set, Pointer value);
 
 // Επιστρέφει την μονιαδική τιμή που είναι ίση με value, ή NULL αν δεν υπάρχει
 
@@ -57,9 +57,9 @@ Pointer set_previous(Set set, Pointer value);
 Pointer set_next(Set set, Pointer value);
 
 // Προσθέτει την τιμή value στο σύνολο, αντικαθιστώντας τυχόν προηγούμενη τιμή ίση με value.
-// Επιστρέφει 1 αν υπήρχε προηγούμενη ίση τιμή, αλλιώς 0.
+// Επιστρέφει true αν υπήρχε προηγούμενη ίση τιμή, αλλιώς false.
 
-int set_insert(Set set, Pointer value);
+bool set_insert(Set set, Pointer value);
 
 // Αφαιρεί τη μοναδική τιμή ίση με value από το σύνολο. Επιστρέφει την τιμή αυτή, ή NULL αν δεν υπάρχει.
 

@@ -41,10 +41,10 @@ void vector_set(Vector vec, int pos, Pointer value);
 Pointer vector_get(Vector vec, int pos);
 
 // Προσθέτει την τιμή value στο τέλος του vector vec. Το μέγεθος του vector μεγαλώνει κατά 1.
-// Επιστρέφει 1 αν το insert πετύχει, διαφορετικά 0 (μοναδική περίπτωση αποτυχίας είναι όταν
+// Επιστρέφει true αν το insert πετύχει, διαφορετικά false (μοναδική περίπτωση αποτυχίας είναι όταν
 // απαιτείται δέσμευση μνήμης και δεν υπάρχει διαθέσιμη)
 
-int vector_insert(Vector vec, Pointer value);
+bool vector_insert(Vector vec, Pointer value);
 
 // Αφαιρεί και επιστρέψει την τιμή της τελευταίας θέσης του vector.
 // Το μέγεθος του vector μικραίνει κατά 1.

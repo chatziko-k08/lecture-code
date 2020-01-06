@@ -28,9 +28,9 @@ Map map_create(CompareFunc compare);
 
 int map_size(Map map);
 
-// Επιστρέφει 1 αν το map περιέχει το συγκεκριμένο key, διαφορετικά 0.
+// Επιστρέφει true αν το map περιέχει το συγκεκριμένο key, διαφορετικά false.
 
-int map_exists(Map map, Pointer key);
+bool map_exists(Map map, Pointer key);
 
 // Επιστρέφει την τιμή που έχει αντιστοιχιστεί στο συγκεκριμένο key, ή NULL αν το key δεν υπάρχει.
 //
@@ -40,9 +40,9 @@ int map_exists(Map map, Pointer key);
 Pointer map_get(Map map, Pointer key);
 
 // Προσθέτει το κλειδί key με τιμή value στο map, αντικαθιστώντας τυχόν προηγούμενη τιμή.
-// Επιστρέφει 1 αν το κλειδί υπήρχε ήδη, διαφορετικά 0.
+// Επιστρέφει true αν το κλειδί υπήρχε ήδη, διαφορετικά false.
 
-int map_insert(Map map, Pointer key, Pointer value);
+bool map_insert(Map map, Pointer key, Pointer value);
 
 // Αφαιρεί το κλειδί key από το map. Επιστρέφει την τιμή που είχε το κλειδί, ή NULL αν το κλειδί δεν υπήρχε.
 //
