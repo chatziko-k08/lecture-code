@@ -66,26 +66,24 @@ void integers_loop() {
 		set_insert(set, p);
 	}
 
-	int a1 = 0;
-	int a2 = 1;
-	int* value1 = set_get(set, &a1);
-	int* value2 = set_get(set, &a2);
+	// set_min and set_next
+	i = 0;
+	for(int* value = set_min(set); value != NULL; value = set_next(set, value)) {
+		TEST_ASSERT(*value == i++);
+	}
 
-	// Οι pointers ΔΕΝ δείχνουν στο i
-	TEST_ASSERT(value1 != &i);
-	TEST_ASSERT(value2 != &i);
+	// set_max and set_previous
+	i = 99;
+	for(int* value = set_max(set); value != NULL; value = set_previous(set, value)) {
+		TEST_ASSERT(*value == i--);
+	}
 
-	// Και οι τιμές είναι αυτές που περιμένουμε
-	TEST_ASSERT(*value1 == 0);
-	TEST_ASSERT(*value2 == 1);
-
-	// Αφαίρεση
+	// get, remove, free
 	for(i = 0; i < 100; i++) {
-		value1 = set_min(set);
-		value2 = set_max(set);
-		TEST_ASSERT(*value1 == i);
-		TEST_ASSERT(*value2 == 99);
-		set_remove(set, value1);
+		int* value = set_get(set, &i);
+		set_remove(set, &i);
+		TEST_ASSERT(*value == i);
+		free(value);
 	}
 
 	set_destroy(set);
