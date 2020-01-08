@@ -33,7 +33,7 @@ struct queue {
 Queue queue_create() {
 	// Φτιάχνουμε ένα struct και αποθηκεύουμε μέσα μια νέα λίστα
 	//
-	Queue queue = (Queue)malloc(sizeof(*queue));
+	Queue queue = malloc(sizeof(*queue));
 	queue->list = list_create();
 	return queue;
 }

@@ -25,13 +25,13 @@ struct list_node {
 
 List list_create() {
 	// Πρώτα δημιουργούμε το stuct
-	List list = (List)malloc(sizeof(*list));
+	List list = malloc(sizeof(*list));
 	list->size = 0;
 
 	// Χρησιμοποιούμε dummy κόμβο, ώστε ακόμα και μια άδεια λίστα να έχει ένα κόμβο
 	// (απλοποιεί τους αλγορίθμους). Οπότε πρέπει να τον δημιουργήσουμε.
 	//
-	list->dummy = (ListNode)malloc(sizeof(*list->dummy));
+	list->dummy = malloc(sizeof(*list->dummy));
 	list->dummy->next = NULL;		// άδεια λίστα, ο dummy δεν έχει επόμενο
 
 	// Σε μια κενή λίστα, τελευταίος κόμβος είναι επίσης ο dummy
@@ -81,7 +81,7 @@ ListNode list_insert_after(List list, ListNode node, Pointer value) {
 		node = list->dummy;
 
 	// Δημιουργία του νέου κόμβου
-	ListNode new = (ListNode)malloc(sizeof(*new));
+	ListNode new = malloc(sizeof(*new));
 	new->value = value;
 
 	// Σύνδεση του new ανάμεσα στο node και το node->next
