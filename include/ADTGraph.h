@@ -58,7 +58,7 @@ int graph_get_weight(Graph graph, Pointer vertex1, Pointer vertex2);
 List graph_get_adjacent(Graph graph, Pointer vertex);
 
 // Επιστρέφει (σε λίστα) το συντομότερο μονοπάτι ανάμεσα στις κορυφές source
-// και target, ή NULL αν δεν υπάρχει κανένα μονοπάτι.
+// και target, ή LIST_NONE αν δεν υπάρχει κανένα μονοπάτι.
 
 List graph_shortest_path(Graph graph, Pointer source, Pointer target);
 

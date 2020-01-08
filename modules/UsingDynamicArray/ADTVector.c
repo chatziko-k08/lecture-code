@@ -35,7 +35,7 @@ Vector vector_create(int size) {
 	if(vec == NULL || array == NULL) {
 		free(vec);		// free αν καταφέραμε να δεσμεύσουμε κάποιο από τα δύο.
 		free(array);	// Αν όχι το free(NULL) απλά δεν κάνει τίποτα.
-		return NULL;
+		return VECTOR_NONE;
 	}
 	// LCOV_EXCL_STOP
 

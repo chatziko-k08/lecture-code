@@ -13,7 +13,7 @@
 void test_create(void) {
 	Vector vec = vector_create(0);
 
-	TEST_CHECK(vec != NULL);
+	TEST_CHECK(vec != VECTOR_NONE);
 	TEST_CHECK(vector_size(vec) == 0);
 
 	vector_destroy(vec);

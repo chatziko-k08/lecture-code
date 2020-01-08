@@ -54,7 +54,7 @@ ListNode list_last(List list) {
 	// Προσοχή, αν η λίστα είναι κενή το last δείχνει στον dummy, εμείς όμως θέλουμε να επιστρέψουμε NULL, όχι τον dummy!
 	//
 	if(list->last == list->dummy)
-		return NULL;		// κενή λίστα, επιστρέφουμε NULL
+		return LISTNODE_NONE;		// κενή λίστα
 	else
 		return list->last;
 }
@@ -123,7 +123,7 @@ ListNode list_find(List list, Pointer value, CompareFunc compare) {
 		if(compare(value, node->value) == 0)
 			return node;		// βρέθηκε
 
-	return NULL;	// δεν υπάρχει
+	return LISTNODE_NONE;	// δεν υπάρχει
 }
 
 void list_destroy(List list) {
