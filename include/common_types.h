@@ -8,5 +8,8 @@
 // Pointer προς ένα αντικείμενο οποιουδήποτε τύπου. Απλά είναι πιο ευανάγνωστο από το "void*" που μοιάζει με το "void"
 typedef void* Pointer;
 
-// Δείκτης σε συνάρτηση που συγκρίνει 2 στοιχεία a και b
-typedef int (*CompareFunc)(const Pointer a, const Pointer b);
+// Δείκτης σε συνάρτηση που συγκρίνει 2 στοιχεία a και b και επιστρέφει:
+// < 0  αν a < b
+//   0  αν a και b είναι ισοδύναμα (_όχι_ αναγναστικά ίσα)
+// > 0  αν a > b
+typedef int (*CompareFunc)(Pointer a, Pointer b);

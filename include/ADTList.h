@@ -62,7 +62,7 @@ ListNode list_insert_after(List list, ListNode node, Pointer value);
 
 void list_remove_after(List list, ListNode node);
 
-// Επιστρέφει τον πρώτο κόμβο του οποίου η τιμή είναι ίση με value
+// Επιστρέφει τον πρώτο κόμβο του οποίου η τιμή είναι ισοδύναμη με value
 // (με βάση τη συνάρτηση compare), ή LISTNODE_NONE αν δε βρεθεί κανένας.
 
 ListNode list_find(List list, Pointer value, CompareFunc compare);
