@@ -53,7 +53,7 @@ void test_remove(void) {
 // destroy
 //
 // Η destroy καλείται σε όλα τα tests, για να βρούμε αν δουλεύει σωστά τρέχουμε
-//   make run-valgrid
+//   make valgrind
 
 
 // Λίστα με όλα τα tests προς εκτέλεση

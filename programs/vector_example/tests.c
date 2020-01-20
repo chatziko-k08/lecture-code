@@ -95,7 +95,7 @@ void integers_loop2() {
 	TEST_ASSERT(*value1 == 0);
 	TEST_ASSERT(*value2 == 1);
 
-	// Ο,τι κάναμε malloc πρέπει να το κάνουμε free, αλλιώς θα έχουμε memory leaks! (απόδειξη: make run-valgrind)
+	// Ο,τι κάναμε malloc πρέπει να το κάνουμε free, αλλιώς θα έχουμε memory leaks! (απόδειξη: make valgrind)
 	while(vector_size(vec))
 		free(vector_remove(vec));		// αφαίρεση στοιχείου και free, μέχρι να αδειάσει ο πίνακας
 
