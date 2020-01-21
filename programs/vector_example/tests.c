@@ -72,26 +72,25 @@ void integers_loop1() {
 	vector_destroy(vec);
 }
 
+// Δεσμεύει μνήμη για έναν ακέραιο, αντιγράφει το value εκεί και επιστρέφει pointer
+int* create_int(int value) {
+	int* pointer = malloc(sizeof(int));		// δέσμευση μνήμης
+	*pointer = value;						// αντιγραφή του value στον νέο ακέραιο
+	return pointer;
+}
+
 void integers_loop2() {
 	Vector vec = vector_create(0);
 
 	// Για να αποθηκεύσουμε 100 διαφορετικούς ακεραίους (_όχι_ όπως στο integers_loop1),
 	// πρέπει κάθε φορά να δημιουργήσουμε έναν νέο ακέραιο.
-	int i;
-	for(i = 0; i < 100; i++) {
-		int *p = malloc(sizeof(int));
-		*p = i;						// αντιγραφή του i στον νέο ακέραιο
-		vector_insert(vec, p);
-	}
+	for(int i = 0; i < 100; i++)
+		vector_insert(vec, create_int(i));
 
 	int* value1 = vector_get(vec, 0);
 	int* value2 = vector_get(vec, 1);
 
-	// Οι pointers ΔΕΝ δείχνουν στο i
-	TEST_ASSERT(value1 != &i);
-	TEST_ASSERT(value2 != &i);
-
-	// Και οι τιμές είναι αυτές που περιμένουμε
+	// Οι τιμές είναι αυτές που περιμένουμε
 	TEST_ASSERT(*value1 == 0);
 	TEST_ASSERT(*value2 == 1);
 
