@@ -42,7 +42,7 @@ INCLUDE := $(MY_PATH)include
 #   -Wall      Ενεργοποιεί όλα τα warnings
 #   -MDD       Δημιουργεί ένα .d αρχείο με τα dependencies, το οποίο μπορούμε να κάνουμε include στο Makefile
 #
-CFLAGS += -g -Wall -MMD -I$(INCLUDE)
+CFLAGS += -g -Wall -Werror -MMD -I$(INCLUDE)
 
 # Linker options
 #   -lm        Link με τη math library
