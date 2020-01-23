@@ -1,7 +1,19 @@
 {
 	"c_project": {
-		"dir": "programs/int_vector_example",
-		"program": "int_vector_example",
-		"arg": ""
+		// Directory στο οποίο βρίσκεται το πρόγραμμα
+		"dir": "programs/vector_example",
+
+		// Όνομα του εκτελέσιμου προγράμματος
+		"program": "vector_example",
+
+		// Ορίσματα του προγράμματος.
+		// - Θέτωντας κάποιο σε "#" αγνοείται αυτό και όλα τα επόμενα
+		// - Ανακατεύθυνση επιτυγνάνεται βάζοντας ορίσματα "<", "input-file" ή ">", "output-file"
+		"arg1": "#",
+		"arg2": "#",
+		"arg3": "#",
+		"arg4": "#",
+		"arg5": "#",
+		"arg6": "#",
 	},
 }
