@@ -74,17 +74,17 @@ void vector_destroy(Vector vec);
 // η διάσχιση μέσω κόμβων μπορεί να είναι πιο γρήγορη.
 
 // Οι σταθερές αυτές συμβολίζουν εικονικούς κόμβους _πριν_ τον πρώτο και _μετά_ τον τελευταίο
-#define VECTOR_START	(VectorNode)0
-#define VECTOR_END		(VectorNode)0
+#define VECTOR_BOF (VectorNode)0
+#define VECTOR_EOF (VectorNode)0
 
 typedef struct vector_node* VectorNode;
 
-// Επιστρέφουν τον πρώτο και τον τελευταίο κομβο του vector, ή VECTOR_START / VECTOR_END αντίστοιχα αν το vector είναι κενό
+// Επιστρέφουν τον πρώτο και τον τελευταίο κομβο του vector, ή VECTOR_BOF / VECTOR_EOF αντίστοιχα αν το vector είναι κενό
 
 VectorNode vector_first(Vector vec);
 VectorNode vector_last(Vector vec);
 
-// Επιστρέφουν τον επόμενο και τον προηγούμενο κομβο του node, ή VECTOR_END / VECTOR_START
+// Επιστρέφουν τον επόμενο και τον προηγούμενο κομβο του node, ή VECTOR_EOF / VECTOR_BOF
 // αντίστοιχα αν ο node δεν έχει επόμενο / προηγούμενο.
 
 VectorNode vector_next(Vector vec, VectorNode node);
@@ -95,6 +95,6 @@ VectorNode vector_previous(Vector vec, VectorNode node);
 Pointer vector_node_value(Vector vec, VectorNode node);
 
 // Βρίσκει το πρώτο στοιχείο στο vector που να είναι ίσο με value (με βάση τη συνάρτηση compare).
-// Επιστρέφει τον κόμβο του στοιχείου, ή VECTOR_END αν δεν βρεθεί.
+// Επιστρέφει τον κόμβο του στοιχείου, ή VECTOR_EOF αν δεν βρεθεί.
 
 VectorNode vector_find_node(Vector vec, Pointer value, CompareFunc compare);

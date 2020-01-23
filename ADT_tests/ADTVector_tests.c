@@ -85,17 +85,17 @@ void test_iterate(void) {
 	Vector vec = vector_create(0);
 
 	// first/last σε κενό vector
-	TEST_CHECK(vector_first(vec) == VECTOR_START);
-	TEST_CHECK(vector_last(vec) == VECTOR_END);
+	TEST_CHECK(vector_first(vec) == VECTOR_BOF);
+	TEST_CHECK(vector_last(vec) == VECTOR_EOF);
 
 	// insert πολλαπλά NULL
 	for(int i = 0; i < 1000; i++)
 		vector_insert(vec, NULL);
 
-	for(VectorNode node = vector_first(vec); node != VECTOR_END; node = vector_next(vec, node))
+	for(VectorNode node = vector_first(vec); node != VECTOR_EOF; node = vector_next(vec, node))
 		TEST_CHECK(vector_node_value(vec, node) == NULL);
 
-	for(VectorNode node = vector_last(vec); node != VECTOR_START; node = vector_previous(vec, node))
+	for(VectorNode node = vector_last(vec); node != VECTOR_BOF; node = vector_previous(vec, node))
 		TEST_CHECK(vector_node_value(vec, node) == NULL);
 
 	vector_destroy(vec);

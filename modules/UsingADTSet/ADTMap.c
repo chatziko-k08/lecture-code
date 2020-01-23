@@ -89,7 +89,7 @@ void map_destroy(Map map) {
 	// γιατί οι συναρτήσεις του set καλούν την compare πάνω σε αυτό το στοιχείο!
 	//
 	SetNode node = set_first(map->set);
-	while(node != SET_END) {							// while, γιατί πρέπει να πάρουμε το next
+	while(node != SET_EOF) {							// while, γιατί πρέπει να πάρουμε το next
 		SetNode next = set_next(map->set, node);		// πριν κάνουμε remove!
 
 		// αφαίρεση του στοιχείου από το set
@@ -115,13 +115,13 @@ MapNode map_find_node(Map map, Pointer key) {
 
 MapNode map_first(Map map) {
 	SetNode node = set_first(map->set);
-	return node == SET_END ? MAP_END : set_node_value(map->set, node);
+	return node == SET_EOF ? MAP_EOF : set_node_value(map->set, node);
 }
 
 MapNode map_next(Map map, MapNode node) {
 	SetNode set_node = set_find_node(map->set, node);
 	SetNode next_node = set_next(map->set, set_node);
-	return next_node == SET_END ? MAP_END : set_node_value(map->set, next_node);
+	return next_node == SET_EOF ? MAP_EOF : set_node_value(map->set, next_node);
 }
 
 Pointer map_node_key(Map map, MapNode node) {

@@ -31,7 +31,7 @@ Vector vector_create(int size) {
 	Pointer* array = malloc(capacity * sizeof(*array));
 
 	// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία
-	// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
+	// LCOV_EXCL_BOF (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
 	if(vec == NULL || array == NULL) {
 		free(vec);		// free αν καταφέραμε να δεσμεύσουμε κάποιο από τα δύο.
 		free(array);	// Αν όχι το free(NULL) απλά δεν κάνει τίποτα.
@@ -72,7 +72,7 @@ bool vector_insert(Vector vec, Pointer value) {
 		Pointer new_array = realloc(vec->array, vec->capacity * sizeof(Pointer));
 
 		// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία
-		// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
+		// LCOV_EXCL_BOF (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
 		if(new_array == NULL)
 			return false;			// αποτυχία, επιστρέφουμε χωρίς καμία τροποποίηση στο υπάρχον vector
 		// LCOV_EXCL_STOP
@@ -131,7 +131,7 @@ void vector_destroy(Vector vec) {
 
 VectorNode vector_first(Vector vec) {
 	if(vec->size == 0)
-		return VECTOR_START;
+		return VECTOR_BOF;
 		
 	Pointer* p = &vec->array[0];
 	return (VectorNode)p;
@@ -139,7 +139,7 @@ VectorNode vector_first(Vector vec) {
 
 VectorNode vector_last(Vector vec) {
 	if(vec->size == 0)
-		return VECTOR_END;
+		return VECTOR_EOF;
 
 	Pointer* p = &vec->array[vec->size-1];
 	return (VectorNode)p;
@@ -149,7 +149,7 @@ VectorNode vector_next(Vector vec, VectorNode node) {
 	Pointer* p = (Pointer*)node;
 
 	if(p == &vec->array[vec->size-1])
-		return VECTOR_END;
+		return VECTOR_EOF;
 	else
 		return (VectorNode)(p + 1);
 }
@@ -158,7 +158,7 @@ VectorNode vector_previous(Vector vec, VectorNode node) {
 	Pointer* p = (Pointer*)node;
 
 	if(p == &vec->array[0])
-		return VECTOR_END;
+		return VECTOR_EOF;
 	else
 		return (VectorNode)(p - 1);
 }

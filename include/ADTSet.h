@@ -71,17 +71,18 @@ void set_destroy(Set set);
 //
 // Η διάσχιση γίνεται με τη σειρά διάταξης.
 
-#define SET_START	(SetNode)0
-#define SET_END		(SetNode)0
+// Οι σταθερές αυτές συμβολίζουν εικονικούς κόμβους _πριν_ τον πρώτο και _μετά_ τον τελευταίο κόμβο του set
+#define SET_BOF (SetNode)0
+#define SET_EOF (SetNode)0
 
 typedef struct set_node* SetNode;
 
-// Επιστρέφουν τον πρώτο και τον τελευταίο κομβο του set, ή SET_START / SET_END αντίστοιχα αν το set είναι κενό
+// Επιστρέφουν τον πρώτο και τον τελευταίο κομβο του set, ή SET_BOF / SET_EOF αντίστοιχα αν το set είναι κενό
 
 SetNode set_first(Set set);
 SetNode set_last(Set set);
 
-// Επιστρέφουν τον επόμενο και τον προηγούμενο κομβο του node, ή SET_END / SET_START
+// Επιστρέφουν τον επόμενο και τον προηγούμενο κομβο του node, ή SET_EOF / SET_BOF
 // αντίστοιχα αν ο node δεν έχει επόμενο / προηγούμενο.
 
 SetNode set_next(Set set, SetNode node);
@@ -92,6 +93,6 @@ SetNode set_previous(Set set, SetNode node);
 Pointer set_node_value(Set set, SetNode node);
 
 // Βρίσκει το μοναδικό στοιχείο στο set που να είναι ίσο με value.
-// Επιστρέφει τον κόμβο του στοιχείου, ή SET_END αν δεν βρεθεί.
+// Επιστρέφει τον κόμβο του στοιχείου, ή SET_EOF αν δεν βρεθεί.
 
 SetNode set_find_node(Set set, Pointer value);

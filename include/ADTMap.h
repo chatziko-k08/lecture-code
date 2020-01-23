@@ -55,19 +55,20 @@ void map_destroy(Map map);
 
 
 
-//// Διάσχιση του map μέσω κόμβων ////////////////////////////////////////////////////////////
+// Διάσχιση του map μέσω κόμβων ////////////////////////////////////////////////////////////
 //
 // Η σειρά διάσχισης είναι αυθαίρετη.
-//
-#define MAP_END		(MapNode)0
+
+// Η σταθερά αυτή συμβολίζει έναν εικονικό κόμβου _μετά_ τον τελευταίο κόμβο του map
+#define MAP_EOF (MapNode)0
 
 typedef struct map_node* MapNode;
 
-// Επιστρέφει τον πρώτο κομβο του map, ή MAP_END αν το map είναι κενό
+// Επιστρέφει τον πρώτο κομβο του map, ή MAP_EOF αν το map είναι κενό
 
 MapNode map_first(Map map);
 
-// Επιστρέφει τον επόμενο κόμβο του node, ή MAP_END αν ο node δεν έχει επόμενο
+// Επιστρέφει τον επόμενο κόμβο του node, ή MAP_EOF αν ο node δεν έχει επόμενο
 
 MapNode map_next(Map map, MapNode node);
 
@@ -80,7 +81,7 @@ Pointer map_node_key(Map map, MapNode node);;
 Pointer map_node_value(Map map, MapNode node);
 
 // Βρίσκει και επιστρέφεο τον κόμβο που έχει αντιστοιχιστεί στο κλειδί key,
-// ή MAP_END αν το κλειδί δεν υπάρχει στο map.
+// ή MAP_EOF αν το κλειδί δεν υπάρχει στο map.
 
 MapNode map_find_node(Map map, Pointer key);
 

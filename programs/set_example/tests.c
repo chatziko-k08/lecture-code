@@ -68,14 +68,14 @@ void integers_loop() {
 
 	// set_min and set_next
 	i = 0;
-	for(SetNode node = set_first(set); node != SET_END; node = set_next(set, node)) {
+	for(SetNode node = set_first(set); node != SET_EOF; node = set_next(set, node)) {
 		int* value = set_node_value(set, node);
 		TEST_ASSERT(*value == i++);
 	}
 
 	// set_max and set_previous
 	i = 99;
-	for(SetNode node = set_last(set); node != SET_START; node = set_previous(set, node)) {
+	for(SetNode node = set_last(set); node != SET_BOF; node = set_previous(set, node)) {
 		int* value = set_node_value(set, node);
 		TEST_ASSERT(*value == i--);
 	}

@@ -54,7 +54,7 @@ ListNode list_last(List list) {
 	// Προσοχή, αν η λίστα είναι κενή το last δείχνει στον dummy, εμείς όμως θέλουμε να επιστρέψουμε NULL, όχι τον dummy!
 	//
 	if(list->last == list->dummy)
-		return LIST_END;		// κενή λίστα
+		return LIST_EOF;		// κενή λίστα
 	else
 		return list->last;
 }
