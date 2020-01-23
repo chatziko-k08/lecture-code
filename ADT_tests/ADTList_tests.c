@@ -27,13 +27,13 @@ void test_insert(void) {
 	for(int i = 0; i < 1000; i++) {
 		ListNode node = list_insert_after(list, NULL, &array[i]);
 		TEST_CHECK(list_size(list) == i+1);				// Το size ενημερώθηκε;
-		TEST_CHECK(list_get(list, node) == &array[i]);	// Μπορούμε να κάνουμε get το στοιχείο που μόλις βάλαμε;
+		TEST_CHECK(list_node_value(list, node) == &array[i]);	// Μπορούμε να κάνουμε get το στοιχείο που μόλις βάλαμε;
 	}
 
 	// τα στοιχεία πρέπει να έχουν μπει με την αντίστροφη σειρά
 	ListNode node = list_first(list);
 	for(int i = 999; i >= 0; i--) {
-		TEST_CHECK(list_get(list, node) == &array[i]);
+		TEST_CHECK(list_node_value(list, node) == &array[i]);
 		node = list_next(list, node);
 	}
 
@@ -43,7 +43,7 @@ void test_insert(void) {
 	node = list_next(list, node);
 
 	TEST_CHECK(list_insert_after(list, node, &array[0]) != NULL);
-	TEST_CHECK(list_get(list, list_next(list, node)) == &array[0]);
+	TEST_CHECK(list_node_value(list, list_next(list, node)) == &array[0]);
 
 	list_destroy(list);
 }
@@ -79,9 +79,9 @@ void test_insert(void) {
 // 		list_insert(list, NULL);
 
 // 	for(int i = 0; i < 1000; i++) {
-// 		TEST_CHECK(list_get(list, i) == NULL);
+// 		TEST_CHECK(list_node_value(list, i) == NULL);
 // 		list_set(list, i, &array[i]);
-// 		TEST_CHECK(list_get(list, i) == &array[i]);
+// 		TEST_CHECK(list_node_value(list, i) == &array[i]);
 // 	}
 
 // 	list_destroy(list);
