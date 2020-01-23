@@ -12,7 +12,7 @@
 
 #include "common_types.h"
 
-#define VECTOR_NONE (Vector)0
+#define VECTOR_FAIL	(Vector)0
 
 
 // Ένα vector αναπαριστάται από τον τύπο Vector. Ο χρήστης δε χρειάζεται να γνωρίζει το περιεχόμενο
@@ -25,7 +25,7 @@ typedef struct vector* Vector;
 
 
 // Δημιουργεί και επιστρέφει ένα νεό vector μεγέθους size (τα στοιχεία δεν είναι αρχικοποιημένα).
-// Αν δεν υπάρχει διαθέσιμη μνήμη επιστρέφει VECTOR_NONE.
+// Αν δεν υπάρχει διαθέσιμη μνήμη επιστρέφει VECTOR_FAIL.
 
 Vector vector_create(int size);
 
@@ -33,14 +33,9 @@ Vector vector_create(int size);
 
 int vector_size(Vector vec);
 
-// Προσθέτει την τιμή value στη θέση pos του Vector vec.
-// ΔΕΝ μεταβάλλει το μέγεθος του vector, αν pos >= size το αποτέλεσμα δεν είναι ορισμένο.
-
-void vector_set(Vector vec, int pos, Pointer value);
-
 // Επιστρέφει την τιμή στη θέση pos του vector vec, ή NULL αν pos >= size.
 
-Pointer vector_get(Vector vec, int pos);
+Pointer vector_at(Vector vec, int pos);
 
 // Προσθέτει την τιμή value στο τέλος του vector vec. Το μέγεθος του vector μεγαλώνει κατά 1.
 // Επιστρέφει true αν το insert πετύχει, διαφορετικά false (μοναδική περίπτωση αποτυχίας είναι όταν
@@ -48,18 +43,58 @@ Pointer vector_get(Vector vec, int pos);
 
 bool vector_insert(Vector vec, Pointer value);
 
+// Αλλάζει την τιμή στη θέση pos του Vector vec σε value.
+// ΔΕΝ μεταβάλλει το μέγεθος του vector, αν pos >= size το αποτέλεσμα δεν είναι ορισμένο.
+
+void vector_replace(Vector vec, int pos, Pointer value);
+
 // Αφαιρεί και επιστρέψει την τιμή της τελευταίας θέσης του vector.
 // Το μέγεθος του vector μικραίνει κατά 1.
 // Αν size == 0 επιστρέφει NULL.
 
 Pointer vector_remove(Vector vec);
 
-// Βρίσκει το πρώτο στοιχείο στο vector που να είναι ίσο με value (με βάση τη συνάρτηση compare).
-// Επιστρέφει τη θέση του στοιχείου, ή -1 αν δεν βρεθεί.
+// Βρίσκει και επιστρέφει το πρώτο στοιχείο στο vector που να είναι ίσο με value
+// (με βάση τη συνάρτηση // compare), ή NULL αν δεν βρεθεί κανένα στοιχείο.
 
-int vector_find(Vector vec, Pointer value, CompareFunc compare);
+Pointer vector_find(Vector vec, Pointer value, CompareFunc compare);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει το vector vec.
 // Οποιαδήποτε λειτουργία πάνω στο vector μετά το destroy είναι μη ορισμένη.
 
 void vector_destroy(Vector vec);
+
+
+// Διάσχιση του vector ////////////////////////////////////////////////////////////
+//
+// Οι παρακάτω συναρτήσεις επιτρέπουν τη διάσχιση του vector μέσω κόμβων.
+// Δεν είναι τόσο συχνά χρησιμοποιούμενες όσο για άλλα ADTs, γιατί μπορούμε
+// εύκολα να διασχίσουμε το array και μέσω indexes. Παραμένουν πάντως χρήσιμες,
+// τόσο για ομοιομορφία με τους άλλους ADTs, αλλά και γιατί για κάποιες υλοποιήσεις
+// η διάσχιση μέσω κόμβων μπορεί να είναι πιο γρήγορη.
+
+// Οι σταθερές αυτές συμβολίζουν εικονικούς κόμβους _πριν_ τον πρώτο και _μετά_ τον τελευταίο
+#define VECTOR_START	(VectorNode)0
+#define VECTOR_END		(VectorNode)0
+
+typedef struct vector_node* VectorNode;
+
+// Επιστρέφουν τον πρώτο και τον τελευταίο κομβο του vector, ή VECTOR_START / VECTOR_END αντίστοιχα αν το vector είναι κενό
+
+VectorNode vector_first(Vector vec);
+VectorNode vector_last(Vector vec);
+
+// Επιστρέφουν τον επόμενο και τον προηγούμενο κομβο του node, ή VECTOR_END / VECTOR_START
+// αντίστοιχα αν ο node δεν έχει επόμενο / προηγούμενο.
+
+VectorNode vector_next(Vector vec, VectorNode node);
+VectorNode vector_previous(Vector vec, VectorNode node);
+
+// Επιστρέφει το περιεχόμενο του κόμβου node
+
+Pointer vector_node_value(Vector vec, VectorNode node);
+
+// Βρίσκει το πρώτο στοιχείο στο vector που να είναι ίσο με value (με βάση τη συνάρτηση compare).
+// Επιστρέφει τον κόμβο του στοιχείου, ή VECTOR_END αν δεν βρεθεί.
+
+VectorNode vector_find_node(Vector vec, Pointer value, CompareFunc compare);

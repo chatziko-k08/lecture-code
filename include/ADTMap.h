@@ -15,9 +15,6 @@
 
 typedef struct map* Map;
 
-// Δείκτης σε συνάρτηση που επισκέπτεται τα στειχεία του Map
-typedef void (*MapVisitFunc)(Map map, Pointer key, Pointer value);
-
 
 // Δημιουργεί και επιστρέφει ένα map, στο οποίο τα στοιχεία συγκρίνονται με βάση
 // τη συνάρτηση compare.
@@ -27,17 +24,6 @@ Map map_create(CompareFunc compare);
 // Επιστρέφει τον αριθμό στοιχείων που περιέχει το map.
 
 int map_size(Map map);
-
-// Επιστρέφει true αν το map περιέχει το συγκεκριμένο key, διαφορετικά false.
-
-bool map_exists(Map map, Pointer key);
-
-// Επιστρέφει την τιμή που έχει αντιστοιχιστεί στο συγκεκριμένο key, ή NULL αν το key δεν υπάρχει.
-//
-// Προσοχή: η συνάρτηση επιστρέφει NULL είτε όταν το key δεν υπάρχει, είτε όταν υπάρχει και έχει τιμή NULL.
-//          Αν χρειάζεται να διαχωρίσουμε τις δύο περιπτώσεις μπορούμε να χρησιμοποιήσουμε την map_exists.
-
-Pointer map_get(Map map, Pointer key);
 
 // Αν υπάρχει κλειδί ισοδύναμο με key, αλλάζει την τιμή του σε value. Διαφορετικά προσθέτει το κλειδί key με τιμή value.
 // Επιστρέφει true αν άλλαξε το μέγεθος του map (έγινε δηλαδή προσθήκη, όχι αντικατάσταση), διαφορετικά false.
@@ -51,9 +37,16 @@ bool map_insert(Map map, Pointer key, Pointer value);
 
 bool map_remove(Map map, Pointer key);
 
-// Καλεί τη visit(map, key, value) για κάθε στοιχείο του map (σε μη καθορισμένη σειρά)
+// Επιστρέφει true αν το map περιέχει το συγκεκριμένο key, διαφορετικά false.
 
-void map_visit(Map map, MapVisitFunc visit);
+bool map_exists(Map map, Pointer key);
+
+// Επιστρέφει την τιμή που έχει αντιστοιχιστεί στο συγκεκριμένο key, ή NULL αν το key δεν υπάρχει στο map.
+//
+// Προσοχή: η συνάρτηση επιστρέφει NULL είτε όταν το key δεν υπάρχει, είτε όταν υπάρχει και έχει τιμή NULL.
+//          Αν χρειάζεται να διαχωρίσουμε τις δύο περιπτώσεις μπορούμε να χρησιμοποιήσουμε την map_exists.
+
+Pointer map_find(Map map, Pointer key);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει το map.
 // Οποιαδήποτε λειτουργία πάνω στο map μετά το destroy είναι μη ορισμένη.
@@ -61,6 +54,35 @@ void map_visit(Map map, MapVisitFunc visit);
 void map_destroy(Map map);
 
 
+
+//// Διάσχιση του map μέσω κόμβων ////////////////////////////////////////////////////////////
+//
+// Η σειρά διάσχισης είναι αυθαίρετη.
+//
+#define MAP_END		(MapNode)0
+
+typedef struct map_node* MapNode;
+
+// Επιστρέφει τον πρώτο κομβο του map, ή MAP_END αν το map είναι κενό
+
+MapNode map_first(Map map);
+
+// Επιστρέφει τον επόμενο κόμβο του node, ή MAP_END αν ο node δεν έχει επόμενο
+
+MapNode map_next(Map map, MapNode node);
+
+// Επιστρέφει το κλειδί του κόμβου node
+
+Pointer map_node_key(Map map, MapNode node);;
+
+// Επιστρέφει το περιεχόμενο του κόμβου node
+
+Pointer map_node_value(Map map, MapNode node);
+
+// Βρίσκει και επιστρέφεο τον κόμβο που έχει αντιστοιχιστεί στο κλειδί key,
+// ή MAP_END αν το κλειδί δεν υπάρχει στο map.
+
+MapNode map_find_node(Map map, Pointer key);
 
 
 //// Επιπλέον συναρτήσεις για υλοποιήσεις βασισμένες σε hashing ////////////////////////////

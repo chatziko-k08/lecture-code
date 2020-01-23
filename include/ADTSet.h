@@ -17,44 +17,19 @@
 
 typedef struct set* Set;
 
-// Δείκτης σε συνάρτηση που επισκέπτεται τα στoιχεία του συνόλου
-typedef void (*SetVisitFunc)(Set set, Pointer value);
-
 
 // Δημιουργεί και επιστρέφει ένα σύνολο, στο οποίο τα στοιχεία συγκρίνονται με βάση
 // τη συνάρτηση compare.
 
 Set set_create(CompareFunc compare);
 
+// Επιστρέφει τη συνάρτηση compare του set.
+
+Set set_compare(Set set);
+
 // Επιστρέφει τον αριθμό στοιχείων που περιέχει το σύνολο set.
 
 int set_size(Set set);
-
-// Επιστρέφει true αν το set περιέχει τιμή ισοδύναμη της value (με βάση τη compare) αλλιώς false
-
-bool set_exists(Set set, Pointer value);
-
-// Επιστρέφει την μοναδική τιμή του set που είναι ισοδύναμη με value, ή NULL αν δεν υπάρχει
-
-Pointer set_get(Set set, Pointer value);
-
-// Επιστρέφει την μικρότερη τιμή του συνόλου, ή NULL αν το σύνολο είναι άδειο.
-
-Pointer set_min(Set set);
-
-// Επιστρέφει την μεγαλύτερη τιμή του συνόλου, ή NULL αν το σύνολο είναι άδειο.
-
-Pointer set_max(Set set);
-
-// Επιστρέφει την προηγούμενη τιμή από τη value με βάση τη σειρά διάταξης
-// (δηλαδή την τιμή max { v in set | v < value }), ή NULL αν δεν υπάρχει
-
-Pointer set_previous(Set set, Pointer value);
-
-// Επιστρέφει την επόμενη τιμή από τη value με βάση τη σειρά διάταξης
-// (δηλαδή την τιμή min { v in set | v > value }), ή NULL αν δεν υπάρχει.
-
-Pointer set_next(Set set, Pointer value);
 
 // Προσθέτει την τιμή value στο σύνολο, αντικαθιστώντας τυχόν προηγούμενη τιμή ισοδύναμη της value.
 // Επιστρέφει true αν άλλαξε το μέγεθος του συνόλου (δηλαδή έγινε προσθήκη, όχι αντικατάσταση), αλλιώς false.
@@ -68,11 +43,55 @@ bool set_insert(Set set, Pointer value);
 
 bool set_remove(Set set, Pointer value);
 
-// Καλεί τη visit(set, value) για κάθε στοιχείο του συνόλου, στη σειρά διάταξης.
+// Επιστρέφει true αν το set περιέχει τιμή ισοδύναμη της value (με βάση τη compare) αλλιώς false
 
-void set_visit(Set set, SetVisitFunc visit);
+bool set_exists(Set set, Pointer value);
+
+// Επιστρέφει την μοναδική τιμή του set που είναι ισοδύναμη με value, ή NULL αν δεν υπάρχει
+
+Pointer set_find(Set set, Pointer value);
+
+// Επιστρέφει τη μεγαλύτερη τιμή του set που να είναι μικρότερη από value με βάση τη σειρά διάταξης
+// (δηλαδή την τιμή max { v in set | v < value }), ή NULL αν δεν υπάρχει
+
+Pointer set_find_smaller(Set set, Pointer value);
+
+// Επιστρέφει τη μικρότερη τιμή του set που να είναι μεγαλύτερη από value με βάση τη σειρά διάταξης
+// (δηλαδή την τιμή min { v in set | v > value }), ή NULL αν δεν υπάρχει.
+
+Pointer set_find_greater(Set set, Pointer value);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει το σύνολο.
 // Οποιαδήποτε λειτουργία πάνω στο set μετά το destroy είναι μη ορισμένη.
 
 void set_destroy(Set set);
+
+
+// Διάσχιση του set ////////////////////////////////////////////////////////////
+//
+// Η διάσχιση γίνεται με τη σειρά διάταξης.
+
+#define SET_START	(SetNode)0
+#define SET_END		(SetNode)0
+
+typedef struct set_node* SetNode;
+
+// Επιστρέφουν τον πρώτο και τον τελευταίο κομβο του set, ή SET_START / SET_END αντίστοιχα αν το set είναι κενό
+
+SetNode set_first(Set set);
+SetNode set_last(Set set);
+
+// Επιστρέφουν τον επόμενο και τον προηγούμενο κομβο του node, ή SET_END / SET_START
+// αντίστοιχα αν ο node δεν έχει επόμενο / προηγούμενο.
+
+SetNode set_next(Set set, SetNode node);
+SetNode set_previous(Set set, SetNode node);
+
+// Επιστρέφει το περιεχόμενο του κόμβου node
+
+Pointer set_node_value(Set set, SetNode node);
+
+// Βρίσκει το μοναδικό στοιχείο στο set που να είναι ίσο με value.
+// Επιστρέφει τον κόμβο του στοιχείου, ή SET_END αν δεν βρεθεί.
+
+SetNode set_find_node(Set set, Pointer value);

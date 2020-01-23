@@ -11,8 +11,9 @@
 
 #include "common_types.h"
 
-#define LIST_NONE (List)0
-#define LISTNODE_NONE (ListNode)0
+// Οι σταθερές αυτές συμβολίζουν εικονικούς κόμβους _πριν_ τον πρώτο και _μετά_ τον τελευταίο
+#define LIST_START	(ListNode)0
+#define LIST_END	(ListNode)0
 
 
 // Λίστες και κόμβοι αναπαριστώνται από τους τύπους List και ListNode. Ο χρήστης δε χρειάζεται να γνωρίζει το περιεχόμενο
@@ -34,40 +35,44 @@ List list_create();
 
 int list_size(List list);
 
-// Επιστρέφει τον πρώτο κόμβο, ή LISTNODE_NONE αν η λίστα είναι άδεια
-
-ListNode list_first(List list);
-
-// Επιστρέφει τον τελευταίο κόμβο, ή LISTNODE_NONE αν η λίστα είναι άδεια
-
-ListNode list_last(List list);
-
-// Επιστρέφει τον κόμβο μετά από τον node, ή LISTNODE_NONE αν ο node είναι ο τελευταίος
-
-ListNode list_next(List list, ListNode node);
-
-// Επιστρέφει το περιεχόμενο του κόμβου node
-
-Pointer list_get(List list, ListNode node);
-
-// Αλλάζει το περιεχόμενο του κόμβου node σε value
-
-void list_set(List list, ListNode node, Pointer value);
-
-// Προσθέτει έναν νέο κόμβο μετά τον node, ή στην αρχή αν node == LISTNODE_NONE, με περιεχόμενο value.
+// Προσθέτει έναν νέο κόμβο μετά τον node, ή στην αρχή αν node == LIST_START, με περιεχόμενο value.
 
 ListNode list_insert_after(List list, ListNode node, Pointer value);
 
-// Αφαιρεί τον επόμενο κόμβο από τον node, ή τον πρώτο κόμβο αν node == LISTNODE_NONE
+// Αφαιρεί τον επόμενο κόμβο από τον node, ή τον πρώτο κόμβο αν node == LIST_START
 
 void list_remove_after(List list, ListNode node);
 
-// Επιστρέφει τον πρώτο κόμβο του οποίου η τιμή είναι ισοδύναμη με value
-// (με βάση τη συνάρτηση compare), ή LISTNODE_NONE αν δε βρεθεί κανένας.
+// Επιστρέφει την πρώτη τιμή που είναι ισοδύναμη με value
+// (με βάση τη συνάρτηση compare), ή NULL αν δεν υπάρχει
 
-ListNode list_find(List list, Pointer value, CompareFunc compare);
+Pointer list_find(List list, Pointer value, CompareFunc compare);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει η λίστα list.
 // Οποιαδήποτε λειτουργία πάνω στη λίστα μετά το destroy είναι μη ορισμένη.
 
 void list_destroy(List list);
+
+
+// Διάσχιση της λίστας /////////////////////////////////////////////
+//
+// Επιστρέφει τον πρώτο κόμβο, ή LIST_START αν η λίστα είναι άδεια
+
+ListNode list_first(List list);
+
+// Επιστρέφει τον τελευταίο κόμβο, ή LIST_END αν η λίστα είναι άδεια
+
+ListNode list_last(List list);
+
+// Επιστρέφει τον κόμβο μετά από τον node, ή LIST_END αν ο node είναι ο τελευταίος
+
+ListNode list_next(List list, ListNode node);
+
+// Επιστρέφει το περιεχόμενο του κόμβου node
+
+Pointer list_node_value(List list, ListNode node);
+
+// Βρίσκει τo πρώτo στοιχείο που είναι ισοδύναμο με value (με βάση τη συνάρτηση compare).
+// Επιστρέφει τον κόμβο του στοιχείου, ή LIST_END αν δεν βρεθεί.
+
+ListNode list_find_node(List list, Pointer value, CompareFunc compare);
