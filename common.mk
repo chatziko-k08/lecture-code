@@ -106,16 +106,21 @@ clean:
 	@rm -f $(PROGS) $(OBJS) $(DEPS) $(COV_FILES)
 	@rm -rf coverage
 
-# Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target run-<prog> που το εκτελεί
+# Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target run-<prog> που το εκτελεί με παραμέτρους <prog>_ARGS
 $(RUN_TARGETS): $$(subst run-,,$$@)
-	./$(subst run-,,$@)
+	$(eval PROG = $(subst run-,,$@))
+	$(eval ARGS = $($(PROG)_ARGS))
+	./$(PROG) $(ARGS)
 
 # Το make run εκτελεί όλα τα run targets
 run: $(RUN_TARGETS)
 
-# Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target valgrind-<prog> που το εκτελεί μέσω valgrind
+# Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target valgrind-<prog> που το εκτελεί μέσω valgrind με παραμέτρους <prog>_ARGS (default -E)
 $(VAL_TARGETS): $$(subst valgrind-,,$$@)
-	valgrind --error-exitcode=1 --leak-check=full ./$(subst valgrind-,,$@) -E
+	$(eval PROG = $(subst valgrind-,,$@))
+	$(eval ARGS = $($(PROG)_ARGS))
+	$(eval ARGS = $(if $(ARGS),$(ARGS),-E))
+	valgrind --error-exitcode=1 --leak-check=full ./$(PROG) $(ARGS)
 
 valgrind: $(VAL_TARGETS)
 
