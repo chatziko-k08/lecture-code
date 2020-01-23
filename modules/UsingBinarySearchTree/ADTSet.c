@@ -201,25 +201,24 @@ BSTNode bst_insert(BSTNode node, CompareFunc compare, Pointer value, bool* inser
 	return node;	// η ρίζα του υποδέντρου δεν αλλάζει
 }
 
-// Διαγράφει τον μικρότερο κόμβο του υποδέντρου με ρίζα node, αφού αντιγράψει την τιμή του
-// στον κόμβο copy. Επιστρέφει τη νέα ρίζα του υποδέντρου.
+// Αφαιρεί και αποθηκεύει στο min_node τον μικρότερο κόμβο του υποδέντρου με ρίζα node.
+// Επιστρέφει τη νέα ρίζα του υποδέντρου.
 
-BSTNode bst_remove_min_node(BSTNode node, BSTNode copy) {
+BSTNode bst_remove_min_node(BSTNode node, BSTNode* min_node) {
 	if(node->left == NULL) {
 		// Δεν έχουμε αριστερό υποδέντρο, οπότε ο μικρότερος είναι ο ίδιος ο node
-		copy->value = node->value;		// αντιγραφή
+		*min_node = node;
 
 		BSTNode right = node->right;	// αποθήκευση πριν το free
 		if(right != NULL)
 			right->parent = node->parent;
 
-		free(node);
 		return right;					// νέα ρίζα είναι το δεξιό παιδί
 
 	} else {
 		// Εχουμε αριστερό υποδέντρο, οπότε η μικρότερη τιμή είναι εκεί. Συνεχίζουμε αναδρομικά
 		// και ενημερώνουμε το node->left με τη νέα ρίζα του υποδέντρου.
-		node->left = bst_remove_min_node(node->left, copy);
+		node->left = bst_remove_min_node(node->left, min_node);
 		return node;
 	}
 }
@@ -243,6 +242,7 @@ BSTNode bst_remove(BSTNode node, CompareFunc compare, Pointer value, bool* remov
 			BSTNode right = node->right;	// αποθήκευση πριν το free!
 			if(right != NULL)
 				right->parent = node->parent;
+
 			free(node);
 			return right;
 
@@ -251,14 +251,24 @@ BSTNode bst_remove(BSTNode node, CompareFunc compare, Pointer value, bool* remov
 			BSTNode left = node->left;		// αποθήκευση πριν το free!
 			if(left != NULL)
 				left->parent = node->parent;
+
 			free(node);
 			return left;
 
 		} else {
 			// Υπάρχουν και τα δύο παιδιά. Αντικαθιστούμε την τιμή του node με την μικρότερη του δεξιού υποδέντρου, η οποία
 			// αφαιρείται. Η συνάρτηση bst_remove_min_node κάνει ακριβώς αυτή τη δουλειά.
-			node->right = bst_remove_min_node(node->right, node);
-			return node;
+
+			BSTNode min_right;
+			node->right = bst_remove_min_node(node->right, &min_right);
+
+			// Σύνδεση του min_right στη θέση του node
+			min_right->parent = node->parent;
+			min_right->left = node->left;
+			min_right->right = node->right;
+
+			free(node);
+			return min_right;
 		}
 	}
 
