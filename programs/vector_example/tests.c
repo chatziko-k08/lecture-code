@@ -17,8 +17,8 @@ void strings() {
 
 	TEST_CHECK(vector_size(vec) == 2);
 
-	char* value1 = vector_get(vec, 0);
-	char* value2 = vector_get(vec, 1);
+	char* value1 = vector_at(vec, 0);
+	char* value2 = vector_at(vec, 1);
 
 	TEST_ASSERT(strcmp(s1, value1) == 0);
 	TEST_ASSERT(strcmp(s2, value2) == 0);
@@ -39,8 +39,8 @@ void integers() {
 
 	TEST_CHECK(vector_size(vec) == 2);
 
-	int* value1 = vector_get(vec, 0);
-	int* value2 = vector_get(vec, 1);
+	int* value1 = vector_at(vec, 0);
+	int* value2 = vector_at(vec, 1);
 
 	TEST_ASSERT(*value1 == a1);
 	TEST_ASSERT(*value2 == a2);
@@ -58,8 +58,8 @@ void integers_loop1() {
 		vector_insert(vec, &i);
 
 	// Διαβάζοντας οποιαδήποτε τιμή παίρνουμε πίσω έναν pointer στο i
-	int* value1 = vector_get(vec, 0);
-	int* value2 = vector_get(vec, 1);
+	int* value1 = vector_at(vec, 0);
+	int* value2 = vector_at(vec, 1);
 
 	// και οι δύο pointers δείχνουν στον i
 	TEST_ASSERT(value1 == &i);
@@ -87,8 +87,8 @@ void integers_loop2() {
 	for(int i = 0; i < 100; i++)
 		vector_insert(vec, create_int(i));
 
-	int* value1 = vector_get(vec, 0);
-	int* value2 = vector_get(vec, 1);
+	int* value1 = vector_at(vec, 0);
+	int* value2 = vector_at(vec, 1);
 
 	// Οι τιμές είναι αυτές που περιμένουμε
 	TEST_ASSERT(*value1 == 0);

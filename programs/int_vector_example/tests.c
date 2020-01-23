@@ -15,8 +15,8 @@ void integers_loop() {
 	for(i = 0; i < 100; i++)
 		int_vector_insert(vec, i);
 
-	int value1 = int_vector_get(vec, 0);
-	int value2 = int_vector_get(vec, 1);
+	int value1 = int_vector_at(vec, 0);
+	int value2 = int_vector_at(vec, 1);
 
 	// Οι τιμές είναι αυτές που περιμένουμε
 	TEST_ASSERT(value1 == 0);

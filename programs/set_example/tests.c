@@ -17,8 +17,8 @@ void strings() {
 
 	TEST_CHECK(set_size(set) == 2);
 
-	char* value1 = set_get(set, "FOO");
-	char* value2 = set_get(set, "BAR");
+	char* value1 = set_find(set, "FOO");
+	char* value2 = set_find(set, "BAR");
 
 	TEST_ASSERT(s1 == value1);
 	TEST_ASSERT(s2 == value2);
@@ -45,8 +45,8 @@ void integers() {
 
 	int b1 = 5;
 	int b2 = 42;
-	int* value1 = set_get(set, &b1);
-	int* value2 = set_get(set, &b2);
+	int* value1 = set_find(set, &b1);
+	int* value2 = set_find(set, &b2);
 
 	TEST_ASSERT(value1 == &a1);
 	TEST_ASSERT(value2 == &a2);
@@ -68,19 +68,21 @@ void integers_loop() {
 
 	// set_min and set_next
 	i = 0;
-	for(int* value = set_min(set); value != NULL; value = set_next(set, value)) {
+	for(SetNode node = set_first(set); node != SET_END; node = set_next(set, node)) {
+		int* value = set_node_value(set, node);
 		TEST_ASSERT(*value == i++);
 	}
 
 	// set_max and set_previous
 	i = 99;
-	for(int* value = set_max(set); value != NULL; value = set_previous(set, value)) {
+	for(SetNode node = set_last(set); node != SET_START; node = set_previous(set, node)) {
+		int* value = set_node_value(set, node);
 		TEST_ASSERT(*value == i--);
 	}
 
 	// get, remove, free
 	for(i = 0; i < 100; i++) {
-		int* value = set_get(set, &i);
+		int* value = set_find(set, &i);
 		set_remove(set, &i);
 		TEST_ASSERT(*value == i);
 		free(value);
