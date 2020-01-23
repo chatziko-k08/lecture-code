@@ -88,19 +88,17 @@ void map_destroy(Map map) {
 	// Αλλά προσοχή!!! Δεν μπορούμε να κάνουμε free ένα στοιχείο που είναι ακόμα μέσα στο set
 	// γιατί οι συναρτήσεις του set καλούν την compare πάνω σε αυτό το στοιχείο!
 	//
-	SetNode node = set_first(map->set);
-	while(node != SET_EOF) {							// while, γιατί πρέπει να πάρουμε το next
-		SetNode next = set_next(map->set, node);		// πριν κάνουμε remove!
+	while(set_size(map->set) != 0) {
+		SetNode set_node = set_first(map->set);
+
+		// Ο κόμβος του map είναι η τιμή που αποθηκεύεται στο set
+		MapNode map_node = set_node_value(map->set, set_node);
 
 		// αφαίρεση του στοιχείου από το set
-		MapNode map_node = set_node_value(map->set, node);
 		set_remove(map->set, map_node);
 
 		// πλέον μπορούμε να κάνουμε free!
 		free(map_node);
-
-		// συνεχίζουμε με το next, που το είχαμε βρει πριν κάνουμε remove
-		node = next;
 	}
 
 	set_destroy(map->set);
