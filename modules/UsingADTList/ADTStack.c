@@ -40,7 +40,7 @@ int stack_size(Stack stack) {
 
 Pointer stack_top(Stack stack) {
 	List list = (List)stack;
-	return list_get(list, list_first(list));
+	return list_node_value(list, list_first(list));
 }
 
 void stack_insert(Stack stack, Pointer value) {

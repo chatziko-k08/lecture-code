@@ -9,9 +9,9 @@
 #include "ADTSet.h"
 
 // Κόμβοι του δέντρου
-typedef struct bst_node* BSTNode;
-struct bst_node {
-	BSTNode left, right;	// Δείκτες στα παιδιά
+typedef SetNode BSTNode;
+struct set_node {
+	BSTNode parent, left, right;	// Δείκτες σε παιδιά και πατέρα
 	Pointer value;
 };
 
@@ -77,20 +77,20 @@ BSTNode bst_find_max_node(BSTNode node) {
 // Επιστρέφει τον κόμβο με την προηγούμενη τιμή από τη value με βάση τη σειρά διάταξης
 // (δηλαδή τη μεγαλύτερη τιμή, ανάμεσα σε αυτές που είναι αυστηρά μικρότερες της value)
 
-BSTNode bst_find_previous_node(BSTNode node, CompareFunc compare, Pointer value) {
+BSTNode bst_find_smaller_node(BSTNode node, CompareFunc compare, Pointer value) {
 	if(node == NULL)
 		return NULL;
 	
 	if(compare(value, node->value) <= 0) {
 		// value <= node->value, αλλά εμείς θέλουμε τιμές αυστηρά _μικρότερες_ της value.
 		// Οπότε συνεχίζουμε στο δεξί υποδέντρο.
-		return bst_find_previous_node(node->left, compare, value);
+		return bst_find_smaller_node(node->left, compare, value);
 
 	} else {
 		// value > node->value, οπότε η node->value είναι ανάμεσα στις τιμές που ψάχνουμε. Αλλά
 		// εμείς ψάχνουμε τη _μεγαλύτερη_ από αυτές τις τιμές. Αν υπάρχει, θα βρίσκεται
 		// στο δεξί υποδέντρο, οπότε ψάχνουμε εκεί.
-		BSTNode larger = bst_find_previous_node(node->right, compare, value);
+		BSTNode larger = bst_find_smaller_node(node->right, compare, value);
 
 		// Αν βρήκαμε κόμβο στο δεξί υποδέντρο τότε έχει σίγουρα τιμή μεγαλύτερη της node->value,
 		// οπότε τον προτιμάμε. Διαφορετικά επιστρέφουμε τον node.
@@ -101,25 +101,63 @@ BSTNode bst_find_previous_node(BSTNode node, CompareFunc compare, Pointer value)
 // Επιστρέφει τον κόμβο με την επόμενη τιμή από τη value με βάση τη σειρά διάταξης
 // (δηλαδή τη μικρότερη τιμή, ανάμεσα σε αυτές που είναι αυστηρά μεγαλύτερες της value)
 
-BSTNode bst_find_next_node(BSTNode node, CompareFunc compare, Pointer value) {
+BSTNode bst_find_greater_node(BSTNode node, CompareFunc compare, Pointer value) {
 	if(node == NULL)
 		return NULL;
 	
 	if(compare(value, node->value) >= 0) {
 		// value >= node->value, αλλά εμείς θέλουμε τιμές αυστηρά _μεγαλύτερες_ της value.
 		// Οπότε συνεχίζουμε στο δεξί υποδέντρο.
-		return bst_find_previous_node(node->right, compare, value);
+		return bst_find_greater_node(node->right, compare, value);
 
 	} else {
 		// value < node->value, οπότε η node->value είναι ανάμεσα στις τιμές που ψάχνουμε. Αλλά
 		// εμείς ψάχνουμε τη _μικρότερη_ από αυτές τις τιμές. Αν υπάρχει, θα βρίσκεται
 		// στο αριστερό υποδέντρο, οπότε ψάχνουμε εκεί.
-		BSTNode smaller = bst_find_next_node(node->left, compare, value);
+		BSTNode smaller = bst_find_greater_node(node->left, compare, value);
 
 		// Αν βρήκαμε κόμβο στο αριστερό υποδέντρο τότε έχει σίγουρα τιμή μικρότερη της node->value,
 		// οπότε τον προτιμάμε. Διαφορετικά επιστρέφουμε τον node.
 		return smaller != NULL ? smaller : node;
 	}
+}
+
+// Επιστρέφει τον προηγούμενο του node στη σειρά διάταξης, ή NULL αν ο node είναι ο μικρότερος όλου του δέντρου
+
+BSTNode bst_find_previous_node(BSTNode node, CompareFunc compare) {
+	// Αν έχουμε αριστερό παιδί τότε όλο το αριστερό υποδέντρο είναι μικρότεροι κόμβοι.
+	// Ο πρηγούμενος είναι ο μεγαλύτερος από αυτούς.
+	if(node->left != NULL)
+		return bst_find_max_node(node->left);
+
+	// Δεν έχουμε αριστερό παιδί, μπορεί όμως να υπάρχουν μικρότεροι κόμβοι σε άλλα σημεία του υποδέντρου.
+	// Προχωράμε προς τη ρίζα, ψάχνοντας για κόμβο που να είναι _δεξί_ παιδί του πατέρα του, άρα ο πατέρας
+	// είναι ο ακριβώς προγούμενός του.
+	for(; node != NULL; node = node->parent)
+		if(node->parent != NULL && node->parent->right == node)
+			return node->parent;
+
+	// φτάσαμε στη ρίζα ακολουθώντας μόνο _αριστερά_ links, άρα είμαστε ο αριστερότερος (μικρότερος) κόμβος όλου του δέντρου!
+	return NULL;
+}
+
+// Επιστρέφει τον επόμενο του node στη σειρά διάταξης, ή NULL αν ο node είναι ο μεγαλύτερος όλου του δέντρου
+
+BSTNode bst_find_next_node(BSTNode node, CompareFunc compare) {
+	// Αν έχουμε δεξί παιδί τότε όλο το δεξί υποδέντρο είναι μικρότεροι κόμβοι.
+	// Ο επόμενος είναι ο μεγαλύτερος από αυτούς.
+	if(node->right != NULL)
+		return bst_find_min_node(node->right);
+
+	// Δεν έχουμε δεξί παιδί, μπορεί όμως να υπάρχουν μεγαλύτεροι κόμβοι σε άλλα σημεία του υποδέντρου.
+	// Προχωράμε προς τη ρίζα, ψάχνοντας για κόμβο που να είναι _αριστερό_ παιδί του πατέρα του, άρα ο πατέρας
+	// είναι ο ακριβώς επόμενός του.
+	for(; node != NULL; node = node->parent)
+		if(node->parent != NULL && node->parent->left == node)
+			return node->parent;
+
+	// φτάσαμε στη ρίζα ακολουθώντας μόνο _δεξιά_ links, άρα είμαστε ο δεξιότερος (μεγαλύτερος) κόμβος όλου του δέντρου!
+	return NULL;
 }
 
 // Αν υπάρχει κόμβος με τιμή ισοδύναμη της value, αλλάζει την τιμή του σε value, διαφορετικά προσθέτει
@@ -130,6 +168,7 @@ BSTNode bst_insert(BSTNode node, CompareFunc compare, Pointer value, bool* inser
 	// Αν το υποδέντρο είναι κενό, δημιουργούμε νέο κόμβο ο οποίος γίνεται ρίζα του υποδέντρου
 	if(node == NULL) {
 		node = malloc(sizeof(*node));
+		node->parent = NULL;	// ρίζα, για την ώρα δεν έχει πατέρα. Μπορεί να αποκτήσει αν το υποδέντρο τοποθετηθεί ως παιδί άλλου δέντρου
 		node->left = node->right = NULL;
 		node->value = value;
 
@@ -150,11 +189,13 @@ BSTNode bst_insert(BSTNode node, CompareFunc compare, Pointer value, bool* inser
 		// value < node->value, συνεχίζουμε αριστερά. Η ρίζα του αριστερού υποδέντρου
 		// ίσως αλλαξει, οπότε ενημερώνουμε το node->left με τη νέα ρίζα!
 		node->left = bst_insert(node->left, compare, value, inserted);
+		node->left->parent = node;
 
 	} else {
 		// value > node->value, συνεχίζουμε αριστερά. Η ρίζα του δεξιού υποδέντρου
 		// ίσως αλλαξει, οπότε ενημερώνουμε το node->right με τη νέα ρίζα!
 		node->right = bst_insert(node->right, compare, value, inserted);
+		node->right->parent = node;
 	}
 
 	return node;	// η ρίζα του υποδέντρου δεν αλλάζει
@@ -167,7 +208,11 @@ BSTNode bst_remove_min_node(BSTNode node, BSTNode copy) {
 	if(node->left == NULL) {
 		// Δεν έχουμε αριστερό υποδέντρο, οπότε ο μικρότερος είναι ο ίδιος ο node
 		copy->value = node->value;		// αντιγραφή
+
 		BSTNode right = node->right;	// αποθήκευση πριν το free
+		if(right != NULL)
+			right->parent = node->parent;
+
 		free(node);
 		return right;					// νέα ρίζα είναι το δεξιό παιδί
 
@@ -196,12 +241,16 @@ BSTNode bst_remove(BSTNode node, CompareFunc compare, Pointer value, bool* remov
 		if(node->left == NULL) {
 			// Δεν υπάρχει αριστερό υποδέντρο, οπότε διαγράφεται απλά ο κόμβος και νέα ρίζα μπαίνει το δεξί παιδί
 			BSTNode right = node->right;	// αποθήκευση πριν το free!
+			if(right != NULL)
+				right->parent = node->parent;
 			free(node);
 			return right;
 
 		} else if(node->right == NULL) {
 			// Δεν υπάρχει δεξί υποδέντρο, οπότε διαγράφεται απλά ο κόμβος και νέα ρίζα μπαίνει το αριστερό παιδί
 			BSTNode left = node->left;		// αποθήκευση πριν το free!
+			if(left != NULL)
+				left->parent = node->parent;
 			free(node);
 			return left;
 
@@ -220,18 +269,6 @@ BSTNode bst_remove(BSTNode node, CompareFunc compare, Pointer value, bool* remov
 		node->right = bst_remove(node->right, compare, value, removed);
 
 	return node;
-}
-
-// Καλεί visit(set, value) για κάθε κόμβο του δέντρου, σε σειρά διάταξης.
-
-void bst_visit(BSTNode node, Set set, SetVisitFunc visit) {
-	if(node == NULL)
-		return;
-
-	// Επίσκεψη πρώτα αριστερά, μετά τον ίδιο τον κόμβο, και τέλος δεξιά
-	bst_visit(node->left, set, visit);
-	visit(set, node->value);
-	bst_visit(node->right, set, visit);
 }
 
 // Καταστρέφει όλο το υποδέντρο με ρίζα node
@@ -270,30 +307,6 @@ int set_size(Set set) {
 	return set->size;
 }
 
-bool set_exists(Set set, Pointer value) {
-	return bst_find_node(set->root, set->compare, value) != NULL;
-}
-
-Pointer set_get(Set set, Pointer value) {
-	return bst_node_value( bst_find_node(set->root, set->compare, value) );
-}
-
-Pointer set_min(Set set) {
-	return bst_node_value( bst_find_min_node(set->root) );
-}
-
-Pointer set_max(Set set) {
-	return bst_node_value( bst_find_max_node(set->root) );
-}
-
-Pointer set_previous(Set set, Pointer value) {
-	return bst_node_value( bst_find_previous_node(set->root, set->compare, value) );
-}
-
-Pointer set_next(Set set, Pointer value) {
-	return bst_node_value( bst_find_next_node(set->root, set->compare, value) );
-}
-
 bool set_insert(Set set, Pointer value) {
 	bool inserted;
 	set->root = bst_insert(set->root, set->compare, value, &inserted);
@@ -316,11 +329,48 @@ bool set_remove(Set set, Pointer value) {
 	return removed;
 }
 
-void set_visit(Set set, SetVisitFunc visit) {
-	bst_visit(set->root, set, visit);
+bool set_exists(Set set, Pointer value) {
+	return bst_find_node(set->root, set->compare, value) != NULL;
+}
+
+Pointer set_find(Set set, Pointer value) {
+	return bst_node_value( bst_find_node(set->root, set->compare, value) );
+}
+
+Pointer set_find_smaller(Set set, Pointer value) {
+	return bst_node_value( bst_find_smaller_node(set->root, set->compare, value) );
+}
+
+Pointer set_find_larger(Set set, Pointer value) {
+	return bst_node_value( bst_find_greater_node(set->root, set->compare, value) );
 }
 
 void set_destroy(Set set) {
 	bst_destroy(set->root);
 	free(set);
+}
+
+SetNode set_first(Set set) {
+	return bst_find_min_node(set->root);
+}
+
+SetNode set_last(Set set) {
+	return bst_find_max_node(set->root);
+}
+
+SetNode set_previous(Set set, SetNode node) {
+	// TODO: improve
+	return bst_find_previous_node(node, set->compare);
+}
+
+SetNode set_next(Set set, SetNode node) {
+	return bst_find_next_node(node, set->compare);
+}
+
+Pointer set_node_value(Set set, SetNode node) {
+	return node->value;
+}
+
+SetNode set_find_node(Set set, Pointer value) {
+	return bst_find_node(set->root, set->compare, value);
 }

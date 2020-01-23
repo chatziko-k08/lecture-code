@@ -35,7 +35,7 @@ Vector vector_create(int size) {
 	if(vec == NULL || array == NULL) {
 		free(vec);		// free αν καταφέραμε να δεσμεύσουμε κάποιο από τα δύο.
 		free(array);	// Αν όχι το free(NULL) απλά δεν κάνει τίποτα.
-		return VECTOR_NONE;
+		return VECTOR_FAIL;
 	}
 	// LCOV_EXCL_STOP
 
@@ -50,7 +50,7 @@ int vector_size(Vector vec) {
 	return vec->size;
 }
 
-Pointer vector_get(Vector vec, int pos) {
+Pointer vector_at(Vector vec, int pos) {
 	if(pos >= 0 && pos < vec->size)
 		return vec->array[pos];
 	else
@@ -58,7 +58,7 @@ Pointer vector_get(Vector vec, int pos) {
 	
 }
 
-void vector_set(Vector vec, int pos, Pointer value) {
+void vector_replace(Vector vec, int pos, Pointer value) {
 	assert(pos >= 0 && pos < vec->size);	// LCOV_EXCL_LINE (αγνοούμε το branch από τα coverage reports, είναι δύσκολο να τεστάρουμε το false γιατί θα κρασάρει το test)
 
 	vec->array[pos] = value;
@@ -75,7 +75,7 @@ bool vector_insert(Vector vec, Pointer value) {
 		// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
 		if(new_array == NULL)
 			return false;			// αποτυχία, επιστρέφουμε χωρίς καμία τροποποίηση στο υπάρχον vector
-		// LCONV_EXCL_STOP
+		// LCOV_EXCL_STOP
 
 		// Έχουμε πλέον μεγαλύτερη μνήμη που περιέχει τα προηγούμενα περιεχόμενα.
 		// Προσοχή: δε πρέπει να κάνουμε free τον παλιό pointer, το κάνει η realloc
@@ -111,17 +111,59 @@ Pointer vector_remove(Vector vec) {
 	return value;
 }
 
-int vector_find(Vector vec, Pointer value, CompareFunc compare) {
+Pointer vector_find(Vector vec, Pointer value, CompareFunc compare) {
 	// Διάσχιση του vector
 	for(int i = 0; i < vec->size; i++)
 		if(compare(vec->array[i], value) == 0)
-			return i;		// βρέθηκε
+			return vec->array[i];		// βρέθηκε
 
-	return -1;				// δεν υπάρχει
+	return NULL;				// δεν υπάρχει
 }
 
 void vector_destroy(Vector vec) {
 	// Πρέπει να κάνουμε free τόσο τον πίνακα όσο και το struct!
 	free(vec->array);
 	free(vec);			// τελευταίο το vec!
+}
+
+
+// Συναρτήσεις για διάσχιση μέσω node /////////////////////////////////////////////////////
+
+VectorNode vector_first(Vector vec) {
+	if(vec->size == 0)
+		return VECTOR_START;
+		
+	Pointer* p = &vec->array[0];
+	return (VectorNode)p;
+}
+
+VectorNode vector_last(Vector vec) {
+	if(vec->size == 0)
+		return VECTOR_END;
+
+	Pointer* p = &vec->array[vec->size-1];
+	return (VectorNode)p;
+}
+
+VectorNode vector_next(Vector vec, VectorNode node) {
+	Pointer* p = (Pointer*)node;
+
+	if(p == &vec->array[vec->size-1])
+		return VECTOR_END;
+	else
+		return (VectorNode)(p + 1);
+}
+
+VectorNode vector_previous(Vector vec, VectorNode node) {
+	Pointer* p = (Pointer*)node;
+
+	if(p == &vec->array[0])
+		return VECTOR_END;
+	else
+		return (VectorNode)(p - 1);
+}
+
+Pointer vector_node_value(Vector vec, VectorNode node) {
+	Pointer* p = (Pointer*)node;
+	return *p;
 }

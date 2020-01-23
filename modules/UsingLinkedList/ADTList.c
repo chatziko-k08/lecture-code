@@ -54,7 +54,7 @@ ListNode list_last(List list) {
 	// Προσοχή, αν η λίστα είναι κενή το last δείχνει στον dummy, εμείς όμως θέλουμε να επιστρέψουμε NULL, όχι τον dummy!
 	//
 	if(list->last == list->dummy)
-		return LISTNODE_NONE;		// κενή λίστα
+		return LIST_END;		// κενή λίστα
 	else
 		return list->last;
 }
@@ -64,14 +64,9 @@ ListNode list_next(List list, ListNode node) {
 	return node->next;
 }
 
-Pointer list_get(List list, ListNode node) {
+Pointer list_node_value(List list, ListNode node) {
 	assert(node != NULL);	// LCOV_EXCL_LINE
 	return node->value;
-}
-
-void list_set(List list, ListNode node, Pointer value) {
-	assert(node != NULL);	// LCOV_EXCL_LINE
-	node->value = value;
 }
 
 ListNode list_insert_after(List list, ListNode node, Pointer value) {
@@ -116,14 +111,19 @@ void list_remove_after(List list, ListNode node) {
 		list->last = node;
 }
 
-ListNode list_find(List list, Pointer value, CompareFunc compare) {
+ListNode list_find_node(List list, Pointer value, CompareFunc compare) {
 	// διάσχιση όλης της λίστας, καλούμε την compare μέχρι να επιστρέψει 0
 	//
 	for(ListNode node = list->dummy->next; node != NULL; node = node->next)
 		if(compare(value, node->value) == 0)
 			return node;		// βρέθηκε
 
-	return LISTNODE_NONE;	// δεν υπάρχει
+	return NULL;	// δεν υπάρχει
+}
+
+Pointer list_find(List list, Pointer value, CompareFunc compare) {
+	ListNode node = list_find_node(list, value, compare);
+	return node == NULL ? NULL : node->value;
 }
 
 void list_destroy(List list) {

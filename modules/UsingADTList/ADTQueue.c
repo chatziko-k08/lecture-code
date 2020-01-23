@@ -43,7 +43,7 @@ int queue_size(Queue queue) {
 }
 
 Pointer queue_top(Queue queue) {
-	return list_get(queue->list, list_first(queue->list));
+	return list_node_value(queue->list, list_first(queue->list));
 }
 
 void queue_insert(Queue queue, Pointer value) {

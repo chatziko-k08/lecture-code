@@ -18,7 +18,7 @@ IntVector int_vector_create(int size) {
 
 	// Ο πίνακας περιέχει size μη-αρχικοποιημένους ακεραίους, δεσμεύουμε μνήμη για αυτούς
 	for(int i = 0; i < size; i ++)
-		vector_set(vec, i, malloc(sizeof(int)));
+		vector_replace(vec, i, malloc(sizeof(int)));
 
 	return (IntVector)vec;
 }
@@ -27,14 +27,14 @@ int int_vector_size(IntVector vec) {
 	return vector_size((Vector)vec);	// trivial
 }
 
-void int_vector_set(IntVector vec, int pos, int value) {
+void int_vector_replace(IntVector vec, int pos, int value) {
 	// Αλλάζουμε την τιμή ενός υπάρχοντος στοιχείου, έχουμε ήδη μνήμη για αυτό! (από το αντίστοιχο insert)
-	int *p = vector_get((Vector)vec, pos);		// το vector περιέχει int pointers
+	int *p = vector_at((Vector)vec, pos);		// το vector περιέχει int pointers
 	*p = value;							// αλλαγή τιμής
 }
 
-int int_vector_get(IntVector vec, int pos) {
-	int *p = vector_get((Vector)vec, pos);		// το vector περιέχει int pointers
+int int_vector_at(IntVector vec, int pos) {
+	int *p = vector_at((Vector)vec, pos);		// το vector περιέχει int pointers
 	return *p;
 }
 
@@ -58,14 +58,15 @@ int compare(Pointer a, Pointer b) {
 }
 
 int int_vector_find(Vector vec, int value) {
-	return vector_find((Vector)vec, &value, compare);
+	int* res = vector_find((Vector)vec, &value, compare);
+	return *res;
 }
 
 void int_vector_destroy(IntVector vec) {
 	// Το vector_destroy θα ελευθερώσει τη μνήμη του ίδιου του vector, αλλά τους pointers που βάλαμε
 	// τους κάναμε malloc εμείς, οπότε εμείς πρέπει να τους κάνουμε και free!
 	for(int i = 0; i < vector_size((Vector)vec); i++)
-		free(vector_get((Vector)vec, i));
+		free(vector_at((Vector)vec, i));
 
 	vector_destroy((Vector)vec);
 }
