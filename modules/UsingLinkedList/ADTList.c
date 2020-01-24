@@ -12,9 +12,10 @@
 
 // Ενα List είναι pointer σε αυτό το struct
 struct list {
-	ListNode dummy;		// χρησιμοποιούμε dummy κόμβο, ώστε ακόμα και η κενή λίστα να έχει έναν κόμβο.
-	ListNode last;		// δείκτης στον τελευταίο κόμβο, ή στον dummy (αν η λίστα είναι κενή)
-	int size;			// μέγεθος, ώστε η list_size να είναι Ο(1)
+	ListNode dummy;				// χρησιμοποιούμε dummy κόμβο, ώστε ακόμα και η κενή λίστα να έχει έναν κόμβο.
+	ListNode last;				// δείκτης στον τελευταίο κόμβο, ή στον dummy (αν η λίστα είναι κενή)
+	int size;					// μέγεθος, ώστε η list_size να είναι Ο(1)
+	DestroyFunc destroy_value;	// Συνάρτηση που καταστρέφει ένα στοιχείο της λίστας.
 };
 
 struct list_node {
@@ -23,10 +24,11 @@ struct list_node {
 };
 
 
-List list_create() {
+List list_create(DestroyFunc destroy_value) {
 	// Πρώτα δημιουργούμε το stuct
 	List list = malloc(sizeof(*list));
 	list->size = 0;
+	list->destroy_value = destroy_value;
 
 	// Χρησιμοποιούμε dummy κόμβο, ώστε ακόμα και μια άδεια λίστα να έχει ένα κόμβο
 	// (απλοποιεί τους αλγορίθμους). Οπότε πρέπει να τον δημιουργήσουμε.
@@ -103,6 +105,8 @@ void list_remove(List list, ListNode node) {
 
 	// Σύνδεση του node με τον επόμενο του removed
 	node->next = removed->next;		// πριν το free!
+	if(list->destroy_value != NULL)
+		list->destroy_value(node->value);
 	free(removed);
 
 	// Ενημέρωση των size & last
@@ -126,7 +130,7 @@ Pointer list_find(List list, Pointer value, CompareFunc compare) {
 	return node == NULL ? NULL : node->value;
 }
 
-void list_destroy(List list, bool free_values) {
+void list_destroy(List list) {
 	// Διασχίζουμε όλη τη λίστα και κάνουμε free όλους τους κόμβους,
 	// συμπεριλαμβανομένου και του dummy!
 	//
@@ -134,9 +138,9 @@ void list_destroy(List list, bool free_values) {
 	while(node != NULL) {				// while αντί για for, γιατί θέλουμε να διαβάσουμε
 		ListNode next = node->next;		// το node->next _πριν_ κάνουμε free!
 
-		// Κάνουμε free το value αν μας ζητηθεί (προσοχή, όχι στον dummy!)
-		if(node != list->dummy && free_values)
-			free(node->value);
+		// Καλούμε τη destroy_value, αν υπάρχει (προσοχή, όχι στον dummy!)
+		if(node != list->dummy && list->destroy_value != NULL)
+			list->destroy_value(node->value);
 
 		free(node);
 		node = next;

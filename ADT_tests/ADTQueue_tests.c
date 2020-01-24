@@ -11,16 +11,16 @@
 
 
 void test_create(void) {
-	Queue queue = queue_create();
+	Queue queue = queue_create(NULL);
 
 	TEST_CHECK(queue != NULL);
 	TEST_CHECK(queue_size(queue) == 0);
 
-	queue_destroy(queue, false);
+	queue_destroy(queue);
 }
 
 void test_insert(void) {
-	Queue queue = queue_create();
+	Queue queue = queue_create(NULL);
 	int array[1000];					// Στο queue θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
 
 	// insert 1000 στοιχεία
@@ -30,11 +30,11 @@ void test_insert(void) {
 		TEST_CHECK(queue_top(queue) == &array[0]);	// Το στοιχείο στην κορυφή είναι πάντα το array[0] !!
 	}
 
-	queue_destroy(queue, false);
+	queue_destroy(queue);
 }
 
 void test_remove(void) {
-	Queue queue = queue_create();
+	Queue queue = queue_create(NULL);
 	int array[1000];
 
 	// insert για προσθήκη δεδομένων, χωρίς ελέγχους (έχουμε ξεχωριστό test για το insert)
@@ -47,7 +47,7 @@ void test_remove(void) {
 		TEST_CHECK(queue_size(queue) == 999-i);
 	}
 
-	queue_destroy(queue, false);
+	queue_destroy(queue);
 }
 
 // destroy

@@ -28,8 +28,9 @@ typedef struct list_node* ListNode;
 
 
 // Δημιουργεί και επιστρέφει μια νέα λίστα.
+// Αν destroy_value != NULL, τότε καλείται destroy_value(value) κάθε φορά που αφαιρείται ένα στοιχείο.
 
-List list_create();
+List list_create(DestroyFunc destroy_value);
 
 // Επιστρέψει τον αριθμό στοιχείων που περιέχει η λίστα.
 
@@ -50,9 +51,8 @@ Pointer list_find(List list, Pointer value, CompareFunc compare);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει η λίστα list.
 // Οποιαδήποτε λειτουργία πάνω στη λίστα μετά το destroy είναι μη ορισμένη.
-// Αν free_values == true τότε καλείται free(value) για κάθε στοιχείο της λίστας.
 
-void list_destroy(List list, bool free_values);
+void list_destroy(List list);
 
 
 // Διάσχιση της λίστας /////////////////////////////////////////////

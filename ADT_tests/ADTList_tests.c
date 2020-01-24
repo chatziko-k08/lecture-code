@@ -11,16 +11,16 @@
 
 
 void test_create(void) {
-	List list = list_create();
+	List list = list_create(NULL);
 
 	TEST_CHECK(list != NULL);
 	TEST_CHECK(list_size(list) == 0);
 
-	list_destroy(list, false);
+	list_destroy(list);
 }
 
 void test_insert(void) {
-	List list = list_create();
+	List list = list_create(NULL);
 	int array[1000];					// θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
 
 	// insert 1000 στοιχεία στην αρχή
@@ -45,7 +45,7 @@ void test_insert(void) {
 	TEST_CHECK(list_insert(list, node, &array[0]) != NULL);
 	TEST_CHECK(list_node_value(list, list_next(list, node)) == &array[0]);
 
-	list_destroy(list, false);
+	list_destroy(list);
 }
 
 // TODO TESTS MISSING

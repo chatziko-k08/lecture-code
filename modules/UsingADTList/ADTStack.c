@@ -27,9 +27,9 @@
 
 
 
-Stack stack_create() {
+Stack stack_create(DestroyFunc destroy_value) {
 	// Η list_create επιστρέφει ένα List. Εμείς λέμε στον compiler να θεωρήσει τον pointer αυτόν ως Stack
-	List list = list_create();
+	List list = list_create(destroy_value);
 	return (Stack)list;
 }
 
@@ -57,7 +57,7 @@ Pointer stack_remove(Stack stack) {
 	return result;
 }
 
-void stack_destroy(Stack stack, bool free_values) {
+void stack_destroy(Stack stack) {
 	List list = (List)stack;
-	list_destroy(list, free_values);
+	list_destroy(list);
 }

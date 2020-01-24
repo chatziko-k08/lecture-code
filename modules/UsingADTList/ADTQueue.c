@@ -30,11 +30,11 @@ struct queue {
 };
 
 
-Queue queue_create() {
+Queue queue_create(DestroyFunc destroy_value) {
 	// Φτιάχνουμε ένα struct και αποθηκεύουμε μέσα μια νέα λίστα
 	//
 	Queue queue = malloc(sizeof(*queue));
-	queue->list = list_create();
+	queue->list = list_create(destroy_value);
 	return queue;
 }
 
@@ -56,10 +56,10 @@ Pointer queue_remove(Queue queue) {
 	return result;
 }
 
-void queue_destroy(Queue queue, bool free_values) {
+void queue_destroy(Queue queue) {
 	// Τη μνήμη της λίστας την κάνει free η list_destroy, αλλά το struct που περιέχει
 	// τη λίστα το δημιουργήσαμε εμείς, οπότε πρέπει εμείς να το κάνουμε free.
 	//
-	list_destroy(queue->list, free_values);
+	list_destroy(queue->list);
 	free(queue);
 }

@@ -22,8 +22,9 @@ typedef struct stack* Stack;
 
 
 // Δημιουργεί και επιστρέφει μια νέα στοίβα.
+// Αν destroy_value != NULL, τότε καλείται destroy_value(value) κάθε φορά που αφαιρείται ένα στοιχείο.
 
-Stack stack_create();
+Stack stack_create(DestroyFunc destroy_value);
 
 // Επιστρέψει τον αριθμό στοιχείων που περιέχει η στοίβα stack
 
@@ -43,6 +44,5 @@ Pointer stack_remove(Stack stack);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει η στοιβα stack.
 // Οποιαδήποτε λειτουργία πάνω στη στοίβα μετά το destroy είναι μη ορισμένη.
-// Αν free_values == true τότε καλείται free(value) για στοιχείο της στοίβας.
 
-void stack_destroy(Stack stack, bool free_values);
+void stack_destroy(Stack stack);
