@@ -38,7 +38,7 @@ Pointer queue_top(Queue queue);
 
 void queue_insert(Queue queue, Pointer value);
 
-// Αφαιρεί και επιστρέψει την τιμή στην κορυφή της ουράς (μη ορισμένο αποτέλεσμα αν η ουρά είναι κενή)
+// Αφαιρεί και επιστρέφει  την τιμή στην κορυφή της ουράς (μη ορισμένο αποτέλεσμα αν η ουρά είναι κενή)
 
 Pointer queue_remove(Queue queue);
 

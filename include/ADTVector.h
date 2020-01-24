@@ -40,7 +40,7 @@ int vector_size(Vector vec);
 
 bool vector_insert(Vector vec, Pointer value);
 
-// Αφαιρεί και επιστρέψει την τιμή της τελευταίας θέσης του vector.
+// Αφαιρεί και επιστρέφει  την τιμή της τελευταίας θέσης του vector.
 // Το μέγεθος του vector μικραίνει κατά 1.
 // Αν size == 0 επιστρέφει NULL.
 

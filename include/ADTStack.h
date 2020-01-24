@@ -38,7 +38,7 @@ Pointer stack_top(Stack stack);
 
 void stack_insert(Stack stack, Pointer value);
 
-// Αφαιρεί και επιστρέψει την τιμή στην κορυφή της στοίβας (μη ορισμένο αποτέλεσμα αν η στοίβα είναι κενή)
+// Αφαιρεί και επιστρέφει  την τιμή στην κορυφή της στοίβας (μη ορισμένο αποτέλεσμα αν η στοίβα είναι κενή)
 
 Pointer stack_remove(Stack stack);
 

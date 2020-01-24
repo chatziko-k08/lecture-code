@@ -35,7 +35,7 @@ Pointer priority_queue_top(PriorityQueue pqueue);
 
 void priority_queue_insert(PriorityQueue pqueue, Pointer value);
 
-// Αφαιρεί και επιστρέψει την μεγαλύτερη τιμή της ουράς (μη ορισμένο αποτέλεσμα αν η ουρά είναι κενή)
+// Αφαιρεί και επιστρέφει  την μεγαλύτερη τιμή της ουράς (μη ορισμένο αποτέλεσμα αν η ουρά είναι κενή)
 
 Pointer priority_queue_remove(PriorityQueue pqueue);
 
