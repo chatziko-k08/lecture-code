@@ -29,7 +29,7 @@ int compare_map_nodes(MapNode a, MapNode b) {
 }
 
 // Συνάρτηση που καταστρέφει ένα map node
-void destropy_map_node(MapNode node) {
+void destroy_map_node(MapNode node) {
 	if(node->owner->destroy_key != NULL)
 		node->owner->destroy_key(node->key);
 
@@ -41,7 +41,7 @@ void destropy_map_node(MapNode node) {
 
 Map map_create(CompareFunc compare, DestroyFunc destroy_key, DestroyFunc destroy_value) {
 	Map map = malloc(sizeof(*map));
-	map->set = set_create((CompareFunc)compare_map_nodes, (DestroyFunc)destropy_map_node);
+	map->set = set_create((CompareFunc)compare_map_nodes, (DestroyFunc)destroy_map_node);
 	map->compare = compare;
 	map->destroy_key = destroy_key;
 	map->destroy_value = destroy_value;

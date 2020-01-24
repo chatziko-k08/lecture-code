@@ -18,10 +18,10 @@ typedef struct map* Map;
 
 // Δημιουργεί και επιστρέφει ένα map, στο οποίο τα στοιχεία συγκρίνονται με βάση
 // τη συνάρτηση compare.
-// Αν destroy_key ή/και destroy_value != NULL, τότε καλείται destropy_key(key)
+// Αν destroy_key ή/και destroy_value != NULL, τότε καλείται destroy_key(key)
 // ή/και destroy_value(value) κάθε φορά που αφαιρείται ένα στοιχείο.
 
-Map map_create(CompareFunc compare, DestroyFunc destropy_key, DestroyFunc destroy_value);
+Map map_create(CompareFunc compare, DestroyFunc destroy_key, DestroyFunc destroy_value);
 
 // Επιστρέφει τον αριθμό στοιχείων που περιέχει το map.
 

@@ -21,7 +21,7 @@ typedef struct priority_queue* PriorityQueue;
 // στοιχεία συγκρίνονται με βάση τη συνάρτηση compare.
 // Αν destroy_value != NULL, τότε καλείται destroy_value(value) κάθε φορά που αφαιρείται ένα στοιχείο.
 
-PriorityQueue priority_queue_create(CompareFunc compare, DestroyFunc destropy_value);
+PriorityQueue priority_queue_create(CompareFunc compare, DestroyFunc destroy_value);
 
 // Επιστρέψει τον αριθμό στοιχείων που περιέχει η ουρά pqueue
 
