@@ -78,17 +78,17 @@ bool map_insert(Map map, Pointer key, Pointer value) {
 	return true;
 }
 
-bool map_remove(Map map, Pointer key) {
+Pointer map_remove(Map map, Pointer key) {
 	struct map_node search_node = { .key = key, .owner = map };
 
 	MapNode node = set_find(map->set, &search_node);
 	if(node == NULL)
-		return false;
+		return NULL;
+	Pointer value = node->value;		// πριν το remove, γιατί κάνει free!
 
-	set_remove(map->set, node);		// πριν το free!
-	free(node);
+	set_remove(map->set, node);
 
-	return true;
+	return value;
 }
 
 void map_destroy(Map map) {

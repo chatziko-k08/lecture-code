@@ -40,9 +40,9 @@ int list_size(List list);
 
 ListNode list_insert(List list, ListNode node, Pointer value);
 
-// Αφαιρεί τον __επόμενο__ κόμβο από τον node, ή τον πρώτο κόμβο αν node == LIST_BOF
+// Αφαιρεί τον __επόμενο__ κόμβο από τον node, ή τον πρώτο κόμβο αν node == LIST_BOF, και επιστρέφει την τιμή που περιείχε.
 
-void list_remove(List list, ListNode node);
+Pointer list_remove(List list, ListNode node);
 
 // Επιστρέφει την πρώτη τιμή που είναι ισοδύναμη με value
 // (με βάση τη συνάρτηση compare), ή NULL αν δεν υπάρχει

@@ -179,7 +179,7 @@ BSTNode bst_remove_min_node(BSTNode node, BSTNode* min_node) {
 // Διαγράφει το κόμβο με τιμή ισοδύναμη της value, αν υπάρχει. Επιστρέφει τη νέα ρίζα του
 // υποδέντρου, και θέτει το *removed σε true αν έγινε πραγματικά διαγραφή.
 
-BSTNode bst_remove(BSTNode node, CompareFunc compare, DestroyFunc destroy_value, Pointer value, bool* removed) {
+BSTNode bst_remove(BSTNode node, CompareFunc compare, Pointer value, bool* removed, Pointer* old_value) {
 	if(node == NULL) {
 		*removed = false;		// κενό υποδέντρο, δεν υπάρχει η τιμή
 		return NULL;
@@ -189,9 +189,7 @@ BSTNode bst_remove(BSTNode node, CompareFunc compare, DestroyFunc destroy_value,
 	if(compare_res == 0) {
 		// Βρέθηκε ισοδύναμη τιμή στον node, οπότε τον διαγράφουμε. Το πώς θα γίνει αυτό εξαρτάται από το αν έχει παιδιά.
 		*removed = true;
-
-		if(destroy_value != NULL)
-			destroy_value(node->value);
+		*old_value = node->value;
 
 		if(node->left == NULL) {
 			// Δεν υπάρχει αριστερό υποδέντρο, οπότε διαγράφεται απλά ο κόμβος και νέα ρίζα μπαίνει το δεξί παιδί
@@ -230,9 +228,9 @@ BSTNode bst_remove(BSTNode node, CompareFunc compare, DestroyFunc destroy_value,
 
 	// compare_res != 0, συνεχίζουμε στο αριστερό ή δεξί υποδέντρο, η ρίζα δεν αλλάζει.
 	if(compare_res < 0)
-		node->left  = bst_remove(node->left,  compare, destroy_value, value, removed);
+		node->left  = bst_remove(node->left,  compare, value, removed, old_value);
 	else
-		node->right = bst_remove(node->right, compare, destroy_value, value, removed);
+		node->right = bst_remove(node->right, compare, value, removed, old_value);
 
 	return node;
 }
@@ -289,15 +287,20 @@ bool set_insert(Set set, Pointer value) {
 	return inserted;
 }
 
-bool set_remove(Set set, Pointer value) {
+Pointer set_remove(Set set, Pointer value) {
 	bool removed;
-	set->root = bst_remove(set->root, set->compare, set->destroy_value, value, &removed);
+	Pointer old_value = NULL;
+	set->root = bst_remove(set->root, set->compare, value, &removed, &old_value);
 
 	// Το size αλλάζει μόνο αν πραγματικά αφαιρεθεί ένας κόμβος
-	if(removed)
+	if(removed) {
 		set->size--;
 
-	return removed;
+		if(set->destroy_value != NULL)
+			set->destroy_value(old_value);
+	}
+
+	return old_value;
 }
 
 Pointer set_find(Set set, Pointer value) {

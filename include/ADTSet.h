@@ -36,9 +36,9 @@ int set_size(Set set);
 bool set_insert(Set set, Pointer value);
 
 // Αφαιρεί τη μοναδική τιμή ισοδύναμη της value από το σύνολο, αν υπάρχει.
-// Επιστρέφει true αν άλλαξε το μέγεθος του συνόλου (βρέθηκε δηλαδή τιμή), αλλιώς false.
+// Επιστρέφει την τιμή αυτή, ή NULL αν δε βρέθηκε τέτοια τιμή.
 
-bool set_remove(Set set, Pointer value);
+Pointer set_remove(Set set, Pointer value);
 
 // Επιστρέφει την μοναδική τιμή του set που είναι ισοδύναμη με value, ή NULL αν δεν υπάρχει
 

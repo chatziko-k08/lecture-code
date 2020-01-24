@@ -93,7 +93,7 @@ ListNode list_insert(List list, ListNode node, Pointer value) {
 	return new;
 }
 
-void list_remove(List list, ListNode node) {
+Pointer list_remove(List list, ListNode node) {
 	// Αν το node είναι NULL απλά διαγράφουμε μετά τον dummy κόμβο!
 	// Αυτή ακριβώς είναι η αξία του dummy, δε χρειαζόμαστε ξεχωριστή υλοποίηση.
 	if(node == NULL)
@@ -103,16 +103,20 @@ void list_remove(List list, ListNode node) {
 	ListNode removed = node->next;
 	assert(removed != NULL);		// LCOV_EXCL_LINE
 
+	Pointer value = node->value;
+	if(list->destroy_value != NULL)
+		list->destroy_value(value);
+
 	// Σύνδεση του node με τον επόμενο του removed
 	node->next = removed->next;		// πριν το free!
-	if(list->destroy_value != NULL)
-		list->destroy_value(node->value);
 	free(removed);
 
 	// Ενημέρωση των size & last
 	list->size--;
 	if(list->last == removed)
 		list->last = node;
+
+	return value;
 }
 
 ListNode list_find_node(List list, Pointer value, CompareFunc compare) {
