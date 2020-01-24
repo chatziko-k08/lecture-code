@@ -35,10 +35,9 @@ Vector vector_create(int size, DestroyFunc destroy_value);
 int vector_size(Vector vec);
 
 // Προσθέτει την τιμή value στο _τέλος_ του vector vec. Το μέγεθος του vector μεγαλώνει κατά 1.
-// Επιστρέφει true αν το insert πετύχει, διαφορετικά false (μοναδική περίπτωση αποτυχίας είναι όταν
-// απαιτείται δέσμευση μνήμης και δεν υπάρχει διαθέσιμη)
+// Αν δεν υπάρχει διαθέσιμη μνήμη το vector παραμένει όπως ήταν (αυτό μπορεί να ελεγχθεί με τη vector_size)
 
-bool vector_insert(Vector vec, Pointer value);
+void vector_insert(Vector vec, Pointer value);
 
 // Αφαιρεί και επιστρέφει  την τιμή της τελευταίας θέσης του vector.
 // Το μέγεθος του vector μικραίνει κατά 1.

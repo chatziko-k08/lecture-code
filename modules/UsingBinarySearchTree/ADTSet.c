@@ -277,7 +277,7 @@ int set_size(Set set) {
 	return set->size;
 }
 
-bool set_insert(Set set, Pointer value) {
+void set_insert(Set set, Pointer value) {
 	bool inserted;
 	Pointer old_value;
 	set->root = bst_insert(set->root, set->compare, value, &inserted, &old_value);
@@ -287,8 +287,6 @@ bool set_insert(Set set, Pointer value) {
 		set->size++;
 	else if(set->destroy_value != NULL)
 		set->destroy_value(old_value);
-
-	return inserted;
 }
 
 Pointer set_remove(Set set, Pointer value) {

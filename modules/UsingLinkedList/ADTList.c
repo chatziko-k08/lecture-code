@@ -71,7 +71,7 @@ Pointer list_node_value(List list, ListNode node) {
 	return node->value;
 }
 
-ListNode list_insert(List list, ListNode node, Pointer value) {
+void list_insert(List list, ListNode node, Pointer value) {
 	// Αν το node είναι NULL απλά εισάγουμε μετά τον dummy κόμβο!
 	// Αυτή ακριβώς είναι η αξία του dummy, δε χρειαζόμαστε ξεχωριστή υλοποίηση.
 	if(node == NULL)
@@ -89,8 +89,6 @@ ListNode list_insert(List list, ListNode node, Pointer value) {
 	list->size++;
 	if(list->last == node)
 		list->last = new;
-
-	return new;
 }
 
 Pointer list_remove(List list, ListNode node) {

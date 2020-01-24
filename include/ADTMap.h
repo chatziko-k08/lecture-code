@@ -28,11 +28,10 @@ Map map_create(CompareFunc compare, DestroyFunc destroy_key, DestroyFunc destroy
 int map_size(Map map);
 
 // Αν υπάρχει κλειδί ισοδύναμο με key, αλλάζει την τιμή του σε value. Διαφορετικά προσθέτει το κλειδί key με τιμή value.
-// Επιστρέφει true αν άλλαξε το μέγεθος του map (έγινε δηλαδή προσθήκη, όχι αντικατάσταση), διαφορετικά false.
 //
 // ΠΡΟΣΟΧΗ: όσο το key είναι μέλος του set, οποιαδήποτε μεταβολή στην μνήμη που δείχνει έχει απρόβλεπτα αποτελέσματα.
 
-bool map_insert(Map map, Pointer key, Pointer value);
+void map_insert(Map map, Pointer key, Pointer value);
 
 // Αφαιρεί το κλειδί που είναι ισοδύναμο με key από το map, αν υπάρχει.
 // Επιστρέφει την τιμή που είχε αντιστοιχιστεί στο κλειδί αυτό, ή NULL αν δε βρέθηκε το κλειδί.

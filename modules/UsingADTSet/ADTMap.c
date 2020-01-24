@@ -59,13 +59,13 @@ Pointer map_find(Map map, Pointer key) {
 	return node == NULL ? NULL : node->value;
 }
 
-bool map_insert(Map map, Pointer key, Pointer value) {
+void map_insert(Map map, Pointer key, Pointer value) {
 	struct map_node search_node = { .key = key, .owner = map };
 
 	MapNode node = set_find(map->set, &search_node);
 	if(node != NULL) {
 		node->value = value;
-		return false;
+		return;
 	}
 
 	node = malloc(sizeof(*node));
@@ -74,8 +74,6 @@ bool map_insert(Map map, Pointer key, Pointer value) {
 	node->owner = map;
 
 	set_insert(map->set, node);
-
-	return true;
 }
 
 Pointer map_remove(Map map, Pointer key) {
