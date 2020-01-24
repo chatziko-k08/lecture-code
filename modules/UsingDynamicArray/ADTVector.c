@@ -74,8 +74,7 @@ void vector_insert(Vector vec, Pointer value) {
 	// Μεγαλώνουμε τον πίνακα (αν χρειαστεί), ώστε να χωράει τουλάχιστον size στοιχεία
 	// Διπλασιάζουμε κάθε φορά το capacity (σημαντικό για την πολυπλοκότητα!)
 	if(vec->capacity == vec->size) {
-		vec->capacity *= 2;
-		Pointer new_array = realloc(vec->array, vec->capacity * sizeof(Pointer));
+		Pointer new_array = realloc(vec->array, 2 * vec->capacity * sizeof(Pointer));
 
 		// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία
 		// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
@@ -85,6 +84,7 @@ void vector_insert(Vector vec, Pointer value) {
 
 		// Έχουμε πλέον μεγαλύτερη μνήμη που περιέχει τα προηγούμενα περιεχόμενα.
 		// Προσοχή: δε πρέπει να κάνουμε free τον παλιό pointer, το κάνει η realloc
+		vec->capacity *= 2;
 		vec->array = new_array;
 	}
 
