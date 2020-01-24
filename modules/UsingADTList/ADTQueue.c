@@ -47,12 +47,12 @@ Pointer queue_top(Queue queue) {
 }
 
 void queue_insert(Queue queue, Pointer value) {
-	list_insert_after(queue->list, list_last(queue->list), value);		// Προσθήκη στο _τέλος_
+	list_insert(queue->list, list_last(queue->list), value);		// Προσθήκη στο _τέλος_
 }
 
 Pointer queue_remove(Queue queue) {
 	Pointer result = queue_top(queue);	// Αποθήκευση πριν κάνουμε remove
-	list_remove_after(queue->list, NULL);
+	list_remove(queue->list, NULL);
 	return result;
 }
 

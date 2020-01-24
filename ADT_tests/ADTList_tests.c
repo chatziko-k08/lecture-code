@@ -25,7 +25,7 @@ void test_insert(void) {
 
 	// insert 1000 στοιχεία στην αρχή
 	for(int i = 0; i < 1000; i++) {
-		ListNode node = list_insert_after(list, NULL, &array[i]);
+		ListNode node = list_insert(list, NULL, &array[i]);
 		TEST_CHECK(list_size(list) == i+1);				// Το size ενημερώθηκε;
 		TEST_CHECK(list_node_value(list, node) == &array[i]);	// Μπορούμε να κάνουμε get το στοιχείο που μόλις βάλαμε;
 	}
@@ -42,7 +42,7 @@ void test_insert(void) {
 	node = list_next(list, node);
 	node = list_next(list, node);
 
-	TEST_CHECK(list_insert_after(list, node, &array[0]) != NULL);
+	TEST_CHECK(list_insert(list, node, &array[0]) != NULL);
 	TEST_CHECK(list_node_value(list, list_next(list, node)) == &array[0]);
 
 	list_destroy(list);

@@ -35,13 +35,13 @@ List list_create();
 
 int list_size(List list);
 
-// Προσθέτει έναν νέο κόμβο μετά τον node, ή στην αρχή αν node == LIST_BOF, με περιεχόμενο value.
+// Προσθέτει έναν νέο κόμβο __μετά__ τον node, ή στην αρχή αν node == LIST_BOF, με περιεχόμενο value.
 
-ListNode list_insert_after(List list, ListNode node, Pointer value);
+ListNode list_insert(List list, ListNode node, Pointer value);
 
-// Αφαιρεί τον επόμενο κόμβο από τον node, ή τον πρώτο κόμβο αν node == LIST_BOF
+// Αφαιρεί τον __επόμενο__ κόμβο από τον node, ή τον πρώτο κόμβο αν node == LIST_BOF
 
-void list_remove_after(List list, ListNode node);
+void list_remove(List list, ListNode node);
 
 // Επιστρέφει την πρώτη τιμή που είναι ισοδύναμη με value
 // (με βάση τη συνάρτηση compare), ή NULL αν δεν υπάρχει
@@ -56,12 +56,9 @@ void list_destroy(List list);
 
 // Διάσχιση της λίστας /////////////////////////////////////////////
 //
-// Επιστρέφει τον πρώτο κόμβο, ή LIST_BOF αν η λίστα είναι άδεια
+// Επιστρέφουν τον πρώτο και τον τελευταίο κομβο της λίστας, ή LIST_BOF / LIST_EOF αντίστοιχα αν η λίστα είναι κενή
 
 ListNode list_first(List list);
-
-// Επιστρέφει τον τελευταίο κόμβο, ή LIST_EOF αν η λίστα είναι άδεια
-
 ListNode list_last(List list);
 
 // Επιστρέφει τον κόμβο μετά από τον node, ή LIST_EOF αν ο node είναι ο τελευταίος

@@ -45,14 +45,14 @@ Pointer stack_top(Stack stack) {
 
 void stack_insert(Stack stack, Pointer value) {
 	List list = (List)stack;
-	list_insert_after(list, NULL, value);
+	list_insert(list, NULL, value);
 }
 
 Pointer stack_remove(Stack stack) {
 	List list = (List)stack;
 
 	Pointer result = stack_top(stack);	// Αποθήκευση πριν κάνουμε remove
-	list_remove_after(list, NULL);
+	list_remove(list, NULL);
 
 	return result;
 }
