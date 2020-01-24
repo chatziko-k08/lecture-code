@@ -33,20 +33,11 @@ Vector vector_create(int size);
 
 int vector_size(Vector vec);
 
-// Επιστρέφει την τιμή στη θέση pos του vector vec, ή NULL αν pos >= size.
-
-Pointer vector_at(Vector vec, int pos);
-
-// Προσθέτει την τιμή value στο τέλος του vector vec. Το μέγεθος του vector μεγαλώνει κατά 1.
+// Προσθέτει την τιμή value στο _τέλος_ του vector vec. Το μέγεθος του vector μεγαλώνει κατά 1.
 // Επιστρέφει true αν το insert πετύχει, διαφορετικά false (μοναδική περίπτωση αποτυχίας είναι όταν
 // απαιτείται δέσμευση μνήμης και δεν υπάρχει διαθέσιμη)
 
 bool vector_insert(Vector vec, Pointer value);
-
-// Αλλάζει την τιμή στη θέση pos του Vector vec σε value.
-// ΔΕΝ μεταβάλλει το μέγεθος του vector, αν pos >= size το αποτέλεσμα δεν είναι ορισμένο.
-
-void vector_replace(Vector vec, int pos, Pointer value);
 
 // Αφαιρεί και επιστρέψει την τιμή της τελευταίας θέσης του vector.
 // Το μέγεθος του vector μικραίνει κατά 1.
@@ -54,8 +45,17 @@ void vector_replace(Vector vec, int pos, Pointer value);
 
 Pointer vector_remove(Vector vec);
 
+// Επιστρέφει την τιμή στη θέση pos του vector vec, ή NULL αν pos >= size.
+
+Pointer vector_get_at(Vector vec, int pos);
+
+// Αλλάζει την τιμή στη θέση pos του Vector vec σε value.
+// ΔΕΝ μεταβάλλει το μέγεθος του vector, αν pos >= size το αποτέλεσμα δεν είναι ορισμένο.
+
+void vector_set_at(Vector vec, int pos, Pointer value);
+
 // Βρίσκει και επιστρέφει το πρώτο στοιχείο στο vector που να είναι ίσο με value
-// (με βάση τη συνάρτηση // compare), ή NULL αν δεν βρεθεί κανένα στοιχείο.
+// (με βάση τη συνάρτηση compare), ή NULL αν δεν βρεθεί κανένα στοιχείο.
 
 Pointer vector_find(Vector vec, Pointer value, CompareFunc compare);
 

@@ -27,12 +27,12 @@ void test_insert(void) {
 	for(int i = 0; i < 1000; i++) {
 		vector_insert(vec, &array[i]);
 		TEST_CHECK(vector_size(vec) == i+1);		// Το size ενημερώθηκε;
-		TEST_CHECK(vector_at(vec, i) == &array[i]);	// Μπορούμε να κάνουμε at το στοιχείο που μόλις βάλαμε;
+		TEST_CHECK(vector_get_at(vec, i) == &array[i]);	// Μπορούμε να κάνουμε at το στοιχείο που μόλις βάλαμε;
 	}
 
 	// Δοκιμή ότι μετά τα resizes τα στοιχεία είναι ακόμα προσπελάσιμα
 	for(int i = 0; i < 1000; i++)
-		TEST_CHECK(vector_at(vec, i) == &array[i]);
+		TEST_CHECK(vector_get_at(vec, i) == &array[i]);
 
 	vector_destroy(vec);
 }
@@ -43,7 +43,7 @@ void test_remove(void) {
 
 	// replace για προσθήκη δεδομένων, χωρίς ελέγχους (έχουμε ξεχωριστό test για το replace)
 	for(int i = 0; i < 1000; i++)
-		vector_replace(vec, i, &array[i]);
+		vector_set_at(vec, i, &array[i]);
 
 	// Διαδοχικά remove ώστε να συμβούν και resizes
 	for(int i = 999; i >= 0; i--) {
@@ -62,21 +62,21 @@ void test_at_replace(void) {
 	int array[1000];
 
 	// at σε κενό vector
-	TEST_CHECK(vector_at(vec, 0) == NULL);
+	TEST_CHECK(vector_get_at(vec, 0) == NULL);
 
 	// insert πολλαπλά NULL, θα τα αλλάξουμε μετά με replace
 	for(int i = 0; i < 1000; i++)
 		vector_insert(vec, NULL);
 
 	for(int i = 0; i < 1000; i++) {
-		TEST_CHECK(vector_at(vec, i) == NULL);
-		vector_replace(vec, i, &array[i]);
-		TEST_CHECK(vector_at(vec, i) == &array[i]);
+		TEST_CHECK(vector_get_at(vec, i) == NULL);
+		vector_set_at(vec, i, &array[i]);
+		TEST_CHECK(vector_get_at(vec, i) == &array[i]);
 	}
 
 	// at εκτός μεγέθους κενό vector
-	TEST_CHECK(vector_at(vec, -1) == NULL);
-	TEST_CHECK(vector_at(vec, 1000) == NULL);
+	TEST_CHECK(vector_get_at(vec, -1) == NULL);
+	TEST_CHECK(vector_get_at(vec, 1000) == NULL);
 
 	vector_destroy(vec);
 }
@@ -112,7 +112,7 @@ void test_find(void) {
 	// replace για προσθήκη δεδομένων
 	for(int i = 0; i < 1000; i++) {
 		array[i] = i;
-		vector_replace(vec, i, &array[i]);
+		vector_set_at(vec, i, &array[i]);
 	}
 
 	for(int i = 0; i < 1000; i++) {

@@ -18,8 +18,8 @@ typedef struct int_vector* IntVector;
 //
 IntVector int_vector_create(int size);
 int int_vector_size(IntVector vec);
-void int_vector_replace(IntVector vec, int pos, int value);
-int int_vector_at(IntVector vec, int pos);
+void int_vector_set_at(IntVector vec, int pos, int value);
+int int_vector_get_at(IntVector vec, int pos);
 void int_vector_insert(IntVector vec, int value);
 int int_vector_remove(IntVector vec);
 int int_vector_find(Vector vec, int value);

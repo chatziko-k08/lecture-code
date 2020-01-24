@@ -50,7 +50,7 @@ int vector_size(Vector vec) {
 	return vec->size;
 }
 
-Pointer vector_at(Vector vec, int pos) {
+Pointer vector_get_at(Vector vec, int pos) {
 	if(pos >= 0 && pos < vec->size)
 		return vec->array[pos];
 	else
@@ -58,7 +58,7 @@ Pointer vector_at(Vector vec, int pos) {
 	
 }
 
-void vector_replace(Vector vec, int pos, Pointer value) {
+void vector_set_at(Vector vec, int pos, Pointer value) {
 	assert(pos >= 0 && pos < vec->size);	// LCOV_EXCL_LINE (αγνοούμε το branch από τα coverage reports, είναι δύσκολο να τεστάρουμε το false γιατί θα κρασάρει το test)
 
 	vec->array[pos] = value;
