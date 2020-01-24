@@ -74,54 +74,6 @@ BSTNode bst_find_max_node(BSTNode node) {
 	return node->right == NULL ? node : bst_find_max_node(node->right);
 }
 
-// Επιστρέφει τον κόμβο με την προηγούμενη τιμή από τη value με βάση τη σειρά διάταξης
-// (δηλαδή τη μεγαλύτερη τιμή, ανάμεσα σε αυτές που είναι αυστηρά μικρότερες της value)
-
-BSTNode bst_find_smaller_node(BSTNode node, CompareFunc compare, Pointer value) {
-	if(node == NULL)
-		return NULL;
-	
-	if(compare(value, node->value) <= 0) {
-		// value <= node->value, αλλά εμείς θέλουμε τιμές αυστηρά _μικρότερες_ της value.
-		// Οπότε συνεχίζουμε στο δεξί υποδέντρο.
-		return bst_find_smaller_node(node->left, compare, value);
-
-	} else {
-		// value > node->value, οπότε η node->value είναι ανάμεσα στις τιμές που ψάχνουμε. Αλλά
-		// εμείς ψάχνουμε τη _μεγαλύτερη_ από αυτές τις τιμές. Αν υπάρχει, θα βρίσκεται
-		// στο δεξί υποδέντρο, οπότε ψάχνουμε εκεί.
-		BSTNode larger = bst_find_smaller_node(node->right, compare, value);
-
-		// Αν βρήκαμε κόμβο στο δεξί υποδέντρο τότε έχει σίγουρα τιμή μεγαλύτερη της node->value,
-		// οπότε τον προτιμάμε. Διαφορετικά επιστρέφουμε τον node.
-		return larger != NULL ? larger : node;
-	}
-}
-
-// Επιστρέφει τον κόμβο με την επόμενη τιμή από τη value με βάση τη σειρά διάταξης
-// (δηλαδή τη μικρότερη τιμή, ανάμεσα σε αυτές που είναι αυστηρά μεγαλύτερες της value)
-
-BSTNode bst_find_greater_node(BSTNode node, CompareFunc compare, Pointer value) {
-	if(node == NULL)
-		return NULL;
-	
-	if(compare(value, node->value) >= 0) {
-		// value >= node->value, αλλά εμείς θέλουμε τιμές αυστηρά _μεγαλύτερες_ της value.
-		// Οπότε συνεχίζουμε στο δεξί υποδέντρο.
-		return bst_find_greater_node(node->right, compare, value);
-
-	} else {
-		// value < node->value, οπότε η node->value είναι ανάμεσα στις τιμές που ψάχνουμε. Αλλά
-		// εμείς ψάχνουμε τη _μικρότερη_ από αυτές τις τιμές. Αν υπάρχει, θα βρίσκεται
-		// στο αριστερό υποδέντρο, οπότε ψάχνουμε εκεί.
-		BSTNode smaller = bst_find_greater_node(node->left, compare, value);
-
-		// Αν βρήκαμε κόμβο στο αριστερό υποδέντρο τότε έχει σίγουρα τιμή μικρότερη της node->value,
-		// οπότε τον προτιμάμε. Διαφορετικά επιστρέφουμε τον node.
-		return smaller != NULL ? smaller : node;
-	}
-}
-
 // Επιστρέφει τον προηγούμενο του node στη σειρά διάταξης, ή NULL αν ο node είναι ο μικρότερος όλου του δέντρου
 
 BSTNode bst_find_previous_node(BSTNode node, CompareFunc compare) {
@@ -341,14 +293,6 @@ bool set_remove(Set set, Pointer value) {
 
 Pointer set_find(Set set, Pointer value) {
 	return bst_node_value( bst_find_node(set->root, set->compare, value) );
-}
-
-Pointer set_find_smaller(Set set, Pointer value) {
-	return bst_node_value( bst_find_smaller_node(set->root, set->compare, value) );
-}
-
-Pointer set_find_larger(Set set, Pointer value) {
-	return bst_node_value( bst_find_greater_node(set->root, set->compare, value) );
 }
 
 void set_destroy(Set set) {

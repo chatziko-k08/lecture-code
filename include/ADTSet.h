@@ -47,16 +47,6 @@ bool set_remove(Set set, Pointer value);
 
 Pointer set_find(Set set, Pointer value);
 
-// Επιστρέφει τη μεγαλύτερη τιμή του set που να είναι μικρότερη από value με βάση τη σειρά διάταξης
-// (δηλαδή την τιμή max { v in set | v < value }), ή NULL αν δεν υπάρχει
-
-Pointer set_find_smaller(Set set, Pointer value);
-
-// Επιστρέφει τη μικρότερη τιμή του set που να είναι μεγαλύτερη από value με βάση τη σειρά διάταξης
-// (δηλαδή την τιμή min { v in set | v > value }), ή NULL αν δεν υπάρχει.
-
-Pointer set_find_greater(Set set, Pointer value);
-
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει το σύνολο.
 // Οποιαδήποτε λειτουργία πάνω στο set μετά το destroy είναι μη ορισμένη.
 
