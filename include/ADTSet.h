@@ -20,8 +20,9 @@ typedef struct set* Set;
 
 // Δημιουργεί και επιστρέφει ένα σύνολο, στο οποίο τα στοιχεία συγκρίνονται με βάση
 // τη συνάρτηση compare.
+// Αν destroy_value != NULL, τότε καλείται destroy_value(value) κάθε φορά που αφαιρείται ένα στοιχείο.
 
-Set set_create(CompareFunc compare);
+Set set_create(CompareFunc compare, DestroyFunc destroy_value);
 
 // Επιστρέφει τον αριθμό στοιχείων που περιέχει το σύνολο set.
 
@@ -45,9 +46,8 @@ Pointer set_find(Set set, Pointer value);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει το σύνολο.
 // Οποιαδήποτε λειτουργία πάνω στο set μετά το destroy είναι μη ορισμένη.
-// Αν free_values == true τότε καλείται free(value) για κάθε στοιχείο του συνόλου.
 
-void set_destroy(Set set, bool free_values);
+void set_destroy(Set set);
 
 
 // Διάσχιση του set ////////////////////////////////////////////////////////////

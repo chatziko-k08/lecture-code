@@ -11,7 +11,7 @@ void strings() {
 	char* s1 = "FOO";
 	char* s2 = "BAR";
 
-	Set set = set_create((CompareFunc)strcmp);
+	Set set = set_create((CompareFunc)strcmp, NULL);
 	set_insert(set, s1);
 	set_insert(set, s2);
 
@@ -23,7 +23,7 @@ void strings() {
 	TEST_ASSERT(s1 == value1);
 	TEST_ASSERT(s2 == value2);
 
-	set_destroy(set, false);
+	set_destroy(set);
 }
 
 int compare_ints(int* a, int* b) {
@@ -34,7 +34,7 @@ void integers() {
 	int a1 = 5;
 	int a2 = 42;
 
-	Set set = set_create((CompareFunc)compare_ints);
+	Set set = set_create((CompareFunc)compare_ints, NULL);
 
 	// ΠΡΟΣΟΧΗ: προσθέτουμε στο set pointers προς τοπικές μεταβλητές! Αυτό είναι ok αν το set
 	// χρησιμοποιείται ΜΟΝΟ όσο οι μεταβλητές βρίσκονται στο scope! (δλαδή μέχρι το τέλος της κλήσης της συνάρτησης)
@@ -51,23 +51,27 @@ void integers() {
 	TEST_ASSERT(value1 == &a1);
 	TEST_ASSERT(value2 == &a2);
 
-	set_destroy(set, false);
+	set_destroy(set);
+}
+
+// Δεσμεύει μνήμη για έναν ακέραιο, αντιγράφει το value εκεί και επιστρέφει pointer
+int* create_int(int value) {
+	int* pointer = malloc(sizeof(int));		// δέσμευση μνήμης
+	*pointer = value;						// αντιγραφή του value στον νέο ακέραιο
+	return pointer;
 }
 
 void integers_loop() {
-	Set set = set_create((CompareFunc)compare_ints);
+	// Χρησιμοποιούμε destroy_value = free ώστε να γίνονται αυτόματα free οι τιμές που αφαιρούνται
+	Set set = set_create((CompareFunc)compare_ints, free);
 
 	// Για να αποθηκεύσουμε 100 διαφορετικούς ακεραίους
 	// πρέπει κάθε φορά να δημιουργήσουμε έναν νέο ακέραιο.
-	int i;
-	for(i = 0; i < 100; i++) {
-		int *p = malloc(sizeof(int));
-		*p = i;						// αντιγραφή του i στον νέο ακέραιο
-		set_insert(set, p);
-	}
+	for(int i = 0; i < 100; i++)
+		set_insert(set, create_int(i));
 
 	// set_min and set_next
-	i = 0;
+	int i = 0;
 	for(SetNode node = set_first(set); node != SET_EOF; node = set_next(set, node)) {
 		int* value = set_node_value(set, node);
 		TEST_ASSERT(*value == i++);
@@ -81,7 +85,7 @@ void integers_loop() {
 	}
 
 	// destroy, με free_values = true για να κάνουμε free και τα περιεχόμενα
-	set_destroy(set, true);
+	set_destroy(set);
 }
 
 

@@ -29,7 +29,7 @@ int compare_map_nodes(MapNode a, MapNode b) {
 
 Map map_create(CompareFunc compare) {
 	Map map = malloc(sizeof(*map));
-	map->set = set_create((CompareFunc)compare_map_nodes);
+	map->set = set_create((CompareFunc)compare_map_nodes, free);
 	map->compare = compare;
 	return map;
 }
@@ -100,7 +100,7 @@ void map_destroy(Map map, bool free_keys, bool free_values) {
 			free(node->value);
 
 	// destroy το set, μαζί με τα values του (τα map nodes δηλαδή)
-	set_destroy(map->set, true);
+	set_destroy(map->set);
 
 	// τώρα μπορούμε να διαγράψουμε τα keys
 	if(free_keys) {

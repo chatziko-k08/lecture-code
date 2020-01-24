@@ -17,9 +17,10 @@ struct set_node {
 
 // Ενα Set είναι pointer σε αυτό το struct
 struct set {
-	BSTNode root;			// η ρίζα, NULL αν είναι κενό δέντρο
-	int size;				// μέγεθος, ώστε η set_size να είναι Ο(1)
-	CompareFunc compare;	// η διάταξη
+	BSTNode root;				// η ρίζα, NULL αν είναι κενό δέντρο
+	int size;					// μέγεθος, ώστε η set_size να είναι Ο(1)
+	CompareFunc compare;		// η διάταξη
+	DestroyFunc destroy_value;	// Συνάρτηση που καταστρέφει ένα στοιχείο του set
 };
 
 
@@ -178,7 +179,7 @@ BSTNode bst_remove_min_node(BSTNode node, BSTNode* min_node) {
 // Διαγράφει το κόμβο με τιμή ισοδύναμη της value, αν υπάρχει. Επιστρέφει τη νέα ρίζα του
 // υποδέντρου, και θέτει το *removed σε true αν έγινε πραγματικά διαγραφή.
 
-BSTNode bst_remove(BSTNode node, CompareFunc compare, Pointer value, bool* removed) {
+BSTNode bst_remove(BSTNode node, CompareFunc compare, DestroyFunc destroy_value, Pointer value, bool* removed) {
 	if(node == NULL) {
 		*removed = false;		// κενό υποδέντρο, δεν υπάρχει η τιμή
 		return NULL;
@@ -188,6 +189,9 @@ BSTNode bst_remove(BSTNode node, CompareFunc compare, Pointer value, bool* remov
 	if(compare_res == 0) {
 		// Βρέθηκε ισοδύναμη τιμή στον node, οπότε τον διαγράφουμε. Το πώς θα γίνει αυτό εξαρτάται από το αν έχει παιδιά.
 		*removed = true;
+
+		if(destroy_value != NULL)
+			destroy_value(node->value);
 
 		if(node->left == NULL) {
 			// Δεν υπάρχει αριστερό υποδέντρο, οπότε διαγράφεται απλά ο κόμβος και νέα ρίζα μπαίνει το δεξί παιδί
@@ -226,25 +230,26 @@ BSTNode bst_remove(BSTNode node, CompareFunc compare, Pointer value, bool* remov
 
 	// compare_res != 0, συνεχίζουμε στο αριστερό ή δεξί υποδέντρο, η ρίζα δεν αλλάζει.
 	if(compare_res < 0)
-		node->left  = bst_remove(node->left,  compare, value, removed);
+		node->left  = bst_remove(node->left,  compare, destroy_value, value, removed);
 	else
-		node->right = bst_remove(node->right, compare, value, removed);
+		node->right = bst_remove(node->right, compare, destroy_value, value, removed);
 
 	return node;
 }
 
 // Καταστρέφει όλο το υποδέντρο με ρίζα node
 
-void bst_destroy(BSTNode node, bool free_values) {
+void bst_destroy(BSTNode node, DestroyFunc destroy_value) {
 	if(node == NULL)
 		return;
 	
 	// πρώτα destroy τα παιδιά, μετά free το node
-	bst_destroy(node->left, free_values);
-	bst_destroy(node->right, free_values);
+	bst_destroy(node->left, destroy_value);
+	bst_destroy(node->right, destroy_value);
 
-	if(free_values)
-		free(node->value);
+	if(destroy_value != NULL)
+		destroy_value(node->value);
+
 	free(node);
 }
 
@@ -258,12 +263,13 @@ Pointer bst_node_value(BSTNode node) {
 
 //// Συναρτήσεις του ADT Set. Γενικά πολύ απλές, αφού καλούν τις αντίστοιχες bst_* ////////////////////////////////////////////
 
-Set set_create(CompareFunc compare) {
+Set set_create(CompareFunc compare, DestroyFunc destroy_value) {
 	// δημιουργούμε το stuct
 	Set set = malloc(sizeof(*set));
 	set->root = NULL;			// κενό δέντρο
 	set->size = 0;
 	set->compare = compare;
+	set->destroy_value = destroy_value;
 
 	return set;
 }
@@ -285,7 +291,7 @@ bool set_insert(Set set, Pointer value) {
 
 bool set_remove(Set set, Pointer value) {
 	bool removed;
-	set->root = bst_remove(set->root, set->compare, value, &removed);
+	set->root = bst_remove(set->root, set->compare, set->destroy_value, value, &removed);
 
 	// Το size αλλάζει μόνο αν πραγματικά αφαιρεθεί ένας κόμβος
 	if(removed)
@@ -298,8 +304,8 @@ Pointer set_find(Set set, Pointer value) {
 	return bst_node_value( bst_find_node(set->root, set->compare, value) );
 }
 
-void set_destroy(Set set, bool free_values) {
-	bst_destroy(set->root, free_values);
+void set_destroy(Set set) {
+	bst_destroy(set->root, set->destroy_value);
 	free(set);
 }
 
