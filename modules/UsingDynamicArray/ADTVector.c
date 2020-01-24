@@ -100,7 +100,7 @@ Pointer vector_remove(Vector vec) {
 	// Προσοχή: αποθήκευση του στοιχείου για να μη χαθεί από το realloc!
 	Pointer value = vec->array[vec->size - 1];
 
-	// Προσθέτουμε στοιχείο οπότε ο πίνακας μικραίνει
+	// Αφαιρούμε στοιχείο οπότε ο πίνακας μικραίνει
 	vec->size--;
 
 	// Μικραίνουμε τον πίνακα αν χρειαστεί, ώστε να μην υπάρχει υπερβολική σπατάλη χώρου.
@@ -108,8 +108,18 @@ Pointer vector_remove(Vector vec) {
 	// αν το capacity είναι τετραπλάσιο του size (δηλαδή το 75% του πίνακα είναι άδειος)
 	//
 	if(vec->capacity > vec->size * 4 && vec->capacity > 2*VECTOR_MIN_CAPACITY) {
-		vec->capacity /= 2;
-		vec->array = realloc(vec->array, vec->capacity * sizeof(Pointer));
+		Pointer new_array = realloc(vec->array, vec->capacity/2 * sizeof(Pointer));
+
+		// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία,
+		// η realloc μπορεί να αποτύχει ακόμα και όταν μικραίνουμε τη μνήμη! Ακόμα όμως και αν αποτύχει η μείωση μνήμης,
+		// μπορούμε να εκτελέσομυε κανονικά το remove, απλά θα συνεχίσουμε να δεσμεύουμε παραπάνω μνήμη (στο επόμενο remove θα ξαναπροσπαθήσουμε).
+		//
+		// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
+		if(new_array != NULL) {
+			vec->capacity /= 2;
+			vec->array = new_array;
+		}
+		// LCOV_EXCL_STOP
 	}
 
 	// Αν υπάρχει συνάρτηση destroy_value, την καλούμε για το στοιχείο που αφαιρείται
