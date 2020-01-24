@@ -97,4 +97,4 @@ int hash_pointer(const Pointer value);		// Χρήση όταν το key είνα
 // Ορίζει τη συνάρτηση κατακερματισμού hash για το συγκεκριμένο map
 // Πρέπει να κληθεί μετά την map_create και πριν από οποιαδήποτε άλλη συνάρτηση.
 
-void map_set_hash(Map map, HashFunc hash);
+void map_set_hash_function(Map map, HashFunc hash_func);
