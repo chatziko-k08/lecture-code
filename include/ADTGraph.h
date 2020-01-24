@@ -22,8 +22,9 @@ typedef void (*GraphVisitFunc)(Graph graph, Pointer value);
 
 // Δημιουργεί και επιστρέφει ένα γράφο, στο οποίο τα στοιχεία συγκρίνονται με βάση
 // τη συνάρτηση compare.
+// Αν destroy_vertex != NULL, τότε καλείται destroy_vertex(vertex) κάθε φορά που αφαιρείται μια κορυφή.
 
-Graph graph_create(CompareFunc compare);
+Graph graph_create(CompareFunc compare, DestroyFunc destroy_vertex);
 
 // Επιστρέφει τον αριθμό στοιχείων (κορυφών) που περιέχει ο γράφος graph.
 
@@ -74,6 +75,5 @@ void graph_dfs(Graph graph, Pointer vertex, GraphVisitFunc visit);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει το γράφος.
 // Οποιαδήποτε λειτουργία πάνω στο γράφο μετά το destroy είναι μη ορισμένη.
-// Αν free_values == true τότε καλείται free(vertex) για κάθε κορυφή του γράφου.
 
-void graph_destroy(Graph graph, bool free_vertices);
+void graph_destroy(Graph graph);
