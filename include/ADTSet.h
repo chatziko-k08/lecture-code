@@ -23,10 +23,6 @@ typedef struct set* Set;
 
 Set set_create(CompareFunc compare);
 
-// Επιστρέφει τη συνάρτηση compare του set.
-
-Set set_compare(Set set);
-
 // Επιστρέφει τον αριθμό στοιχείων που περιέχει το σύνολο set.
 
 int set_size(Set set);
