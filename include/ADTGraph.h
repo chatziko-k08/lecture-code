@@ -74,5 +74,6 @@ void graph_dfs(Graph graph, Pointer vertex, GraphVisitFunc visit);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει το γράφος.
 // Οποιαδήποτε λειτουργία πάνω στο γράφο μετά το destroy είναι μη ορισμένη.
+// Αν free_values == true τότε καλείται free(vertex) για κάθε κορυφή του γράφου.
 
-void graph_destroy(Graph graph);
+void graph_destroy(Graph graph, bool free_vertices);
