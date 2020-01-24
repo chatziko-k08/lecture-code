@@ -29,7 +29,7 @@ Vector vector_create(int size, DestroyFunc destroy_value) {
 
 	// Δέσμευση μνήμης, για το struct και το array.
 	Vector vec = malloc(sizeof(*vec));
-	Pointer* array = malloc(capacity * sizeof(*array));
+	Pointer* array = calloc(capacity, sizeof(*array));		// αρχικοποίηση σε 0 (NULL)
 
 	// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία
 	// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
@@ -62,6 +62,10 @@ Pointer vector_get_at(Vector vec, int pos) {
 
 void vector_set_at(Vector vec, int pos, Pointer value) {
 	assert(pos >= 0 && pos < vec->size);	// LCOV_EXCL_LINE (αγνοούμε το branch από τα coverage reports, είναι δύσκολο να τεστάρουμε το false γιατί θα κρασάρει το test)
+
+	// Αν υπάρχει συνάρτηση destroy_value, την καλούμε για το στοιχείο που αντικαθίσταται
+	if(vec->destroy_value != NULL)
+		vec->destroy_value(vec->array[pos]);
 
 	vec->array[pos] = value;
 }

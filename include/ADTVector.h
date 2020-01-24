@@ -24,9 +24,9 @@
 typedef struct vector* Vector;
 
 
-// Δημιουργεί και επιστρέφει ένα νεό vector μεγέθους size (τα στοιχεία δεν είναι αρχικοποιημένα).
+// Δημιουργεί και επιστρέφει ένα νεό vector μεγέθους size, με στοιχεία αρχικοποιημένα σε NULL.
 // Αν δεν υπάρχει διαθέσιμη μνήμη επιστρέφει VECTOR_FAIL.
-// Αν destroy_value != NULL, τότε καλείται destroy_value(value) κάθε φορά που αφαιρείται ένα στοιχείο.
+// Αν destroy_value != NULL, τότε καλείται destroy_value(value) κάθε φορά που αφαιρείται (ή αντικαθίσταται) ένα στοιχείο.
 
 Vector vector_create(int size, DestroyFunc destroy_value);
 
