@@ -14,6 +14,7 @@
 struct map {
 	Set set;
 	CompareFunc compare;
+	DestroyFunc destroy_key, destroy_value;
 };
 
 typedef struct map_node* MapNode;
@@ -27,10 +28,23 @@ int compare_map_nodes(MapNode a, MapNode b) {
 	return a->owner->compare(a->key, b->key);
 }
 
-Map map_create(CompareFunc compare) {
+// Συνάρτηση που καταστρέφει ένα map node
+void destropy_map_node(MapNode node) {
+	if(node->owner->destroy_key != NULL)
+		node->owner->destroy_key(node->key);
+
+	if(node->owner->destroy_value != NULL)
+		node->owner->destroy_value(node->value);
+
+	free(node);
+}
+
+Map map_create(CompareFunc compare, DestroyFunc destroy_key, DestroyFunc destroy_value) {
 	Map map = malloc(sizeof(*map));
-	map->set = set_create((CompareFunc)compare_map_nodes, free);
+	map->set = set_create((CompareFunc)compare_map_nodes, (DestroyFunc)destropy_map_node);
 	map->compare = compare;
+	map->destroy_key = destroy_key;
+	map->destroy_value = destroy_value;
 	return map;
 }
 
@@ -77,39 +91,11 @@ bool map_remove(Map map, Pointer key) {
 	return true;
 }
 
-// Επιστρέφει array με όλα τα keys
-Pointer* get_all_keys(Map map) {
-	Pointer* keys = malloc(set_size(map->set) * sizeof(*keys));
-	int i = 0;
-	for(MapNode node = map_first(map); node != MAP_EOF; node = map_next(map, node))
-		keys[i++] = node->key;
-
-	return keys;
-}
-
-void map_destroy(Map map, bool free_keys, bool free_values) {
-	// Δεν μπορούμε να κάνουμε free τα keys όσο είναι μέσα στο set, οπότε
-	// αν free_keys == true, τα αποθηκεύουμε για να τα κάνουμε free μετά.
-	Pointer* keys = free_keys ? get_all_keys(map) : NULL;
-
-	int size = map_size(map);		// αποθήκευση για να το έχουμε μετά το destroy!
-
-	// Από την άλλη τα values μπορούμε να τα κάνουμε free αμέσως
-	if(free_values)
-		for(MapNode node = map_first(map); node != MAP_EOF; node = map_next(map, node))
-			free(node->value);
-
-	// destroy το set, μαζί με τα values του (τα map nodes δηλαδή)
+void map_destroy(Map map) {
+	// destroy το set, τα περιοεχόμενα θα τα κάνει free η destroy_map_node
 	set_destroy(map->set);
 
-	// τώρα μπορούμε να διαγράψουμε τα keys
-	if(free_keys) {
-		for(int i = 0; i < size; i++)
-			free(keys[i]);
-		free(keys);
-	}
-
-	// Τέλος free το ίδιο το map
+	// free το ίδιο το map
 	free(map);
 }
 
