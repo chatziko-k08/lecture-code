@@ -31,7 +31,7 @@ Vector vector_create(int size) {
 	Pointer* array = malloc(capacity * sizeof(*array));
 
 	// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία
-	// LCOV_EXCL_BOF (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
+	// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
 	if(vec == NULL || array == NULL) {
 		free(vec);		// free αν καταφέραμε να δεσμεύσουμε κάποιο από τα δύο.
 		free(array);	// Αν όχι το free(NULL) απλά δεν κάνει τίποτα.
@@ -72,7 +72,7 @@ bool vector_insert(Vector vec, Pointer value) {
 		Pointer new_array = realloc(vec->array, vec->capacity * sizeof(Pointer));
 
 		// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία
-		// LCOV_EXCL_BOF (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
+		// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
 		if(new_array == NULL)
 			return false;			// αποτυχία, επιστρέφουμε χωρίς καμία τροποποίηση στο υπάρχον vector
 		// LCOV_EXCL_STOP
@@ -120,7 +120,12 @@ Pointer vector_find(Vector vec, Pointer value, CompareFunc compare) {
 	return NULL;				// δεν υπάρχει
 }
 
-void vector_destroy(Vector vec) {
+void vector_destroy(Vector vec, bool free_values) {
+	// Αν μας ζητηθεί, κάνουμε free τα values (μόνο ο χρήστης γνωρίζει αν τα values πρέπει να γίνουν free ή όχι)
+	if(free_values)
+		for(int i = 0; i < vec->size; i++)
+			free(vec->array[i]);
+
 	// Πρέπει να κάνουμε free τόσο τον πίνακα όσο και το struct!
 	free(vec->array);
 	free(vec);			// τελευταίο το vec!

@@ -16,7 +16,7 @@ void test_create(void) {
 	TEST_CHECK(vec != VECTOR_FAIL);
 	TEST_CHECK(vector_size(vec) == 0);
 
-	vector_destroy(vec);
+	vector_destroy(vec, false);
 }
 
 void test_insert(void) {
@@ -34,7 +34,7 @@ void test_insert(void) {
 	for(int i = 0; i < 1000; i++)
 		TEST_CHECK(vector_get_at(vec, i) == &array[i]);
 
-	vector_destroy(vec);
+	vector_destroy(vec, false);
 }
 
 void test_remove(void) {
@@ -54,10 +54,10 @@ void test_remove(void) {
 	// remove σε κενό vector
 	TEST_CHECK(vector_remove(vec) == NULL);
 
-	vector_destroy(vec);
+	vector_destroy(vec, false);
 }
 
-void test_at_replace(void) {
+void test_get_set_at(void) {
 	Vector vec = vector_create(0);
 	int array[1000];
 
@@ -78,7 +78,7 @@ void test_at_replace(void) {
 	TEST_CHECK(vector_get_at(vec, -1) == NULL);
 	TEST_CHECK(vector_get_at(vec, 1000) == NULL);
 
-	vector_destroy(vec);
+	vector_destroy(vec, false);
 }
 
 void test_iterate(void) {
@@ -98,7 +98,7 @@ void test_iterate(void) {
 	for(VectorNode node = vector_last(vec); node != VECTOR_BOF; node = vector_previous(vec, node))
 		TEST_CHECK(vector_node_value(vec, node) == NULL);
 
-	vector_destroy(vec);
+	vector_destroy(vec, false);
 }
 
 int compare_ints(void* a, void* b) {
@@ -123,13 +123,20 @@ void test_find(void) {
 	int not_exists = -12;
 	TEST_CHECK(vector_find(vec, &not_exists, compare_ints) == NULL);
 
-	vector_destroy(vec);
+	vector_destroy(vec, false);
 }
 
-// destroy
-//
-// Η destroy καλείται σε όλα τα tests, για να βρούμε αν δουλεύει σωστά τρέχουμε
-//   make valgrind
+void test_destroy() {
+	// Απλά εκτελούμε την destroy, για να ελέγξουμε αν όντως δουλεύει
+	// σωστά τρέχουμε το test με valgrind.
+
+	Vector vec = vector_create(1);
+
+	vector_set_at(vec, 0, malloc(1));
+	vector_insert(vec, malloc(1));
+
+	vector_destroy(vec, true);
+}
 
 
 // Λίστα με όλα τα tests προς εκτέλεση
@@ -137,8 +144,9 @@ TEST_LIST = {
 	{ "create", test_create },
 	{ "insert", test_insert },
 	{ "remove", test_remove },
-	{ "at_replace", test_at_replace },
+	{ "get_set_at", test_get_set_at },
 	{ "iterate", test_iterate },
 	{ "find", test_find },
+	{ "destroy", test_destroy },
 	{ NULL, NULL } // τερματίζουμε τη λίστα με NULL
 };

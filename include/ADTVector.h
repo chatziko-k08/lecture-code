@@ -61,8 +61,9 @@ Pointer vector_find(Vector vec, Pointer value, CompareFunc compare);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει το vector vec.
 // Οποιαδήποτε λειτουργία πάνω στο vector μετά το destroy είναι μη ορισμένη.
+// Αν free_values == true τότε καλείται free(value) για κάθε στοιχείο του vector.
 
-void vector_destroy(Vector vec);
+void vector_destroy(Vector vec, bool free_values);
 
 
 // Διάσχιση του vector ////////////////////////////////////////////////////////////

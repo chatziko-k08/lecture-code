@@ -23,7 +23,7 @@ void strings() {
 	TEST_ASSERT(strcmp(s1, value1) == 0);
 	TEST_ASSERT(strcmp(s2, value2) == 0);
 
-	vector_destroy(vec);
+	vector_destroy(vec, false);
 }
 
 void integers() {
@@ -45,7 +45,7 @@ void integers() {
 	TEST_ASSERT(*value1 == a1);
 	TEST_ASSERT(*value2 == a2);
 
-	vector_destroy(vec);
+	vector_destroy(vec, false);
 }
 
 void integers_loop1() {
@@ -69,7 +69,7 @@ void integers_loop1() {
 	TEST_ASSERT(*value1 == i);
 	TEST_ASSERT(*value2 == i);
 
-	vector_destroy(vec);
+	vector_destroy(vec, false);
 }
 
 // Δεσμεύει μνήμη για έναν ακέραιο, αντιγράφει το value εκεί και επιστρέφει pointer
@@ -95,10 +95,9 @@ void integers_loop2() {
 	TEST_ASSERT(*value2 == 1);
 
 	// Ο,τι κάναμε malloc πρέπει να το κάνουμε free, αλλιώς θα έχουμε memory leaks! (απόδειξη: make valgrind)
-	while(vector_size(vec))
-		free(vector_remove(vec));		// αφαίρεση στοιχείου και free, μέχρι να αδειάσει ο πίνακας
+	// Η vector_destroy μπορεί να κάνει free αυτόματα όλα τα values περνώντας free_values = true
 
-	vector_destroy(vec);
+	vector_destroy(vec, true);
 }
 
 

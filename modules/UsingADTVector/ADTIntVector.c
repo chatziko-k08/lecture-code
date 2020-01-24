@@ -63,10 +63,5 @@ int int_vector_find(Vector vec, int value) {
 }
 
 void int_vector_destroy(IntVector vec) {
-	// Το vector_destroy θα ελευθερώσει τη μνήμη του ίδιου του vector, αλλά τους pointers που βάλαμε
-	// τους κάναμε malloc εμείς, οπότε εμείς πρέπει να τους κάνουμε και free!
-	for(int i = 0; i < vector_size((Vector)vec); i++)
-		free(vector_get_at((Vector)vec, i));
-
-	vector_destroy((Vector)vec);
+	vector_destroy((Vector)vec, true);
 }
