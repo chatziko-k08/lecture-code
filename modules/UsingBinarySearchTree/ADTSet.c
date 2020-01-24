@@ -117,7 +117,7 @@ BSTNode bst_find_next_node(BSTNode node, CompareFunc compare) {
 // νέο κόμβο με τιμή value. Επιστρέφει τη νέα ρίζα του υποδέντρου, και θέτει το *inserted σε true
 // αν έγινε προσθήκη, ή false αν έγινε ενημέρωση.
 
-BSTNode bst_insert(BSTNode node, CompareFunc compare, Pointer value, bool* inserted) {
+BSTNode bst_insert(BSTNode node, CompareFunc compare, Pointer value, bool* inserted, Pointer* old_value) {
 	// Αν το υποδέντρο είναι κενό, δημιουργούμε νέο κόμβο ο οποίος γίνεται ρίζα του υποδέντρου
 	if(node == NULL) {
 		node = malloc(sizeof(*node));
@@ -135,19 +135,20 @@ BSTNode bst_insert(BSTNode node, CompareFunc compare, Pointer value, bool* inser
 	int compare_res = compare(value, node->value);
 	if(compare_res == 0) {
 		// βρήκαμε ισοδύναμη τιμή, κάνουμε update
-		node->value = value;
 		*inserted = false;
+		*old_value = node->value;
+		node->value = value;
 
 	} else if(compare_res < 0) {
 		// value < node->value, συνεχίζουμε αριστερά. Η ρίζα του αριστερού υποδέντρου
 		// ίσως αλλαξει, οπότε ενημερώνουμε το node->left με τη νέα ρίζα!
-		node->left = bst_insert(node->left, compare, value, inserted);
+		node->left = bst_insert(node->left, compare, value, inserted, old_value);
 		node->left->parent = node;
 
 	} else {
 		// value > node->value, συνεχίζουμε αριστερά. Η ρίζα του δεξιού υποδέντρου
 		// ίσως αλλαξει, οπότε ενημερώνουμε το node->right με τη νέα ρίζα!
-		node->right = bst_insert(node->right, compare, value, inserted);
+		node->right = bst_insert(node->right, compare, value, inserted, old_value);
 		node->right->parent = node;
 	}
 
@@ -278,11 +279,14 @@ int set_size(Set set) {
 
 bool set_insert(Set set, Pointer value) {
 	bool inserted;
-	set->root = bst_insert(set->root, set->compare, value, &inserted);
+	Pointer old_value;
+	set->root = bst_insert(set->root, set->compare, value, &inserted, &old_value);
 
-	// Το size αλλάζει μόνο αν μπει νέος κόμβος, όχι στα updates!
+	// Το size αλλάζει μόνο αν μπει νέος κόμβος. Στα updates κάνουμε destroy την παλιά τιμή
 	if(inserted)
 		set->size++;
+	else if(set->destroy_value != NULL)
+		set->destroy_value(old_value);
 
 	return inserted;
 }
