@@ -339,10 +339,6 @@ bool set_remove(Set set, Pointer value) {
 	return removed;
 }
 
-bool set_exists(Set set, Pointer value) {
-	return bst_find_node(set->root, set->compare, value) != NULL;
-}
-
 Pointer set_find(Set set, Pointer value) {
 	return bst_node_value( bst_find_node(set->root, set->compare, value) );
 }

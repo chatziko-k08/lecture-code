@@ -37,14 +37,10 @@ bool map_insert(Map map, Pointer key, Pointer value);
 
 bool map_remove(Map map, Pointer key);
 
-// Επιστρέφει true αν το map περιέχει το συγκεκριμένο key, διαφορετικά false.
-
-bool map_exists(Map map, Pointer key);
-
 // Επιστρέφει την τιμή που έχει αντιστοιχιστεί στο συγκεκριμένο key, ή NULL αν το key δεν υπάρχει στο map.
 //
 // Προσοχή: η συνάρτηση επιστρέφει NULL είτε όταν το key δεν υπάρχει, είτε όταν υπάρχει και έχει τιμή NULL.
-//          Αν χρειάζεται να διαχωρίσουμε τις δύο περιπτώσεις μπορούμε να χρησιμοποιήσουμε την map_exists.
+//          Αν χρειάζεται να διαχωρίσουμε τις δύο περιπτώσεις μπορούμε να χρησιμοποιήσουμε την map_find_node.
 
 Pointer map_find(Map map, Pointer key);
 

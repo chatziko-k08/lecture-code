@@ -43,10 +43,6 @@ bool set_insert(Set set, Pointer value);
 
 bool set_remove(Set set, Pointer value);
 
-// Επιστρέφει true αν το set περιέχει τιμή ισοδύναμη της value (με βάση τη compare) αλλιώς false
-
-bool set_exists(Set set, Pointer value);
-
 // Επιστρέφει την μοναδική τιμή του set που είναι ισοδύναμη με value, ή NULL αν δεν υπάρχει
 
 Pointer set_find(Set set, Pointer value);

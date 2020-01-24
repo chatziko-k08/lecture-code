@@ -38,12 +38,6 @@ int map_size(Map map) {
 	return set_size(map->set);
 }
 
-bool map_exists(Map map, Pointer key) {
-	struct map_node search_node = { .key = key, .owner = map };
-
-	return set_exists(map->set, &search_node);
-}
-
 Pointer map_find(Map map, Pointer key) {
 	struct map_node search_node = { .key = key, .owner = map };
 
