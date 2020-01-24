@@ -43,5 +43,6 @@ Pointer queue_remove(Queue queue);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει η ουρά queue.
 // Οποιαδήποτε λειτουργία πάνω στη ουρά μετά το destroy είναι μη ορισμένη.
+// Αν free_values == true τότε καλείται free(value) για κάθε στοιχείο της ουράς.
 
-void queue_destroy(Queue queue);
+void queue_destroy(Queue queue, bool free_values);

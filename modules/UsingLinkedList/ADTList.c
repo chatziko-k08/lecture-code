@@ -126,13 +126,18 @@ Pointer list_find(List list, Pointer value, CompareFunc compare) {
 	return node == NULL ? NULL : node->value;
 }
 
-void list_destroy(List list) {
+void list_destroy(List list, bool free_values) {
 	// Διασχίζουμε όλη τη λίστα και κάνουμε free όλους τους κόμβους,
 	// συμπεριλαμβανομένου και του dummy!
 	//
 	ListNode node = list->dummy;
 	while(node != NULL) {				// while αντί για for, γιατί θέλουμε να διαβάσουμε
 		ListNode next = node->next;		// το node->next _πριν_ κάνουμε free!
+
+		// Κάνουμε free το value αν μας ζητηθεί (προσοχή, όχι στον dummy!)
+		if(node != list->dummy && free_values)
+			free(node->value);
+
 		free(node);
 		node = next;
 	}

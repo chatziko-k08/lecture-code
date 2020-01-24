@@ -16,7 +16,7 @@ void test_create(void) {
 	TEST_CHECK(list != NULL);
 	TEST_CHECK(list_size(list) == 0);
 
-	list_destroy(list);
+	list_destroy(list, false);
 }
 
 void test_insert(void) {
@@ -45,7 +45,7 @@ void test_insert(void) {
 	TEST_CHECK(list_insert(list, node, &array[0]) != NULL);
 	TEST_CHECK(list_node_value(list, list_next(list, node)) == &array[0]);
 
-	list_destroy(list);
+	list_destroy(list, false);
 }
 
 // TODO TESTS MISSING

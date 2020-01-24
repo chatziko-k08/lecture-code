@@ -43,5 +43,6 @@ Pointer stack_remove(Stack stack);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει η στοιβα stack.
 // Οποιαδήποτε λειτουργία πάνω στη στοίβα μετά το destroy είναι μη ορισμένη.
+// Αν free_values == true τότε καλείται free(value) για στοιχείο της στοίβας.
 
-void stack_destroy(Stack stack);
+void stack_destroy(Stack stack, bool free_values);

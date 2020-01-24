@@ -50,8 +50,9 @@ Pointer list_find(List list, Pointer value, CompareFunc compare);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει η λίστα list.
 // Οποιαδήποτε λειτουργία πάνω στη λίστα μετά το destroy είναι μη ορισμένη.
+// Αν free_values == true τότε καλείται free(value) για κάθε στοιχείο της λίστας.
 
-void list_destroy(List list);
+void list_destroy(List list, bool free_values);
 
 
 // Διάσχιση της λίστας /////////////////////////////////////////////

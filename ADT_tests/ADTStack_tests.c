@@ -16,7 +16,7 @@ void test_create(void) {
 	TEST_CHECK(stack != NULL);
 	TEST_CHECK(stack_size(stack) == 0);
 
-	stack_destroy(stack);
+	stack_destroy(stack, false);
 }
 
 void test_insert(void) {
@@ -30,7 +30,7 @@ void test_insert(void) {
 		TEST_CHECK(stack_top(stack) == &array[i]);	// Στην κορυφή είναι πάντα το στοιχείο που μόλις βάλαμε!
 	}
 
-	stack_destroy(stack);
+	stack_destroy(stack, false);
 }
 
 void test_remove(void) {
@@ -47,7 +47,7 @@ void test_remove(void) {
 		TEST_CHECK(stack_size(stack) == i);
 	}
 
-	stack_destroy(stack);
+	stack_destroy(stack, false);
 }
 
 // destroy

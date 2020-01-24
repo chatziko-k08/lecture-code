@@ -57,7 +57,7 @@ Pointer stack_remove(Stack stack) {
 	return result;
 }
 
-void stack_destroy(Stack stack) {
+void stack_destroy(Stack stack, bool free_values) {
 	List list = (List)stack;
-	list_destroy(list);
+	list_destroy(list, free_values);
 }

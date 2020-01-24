@@ -16,7 +16,7 @@ void test_create(void) {
 	TEST_CHECK(queue != NULL);
 	TEST_CHECK(queue_size(queue) == 0);
 
-	queue_destroy(queue);
+	queue_destroy(queue, false);
 }
 
 void test_insert(void) {
@@ -30,7 +30,7 @@ void test_insert(void) {
 		TEST_CHECK(queue_top(queue) == &array[0]);	// Το στοιχείο στην κορυφή είναι πάντα το array[0] !!
 	}
 
-	queue_destroy(queue);
+	queue_destroy(queue, false);
 }
 
 void test_remove(void) {
@@ -47,7 +47,7 @@ void test_remove(void) {
 		TEST_CHECK(queue_size(queue) == 999-i);
 	}
 
-	queue_destroy(queue);
+	queue_destroy(queue, false);
 }
 
 // destroy
