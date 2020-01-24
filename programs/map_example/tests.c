@@ -23,7 +23,7 @@ void strings() {
 	TEST_ASSERT(s1 == value2);
 	TEST_ASSERT(s2 == value1);
 
-	map_destroy(map);
+	map_destroy(map, false, false);
 }
 
 int compare_ints(int* a, int* b) {
@@ -51,7 +51,7 @@ void integers() {
 	TEST_ASSERT(value1 == &a2);
 	TEST_ASSERT(value2 == &a1);
 
-	map_destroy(map);
+	map_destroy(map, false, false);
 }
 
 // Δεσμεύει μνήμη για έναν ακέραιο, αντιγράφει το value εκεί και επιστρέφει pointer
@@ -69,21 +69,13 @@ void integers_loop() {
 	for(int i = 0; i < 100; i++)
 		map_insert(map, create_int(i), create_int(2 * i));
 
-	// get
+	// find
 	for(int i = 0; i < 100; i++) {
-		MapNode node = map_find_node(map, &i);
-
-		int* value = map_node_value(map, node);
+		int* value = map_find(map, &i);
 		TEST_ASSERT(*value == 2*i);
-
-		int* key = map_node_key(map, node);
-		map_remove(map, &i);
-
-		free(key);
-		free(value);
 	}
 
-	map_destroy(map);
+	map_destroy(map, true, true);
 }
 
 

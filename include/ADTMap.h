@@ -46,8 +46,9 @@ Pointer map_find(Map map, Pointer key);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει το map.
 // Οποιαδήποτε λειτουργία πάνω στο map μετά το destroy είναι μη ορισμένη.
+// Αν free_keys/free_values == true τότε καλείται free(key)/free(value) για κάθε στοιχείο του map.
 
-void map_destroy(Map map);
+void map_destroy(Map map, bool free_keys, bool free_values);
 
 
 

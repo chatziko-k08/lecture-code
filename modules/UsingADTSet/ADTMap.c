@@ -77,25 +77,39 @@ bool map_remove(Map map, Pointer key) {
 	return true;
 }
 
-void map_destroy(Map map) {
-	// Κάνουμε free τα στοιχεία του set (που είναι set nodes)
-	// Αλλά προσοχή!!! Δεν μπορούμε να κάνουμε free ένα στοιχείο που είναι ακόμα μέσα στο set
-	// γιατί οι συναρτήσεις του set καλούν την compare πάνω σε αυτό το στοιχείο!
-	//
-	while(set_size(map->set) != 0) {
-		SetNode set_node = set_first(map->set);
+// Επιστρέφει array με όλα τα keys
+Pointer* get_all_keys(Map map) {
+	Pointer* keys = malloc(set_size(map->set) * sizeof(*keys));
+	int i = 0;
+	for(MapNode node = map_first(map); node != MAP_EOF; node = map_next(map, node))
+		keys[i++] = node->key;
 
-		// Ο κόμβος του map είναι η τιμή που αποθηκεύεται στο set
-		MapNode map_node = set_node_value(map->set, set_node);
+	return keys;
+}
 
-		// αφαίρεση του στοιχείου από το set
-		set_remove(map->set, map_node);
+void map_destroy(Map map, bool free_keys, bool free_values) {
+	// Δεν μπορούμε να κάνουμε free τα keys όσο είναι μέσα στο set, οπότε
+	// αν free_keys == true, τα αποθηκεύουμε για να τα κάνουμε free μετά.
+	Pointer* keys = free_keys ? get_all_keys(map) : NULL;
 
-		// πλέον μπορούμε να κάνουμε free!
-		free(map_node);
+	int size = map_size(map);		// αποθήκευση για να το έχουμε μετά το destroy!
+
+	// Από την άλλη τα values μπορούμε να τα κάνουμε free αμέσως
+	if(free_values)
+		for(MapNode node = map_first(map); node != MAP_EOF; node = map_next(map, node))
+			free(node->value);
+
+	// destroy το set, μαζί με τα values του (τα map nodes δηλαδή)
+	set_destroy(map->set, true);
+
+	// τώρα μπορούμε να διαγράψουμε τα keys
+	if(free_keys) {
+		for(int i = 0; i < size; i++)
+			free(keys[i]);
+		free(keys);
 	}
 
-	set_destroy(map->set, false);
+	// Τέλος free το ίδιο το map
 	free(map);
 }
 
