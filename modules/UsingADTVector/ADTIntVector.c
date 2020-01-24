@@ -14,7 +14,8 @@
 
 
 IntVector int_vector_create(int size) {
-	Vector vec = vector_create(size);
+	// Περνάμε τη free στην vector_create, ώστε κάθε στοιχείο που αφαιρείται να γίνεται free αυτόματα
+	Vector vec = vector_create(size, free);
 
 	// Ο πίνακας περιέχει size μη-αρχικοποιημένους ακεραίους, δεσμεύουμε μνήμη για αυτούς
 	for(int i = 0; i < size; i ++)
@@ -63,5 +64,5 @@ int int_vector_find(Vector vec, int value) {
 }
 
 void int_vector_destroy(IntVector vec) {
-	vector_destroy((Vector)vec, true);
+	vector_destroy((Vector)vec);
 }

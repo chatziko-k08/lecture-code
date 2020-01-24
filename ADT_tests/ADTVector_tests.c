@@ -11,16 +11,16 @@
 
 
 void test_create(void) {
-	Vector vec = vector_create(0);
+	Vector vec = vector_create(0, NULL);
 
 	TEST_CHECK(vec != VECTOR_FAIL);
 	TEST_CHECK(vector_size(vec) == 0);
 
-	vector_destroy(vec, false);
+	vector_destroy(vec);
 }
 
 void test_insert(void) {
-	Vector vec = vector_create(0);
+	Vector vec = vector_create(0, NULL);
 	int array[1000];					// Στο vector θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
 
 	// insert 1000 στοιχεία ώστε να συμβούν πολλαπλά resizes
@@ -34,11 +34,11 @@ void test_insert(void) {
 	for(int i = 0; i < 1000; i++)
 		TEST_CHECK(vector_get_at(vec, i) == &array[i]);
 
-	vector_destroy(vec, false);
+	vector_destroy(vec);
 }
 
 void test_remove(void) {
-	Vector vec = vector_create(1000);
+	Vector vec = vector_create(1000, NULL);
 	int array[1000];
 
 	// replace για προσθήκη δεδομένων, χωρίς ελέγχους (έχουμε ξεχωριστό test για το replace)
@@ -54,11 +54,11 @@ void test_remove(void) {
 	// remove σε κενό vector
 	TEST_CHECK(vector_remove(vec) == NULL);
 
-	vector_destroy(vec, false);
+	vector_destroy(vec);
 }
 
 void test_get_set_at(void) {
-	Vector vec = vector_create(0);
+	Vector vec = vector_create(0, NULL);
 	int array[1000];
 
 	// at σε κενό vector
@@ -78,11 +78,11 @@ void test_get_set_at(void) {
 	TEST_CHECK(vector_get_at(vec, -1) == NULL);
 	TEST_CHECK(vector_get_at(vec, 1000) == NULL);
 
-	vector_destroy(vec, false);
+	vector_destroy(vec);
 }
 
 void test_iterate(void) {
-	Vector vec = vector_create(0);
+	Vector vec = vector_create(0, NULL);
 
 	// first/last σε κενό vector
 	TEST_CHECK(vector_first(vec) == VECTOR_BOF);
@@ -98,7 +98,7 @@ void test_iterate(void) {
 	for(VectorNode node = vector_last(vec); node != VECTOR_BOF; node = vector_previous(vec, node))
 		TEST_CHECK(vector_node_value(vec, node) == NULL);
 
-	vector_destroy(vec, false);
+	vector_destroy(vec);
 }
 
 int compare_ints(void* a, void* b) {
@@ -106,7 +106,7 @@ int compare_ints(void* a, void* b) {
 }
 
 void test_find(void) {
-	Vector vec = vector_create(1000);
+	Vector vec = vector_create(1000, NULL);
 	int array[1000];
 
 	// replace για προσθήκη δεδομένων
@@ -123,19 +123,20 @@ void test_find(void) {
 	int not_exists = -12;
 	TEST_CHECK(vector_find(vec, &not_exists, compare_ints) == NULL);
 
-	vector_destroy(vec, false);
+	vector_destroy(vec);
 }
 
 void test_destroy() {
 	// Απλά εκτελούμε την destroy, για να ελέγξουμε αν όντως δουλεύει
 	// σωστά τρέχουμε το test με valgrind.
 
-	Vector vec = vector_create(1);
+	Vector vec = vector_create(1, free);
 
 	vector_set_at(vec, 0, malloc(1));
 	vector_insert(vec, malloc(1));
+	vector_remove(vec);
 
-	vector_destroy(vec, true);
+	vector_destroy(vec);
 }
 
 

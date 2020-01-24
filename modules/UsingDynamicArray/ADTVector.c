@@ -15,13 +15,14 @@
 
 // Ενα Vector είναι pointer σε αυτό το struct
 struct vector {
-	Pointer* array;		// Τα δεδομένα. Θέλουμε ένα πίνακα σε Pointer, οπότε Pointer*
-	int size;			// Πόσα στοιχεία έχουμε προσθέσει
-	int capacity;		// Πόσο χώρο έχουμε δεσμεύσει (το μέγεθος του array). Πάντα capacity >= size, αλλά μπορεί να έχουμε
+	Pointer* array;				// Τα δεδομένα. Θέλουμε ένα πίνακα σε Pointer, οπότε Pointer*
+	int size;					// Πόσα στοιχεία έχουμε προσθέσει
+	int capacity;				// Πόσο χώρο έχουμε δεσμεύσει (το μέγεθος του array). Πάντα capacity >= size, αλλά μπορεί να έχουμε
+	DestroyFunc destroy_value;	// Συνάρτηση που καταστρέφει ένα στοιχείο του vector.
 };
 
 
-Vector vector_create(int size) {
+Vector vector_create(int size, DestroyFunc destroy_value) {
 	// Αρχικά το vector περιέχει size μη-αρχικοποιημένα στοιχεία, αλλά εμείς δεσμεύουμε xώρο για
 	// τουλάχιστον VECTOR_MIN_CAPACITY για να αποφύγουμε τα πολλαπλά resizes
 	int capacity = size < VECTOR_MIN_CAPACITY ? VECTOR_MIN_CAPACITY : size;
@@ -42,6 +43,7 @@ Vector vector_create(int size) {
 	vec->size = size;
 	vec->capacity = capacity;
 	vec->array = array;
+	vec->destroy_value = destroy_value;
 
 	return vec;
 }
@@ -108,6 +110,10 @@ Pointer vector_remove(Vector vec) {
 		vec->array = realloc(vec->array, vec->capacity * sizeof(Pointer));
 	}
 
+	// Αν υπάρχει συνάρτηση destroy_value, την καλούμε για το στοιχείο που αφαιρείται
+	if(vec->destroy_value != NULL)
+		vec->destroy_value(value);
+
 	return value;
 }
 
@@ -120,11 +126,11 @@ Pointer vector_find(Vector vec, Pointer value, CompareFunc compare) {
 	return NULL;				// δεν υπάρχει
 }
 
-void vector_destroy(Vector vec, bool free_values) {
-	// Αν μας ζητηθεί, κάνουμε free τα values (μόνο ο χρήστης γνωρίζει αν τα values πρέπει να γίνουν free ή όχι)
-	if(free_values)
+void vector_destroy(Vector vec) {
+	// Αν υπάρχει συνάρτηση destroy_value, την καλούμε για όλα τα στοιχεία
+	if(vec->destroy_value != NULL)
 		for(int i = 0; i < vec->size; i++)
-			free(vec->array[i]);
+			vec->destroy_value(vec->array[i]);
 
 	// Πρέπει να κάνουμε free τόσο τον πίνακα όσο και το struct!
 	free(vec->array);

@@ -13,3 +13,6 @@ typedef void* Pointer;
 //   0  αν a και b είναι ισοδύναμα (_όχι_ αναγναστικά ίσα)
 // > 0  αν a > b
 typedef int (*CompareFunc)(Pointer a, Pointer b);
+
+// Δείκτης σε συνάρτηση που καταστρέφει ένα στοιχείο value
+typedef void (*DestroyFunc)(Pointer value);

@@ -26,8 +26,9 @@ typedef struct vector* Vector;
 
 // Δημιουργεί και επιστρέφει ένα νεό vector μεγέθους size (τα στοιχεία δεν είναι αρχικοποιημένα).
 // Αν δεν υπάρχει διαθέσιμη μνήμη επιστρέφει VECTOR_FAIL.
+// Αν destroy_value != NULL, τότε καλείται destroy_value(value) κάθε φορά που αφαιρείται ένα στοιχείο.
 
-Vector vector_create(int size);
+Vector vector_create(int size, DestroyFunc destroy_value);
 
 // Επιστρέψει τον αριθμό στοιχείων που περιέχει το vector vec.
 
@@ -61,9 +62,8 @@ Pointer vector_find(Vector vec, Pointer value, CompareFunc compare);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει το vector vec.
 // Οποιαδήποτε λειτουργία πάνω στο vector μετά το destroy είναι μη ορισμένη.
-// Αν free_values == true τότε καλείται free(value) για κάθε στοιχείο του vector.
 
-void vector_destroy(Vector vec, bool free_values);
+void vector_destroy(Vector vec);
 
 
 // Διάσχιση του vector ////////////////////////////////////////////////////////////

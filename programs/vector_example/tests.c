@@ -11,7 +11,7 @@ void strings() {
 	char* s1 = "FOO";
 	char* s2 = "BAR";
 
-	Vector vec = vector_create(0);
+	Vector vec = vector_create(0, NULL);
 	vector_insert(vec, s1);
 	vector_insert(vec, s2);
 
@@ -23,14 +23,14 @@ void strings() {
 	TEST_ASSERT(strcmp(s1, value1) == 0);
 	TEST_ASSERT(strcmp(s2, value2) == 0);
 
-	vector_destroy(vec, false);
+	vector_destroy(vec);
 }
 
 void integers() {
 	int a1 = 5;
 	int a2 = 42;
 
-	Vector vec = vector_create(0);
+	Vector vec = vector_create(0, NULL);
 
 	// ΠΡΟΣΟΧΗ: προσθέτουμε στο vector pointers προς τοπικές μεταβλητές! Αυτό είναι ok αν το vector
 	// χρησιμοποιείται ΜΟΝΟ όσο οι μεταβλητές βρίσκονται στο scope! (δλαδή μέχρι το τέλος της κλήσης της συνάρτησης)
@@ -45,11 +45,11 @@ void integers() {
 	TEST_ASSERT(*value1 == a1);
 	TEST_ASSERT(*value2 == a2);
 
-	vector_destroy(vec, false);
+	vector_destroy(vec);
 }
 
 void integers_loop1() {
-	Vector vec = vector_create(0);
+	Vector vec = vector_create(0, NULL);
 
 	// ΠΡΟΣΟΧΗ: προσθέτουμε στο vector 100 φορές έναν pointer στο i
 	// Δεν έχουμε αποθηκεύσει 100 διαφορετικές τιμές αλλά 100 ολόιδιους pointers!!
@@ -69,7 +69,7 @@ void integers_loop1() {
 	TEST_ASSERT(*value1 == i);
 	TEST_ASSERT(*value2 == i);
 
-	vector_destroy(vec, false);
+	vector_destroy(vec);
 }
 
 // Δεσμεύει μνήμη για έναν ακέραιο, αντιγράφει το value εκεί και επιστρέφει pointer
@@ -80,7 +80,7 @@ int* create_int(int value) {
 }
 
 void integers_loop2() {
-	Vector vec = vector_create(0);
+	Vector vec = vector_create(0, free);
 
 	// Για να αποθηκεύσουμε 100 διαφορετικούς ακεραίους (_όχι_ όπως στο integers_loop1),
 	// πρέπει κάθε φορά να δημιουργήσουμε έναν νέο ακέραιο.
@@ -95,9 +95,8 @@ void integers_loop2() {
 	TEST_ASSERT(*value2 == 1);
 
 	// Ο,τι κάναμε malloc πρέπει να το κάνουμε free, αλλιώς θα έχουμε memory leaks! (απόδειξη: make valgrind)
-	// Η vector_destroy μπορεί να κάνει free αυτόματα όλα τα values περνώντας free_values = true
-
-	vector_destroy(vec, true);
+	// Αλλά έχουμε περάσει την free στην vector_create, οπότε θα κληθεί για κάθε στοιχείο που αφαιρείται.
+	vector_destroy(vec);
 }
 
 
