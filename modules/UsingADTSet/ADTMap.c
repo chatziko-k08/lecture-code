@@ -95,7 +95,7 @@ void map_destroy(Map map) {
 		free(map_node);
 	}
 
-	set_destroy(map->set);
+	set_destroy(map->set, false);
 	free(map);
 }
 

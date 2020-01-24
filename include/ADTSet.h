@@ -45,8 +45,9 @@ Pointer set_find(Set set, Pointer value);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει το σύνολο.
 // Οποιαδήποτε λειτουργία πάνω στο set μετά το destroy είναι μη ορισμένη.
+// Αν free_values == true τότε καλείται free(value) για κάθε στοιχείο του συνόλου.
 
-void set_destroy(Set set);
+void set_destroy(Set set, bool free_values);
 
 
 // Διάσχιση του set ////////////////////////////////////////////////////////////

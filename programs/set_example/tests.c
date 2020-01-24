@@ -23,7 +23,7 @@ void strings() {
 	TEST_ASSERT(s1 == value1);
 	TEST_ASSERT(s2 == value2);
 
-	set_destroy(set);
+	set_destroy(set, false);
 }
 
 int compare_ints(int* a, int* b) {
@@ -51,7 +51,7 @@ void integers() {
 	TEST_ASSERT(value1 == &a1);
 	TEST_ASSERT(value2 == &a2);
 
-	set_destroy(set);
+	set_destroy(set, false);
 }
 
 void integers_loop() {
@@ -80,15 +80,8 @@ void integers_loop() {
 		TEST_ASSERT(*value == i--);
 	}
 
-	// get, remove, free
-	for(i = 0; i < 100; i++) {
-		int* value = set_find(set, &i);
-		set_remove(set, &i);
-		TEST_ASSERT(*value == i);
-		free(value);
-	}
-
-	set_destroy(set);
+	// destroy, με free_values = true για να κάνουμε free και τα περιεχόμενα
+	set_destroy(set, true);
 }
 
 

@@ -235,13 +235,16 @@ BSTNode bst_remove(BSTNode node, CompareFunc compare, Pointer value, bool* remov
 
 // Καταστρέφει όλο το υποδέντρο με ρίζα node
 
-void bst_destroy(BSTNode node) {
+void bst_destroy(BSTNode node, bool free_values) {
 	if(node == NULL)
 		return;
 	
 	// πρώτα destroy τα παιδιά, μετά free το node
-	bst_destroy(node->left);
-	bst_destroy(node->right);
+	bst_destroy(node->left, free_values);
+	bst_destroy(node->right, free_values);
+
+	if(free_values)
+		free(node->value);
 	free(node);
 }
 
@@ -295,8 +298,8 @@ Pointer set_find(Set set, Pointer value) {
 	return bst_node_value( bst_find_node(set->root, set->compare, value) );
 }
 
-void set_destroy(Set set) {
-	bst_destroy(set->root);
+void set_destroy(Set set, bool free_values) {
+	bst_destroy(set->root, free_values);
 	free(set);
 }
 
