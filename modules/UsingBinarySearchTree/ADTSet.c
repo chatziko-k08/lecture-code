@@ -252,6 +252,8 @@ void bst_destroy(BSTNode node, DestroyFunc destroy_value) {
 //// Συναρτήσεις του ADT Set. Γενικά πολύ απλές, αφού καλούν τις αντίστοιχες bst_* ////////////////////////////////////////////
 
 Set set_create(CompareFunc compare, DestroyFunc destroy_value) {
+	assert(compare != NULL);
+
 	// δημιουργούμε το stuct
 	Set set = malloc(sizeof(*set));
 	set->root = NULL;			// κενό δέντρο

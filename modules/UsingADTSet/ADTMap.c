@@ -40,6 +40,8 @@ void destroy_map_node(MapNode node) {
 }
 
 Map map_create(CompareFunc compare, DestroyFunc destroy_key, DestroyFunc destroy_value) {
+	assert(compare != NULL);
+
 	Map map = malloc(sizeof(*map));
 	map->set = set_create((CompareFunc)compare_map_nodes, (DestroyFunc)destroy_map_node);
 	map->compare = compare;
