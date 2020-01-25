@@ -64,6 +64,9 @@ void map_insert(Map map, Pointer key, Pointer value) {
 
 	MapNode node = set_find(map->set, &search_node);
 	if(node != NULL) {
+		if(map->destroy_value != NULL)
+			map->destroy_value(node->value);
+
 		node->value = value;
 		return;
 	}
