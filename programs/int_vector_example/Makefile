@@ -1,9 +1,8 @@
 # Λίστα με objects (.o) για κάθε εκτελέσιμο που θέλουμε να φτιάξουμε.
 #
-# Χρειαζόμαστε μια υλοοποίηση του ADTIntVector: χρησιμοποιούμε το modules/UsingADTVector/ADTIntVector.o
-# Το module όμως αυτό χρησιμοποιεί ADTVector, οπότε χρειαζόμαστε και το modules/UsingDynamicArray/ADTVector.o
+# Για το ADTIntVector χρησιμοποιούμε την υλοποίηση του k08.a library.
 #
-int_vector_example_OBJS = tests.o $(MODULES)/UsingADTVector/ADTIntVector.o $(MODULES)/UsingDynamicArray/ADTVector.o
+int_vector_example_OBJS = tests.o $(LIB)/k08.a
 
 # Ο βασικός κορμός του Makefile
 include ../../common.mk

@@ -35,6 +35,7 @@
 MY_PATH := $(dir $(lastword $(MAKEFILE_LIST)))
 MODULES := $(MY_PATH)modules
 INCLUDE := $(MY_PATH)include
+LIB		:= $(MY_PATH)lib
 
 # Compiler options
 #   -g         Δημιουργεί εκτελέσιμο κατάλληλο για debugging
@@ -60,11 +61,21 @@ endif
 # Λίστα με όλα τα εκτελέσιμα <prog> για τα οποία υπάρχει μια μεταβλητή <prog>_OBJS
 PROGS := $(subst _OBJS,,$(filter %_OBJS,$(.VARIABLES)))
 
-# Μαζεύουμε όλα τα objects σε μία μεταβλητή
-OBJS := $(foreach prog, $(PROGS), $($(prog)_OBJS))
+# Λίστα με objects που περιέχει το k08.a library
+K08LIB_OBJS =									\
+	$(MODULES)/UsingDynamicArray/ADTVector.o	\
+	$(MODULES)/UsingLinkedList/ADTList.o		\
+	$(MODULES)/UsingBinarySearchTree/ADTSet.o	\
+	$(MODULES)/UsingADTVector/ADTIntVector.o	\
+	$(MODULES)/UsingADTList/ADTStack.o			\
+	$(MODULES)/UsingADTList/ADTQueue.o			\
+	$(MODULES)/UsingADTSet/ADTMap.o
 
-# Για κάθε .o ο gcc παράγει ένα .d, τα αποθηκεύουμε εδώ
-DEPS := $(patsubst %.o,%.d,$(OBJS))
+# Μαζεύουμε όλα τα objects σε μία μεταβλητή
+OBJS := $(foreach prog, $(PROGS), $($(prog)_OBJS)) $(K08LIB_OBJS)
+
+# Για κάθε .o ο gcc παράγει ένα .d, τα αποθηκεύουμε εδώ (το filter κρατάει μόνο τα .o, όχι τα .a)
+DEPS := $(patsubst %.o, %.d, $(filter %.o, $(OBJS)))
 
 # Λίστα με coverage-related αρχεία που παράγονται κατά το compile & execute με --coverage (.gcda .gcno)
 COV_FILES := $(patsubst %.o,%.gcda,$(OBJS)) $(patsubst %.o,%.gcno,$(OBJS))
@@ -100,6 +111,10 @@ $(PROGS): $$($$@_OBJS)
 # από τα αρχεία αυτά αλλάξει, πρέπει να ξανακάνουμε compile το foo.o.
 #
 -include $(DEPS)
+
+# Δημιουργία του k08.a library, προσθέτωντας τα αντίστοιχα object files
+$(LIB)/k08.a: $(K08LIB_OBJS)
+	ar -rcs $@ $^
 
 # Το make clean καθαρίζει οτιδήποτε φτιάχνεται από αυτό το Makefile
 clean:
