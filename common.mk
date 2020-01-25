@@ -41,6 +41,7 @@ LIB		:= $(MY_PATH)lib
 #   -g         Δημιουργεί εκτελέσιμο κατάλληλο για debugging
 #   -I<dir>    Λέει στον compiler να ψάξει στο συγκεκριμένο directory για include files
 #   -Wall      Ενεργοποιεί όλα τα warnings
+#   -Werror    Αντιμετωπίζει τα warnings σαν errors, σταματώντας το compilation
 #   -MDD       Δημιουργεί ένα .d αρχείο με τα dependencies, το οποίο μπορούμε να κάνουμε include στο Makefile
 #
 CFLAGS += -g -Wall -Werror -MMD -I$(INCLUDE)
