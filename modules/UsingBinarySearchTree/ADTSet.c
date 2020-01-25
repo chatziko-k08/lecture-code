@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////
 //
-// Υλοποίηση του ADT Set μέσω Binary Search Tree
+// Υλοποίηση του ADT Set μέσω Binary Search Tree (BST)
 //
 ///////////////////////////////////////////////////////////
 
@@ -8,10 +8,12 @@
 
 #include "ADTSet.h"
 
-// Κόμβοι του δέντρου
-typedef SetNode BSTNode;
-struct set_node {
-	BSTNode parent, left, right;	// Δείκτες σε παιδιά και πατέρα
+// Κόμβοι του δέντρου, ταυτίζονται με τους κόμβους του set
+typedef SetNode BSTNode;		// Ξεχωριστό typedef για να είναι πιο σαφές ότι έχουμε κόμβους BST
+
+struct set_node {				// Ενα SetNode είναι pointer σε αυτό το struct
+	BSTNode parent;				// Πατέρας
+	BSTNode left, right;		// Παιδιά
 	Pointer value;
 };
 
@@ -54,25 +56,19 @@ BSTNode bst_find_node(BSTNode node, CompareFunc compare, Pointer value) {
 // Επιστρέφει τον μικρότερο κόμβο του δέντρου με ρίζα node
 
 BSTNode bst_find_min_node(BSTNode node) {
-	if(node == NULL)
-		return NULL;
-
 	// Αν υπάρχει αριστερό υποδέντρο, η μικρότερη τιμή βρίσκεται εκεί
 	// Διαφορετικά η μικρότερη τιμή είναι στο ίδιο το node
 	//
-	return node->left == NULL ? node : bst_find_min_node(node->left);
+	return node == NULL || node->left == NULL ? node : bst_find_min_node(node->left);
 }
 
 // Επιστρέφει τον μεγαλύτερο κόμβο του δέντρου με ρίζα node
 
 BSTNode bst_find_max_node(BSTNode node) {
-	if(node == NULL)
-		return NULL;
-
 	// Αν υπάρχει δεξί υποδέντρο, η μεγαλύτερη τιμή βρίσκεται εκεί
 	// Διαφορετικά η μεγαλύτερη τιμή είναι στο ίδιο το node
 	//
-	return node->right == NULL ? node : bst_find_max_node(node->right);
+	return node == NULL || node->right == NULL ? node : bst_find_max_node(node->right);
 }
 
 // Επιστρέφει τον προηγούμενο του node στη σειρά διάταξης, ή NULL αν ο node είναι ο μικρότερος όλου του δέντρου
@@ -252,13 +248,6 @@ void bst_destroy(BSTNode node, DestroyFunc destroy_value) {
 	free(node);
 }
 
-// Επιστρέφει την τιμή του node, ή NULL αν ο ίδιος ο κόμβος είναι NULL
-// Η συνάρτηση αυτή απλοποιεί αρκετές set_* συναρτήσεις.
-
-Pointer bst_node_value(BSTNode node) {
-	return node != NULL ? node->value : NULL;
-}
-
 
 //// Συναρτήσεις του ADT Set. Γενικά πολύ απλές, αφού καλούν τις αντίστοιχες bst_* ////////////////////////////////////////////
 
@@ -306,7 +295,8 @@ Pointer set_remove(Set set, Pointer value) {
 }
 
 Pointer set_find(Set set, Pointer value) {
-	return bst_node_value( bst_find_node(set->root, set->compare, value) );
+	BSTNode node = bst_find_node(set->root, set->compare, value);
+	return node == NULL ? NULL : node->value;
 }
 
 void set_destroy(Set set) {
