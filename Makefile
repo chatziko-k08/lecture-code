@@ -1,24 +1,61 @@
-# Το Makefile αυτό βρίσκεται στο root ολόκληρου του project. Η μόνη χρησιμοτητά του
-# είναι να μπορούμε εύκολα να κάνουμε compile όλα τα τμήματα του project. Εκτελώντας
-#   make foo
-# στο root directory, εκτελείται η ίδια εντολή σε όλα τα subdirectories που περιέχουν κάποιο Makefile.
+# Το Makefile αυτό βρίσκεται στο root ολόκληρου του project και χρησιμεύει για
+# να κάνουμε εύκολα compile πολλά τμήματα του project μαζί. Το Makefile αυτό
+# καλεί το make στα διάφορα directories ως
+#   $(MAKE) -C <dir> <target>
+# το οποίο είναι ισοδύναμο με το να τρέξουμε make <target> μέσα στο directory <foo>
 
-# Κοινός κανόνας για οποιοδήποτε target, το όνομα το target είναι διαθέσιμο στη μεταβλητή $@
-# Για κάθε subdirectory, έλεγχος αν περιέχει Makefile, και αν ναι τρέχουμε το
-# make $@ με --silent για να μην έχουμε τεράστια έξοδο.
-%:
-	@for dir in * */*; do \
-		if [ -f $$dir/Makefile ]; then \
-			echo; echo Running make $@ in $$dir; echo; \
-			$(MAKE) $@ --silent -C $$dir || exit; \
-		fi; \
-	done;
-	@echo success
+# Τρέχουμε το make με --silent γιατί η έξοδος είναι τεράστια
+MAKE += --silent
 
-# Ορίζουμε το 'all' σαν default target
-all:
+# Ολα τα directories μέσα στο programs directory
+PROGRAMS = $(shell ls programs/)
 
-# Τα παρακάτω είναι μόνο για να αναγνωρίζει τα targets το auto-complete
-run:
-valgrind:
-clean:
+# Compile: όλα, προγράμματα, βιβλιοθήκη και tests
+all: programs lib tests
+
+# Η παρακάτω γραμμή δημιουργεί ένα target programs-<foo> για οποιοδήποτε <foo>. Η μεταβλητή $* περιέχει το "foo"
+programs-%:
+	$(MAKE) -C programs/$*
+
+programs: $(addprefix programs-, $(PROGRAMS))		# depend στο programs-<foo> για κάθε στοιχείο του PROGRAMS
+
+tests:
+	$(MAKE) -C ADT_tests all
+
+lib:
+	$(MAKE) -C lib all
+
+# Εκτέλεση: όλα, προγράμματα, tests
+run: run-tests run-programs
+
+run-programs-%:
+	$(MAKE) -C programs/$* run
+
+run-programs: $(addprefix run-programs-, $(PROGRAMS))
+
+run-tests:
+	$(MAKE) -C ADT_tests run
+
+# Εκτέλεση με valgrind: όλα, προγράμματα, tests
+valgrind: valgrind-tests valgrind-programs
+
+valgrind-programs-%:
+	$(MAKE) -C programs/$* valgrind
+
+valgrind-programs: $(addprefix valgrind-programs-, $(PROGRAMS))
+
+valgrind-tests:
+	$(MAKE) -C ADT_tests valgrind
+
+# Εκκαθάριση
+clean-programs-%:
+	$(MAKE) -C programs/$* clean
+
+clean: $(addprefix clean-programs-, $(PROGRAMS))
+	$(MAKE) -C ADT_tests clean
+	$(MAKE) -C lib clean
+
+# Δηλώνουμε ότι οι παρακάτω κανόνες είναι εικονικοί, δεν παράγουν αρχεία. Θέλουμε δηλαδή
+# το "make programs" να εκτελεστεί παρόλο που υπάρχει ήδη ένα directory "programs".
+#
+.PHONY: programs tests lib run run-programs run-tests clean
