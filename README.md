@@ -2,6 +2,14 @@
 
 Ο βασικός κώδικας που χρησιμοποιείται στις διαλέξεις του μαθήματος [Δομές Δεδομένων και Τεχνικές Προγραμματισμού](https://k08.chatzi.org).
 
+### Παράδειγμα χρήσης
+
+```bash
+cd programs/vector_example
+make
+./vector_example
+```
+
 ### Project structure
 
 - `include`
