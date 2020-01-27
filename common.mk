@@ -86,9 +86,9 @@ COV_FILES := $(patsubst %.o,%.gcda,$(OBJS)) $(patsubst %.o,%.gcno,$(OBJS))
 # Το "?=" σημαίνει "ανάθεση αν η μεταβλητή δεν έχει ήδη τιμή". Αυτό επιτρέπει
 # στο Makefile να ορίσει ποια targets θέλει να φτιαχτούν, πριν το include common.mk
 #
-RUN_TARGETS ?= $(foreach prog, $(PROGS), run-$(prog))
-VAL_TARGETS ?= $(foreach prog, $(PROGS), valgrind-$(prog))
-COV_TARGETS ?= $(foreach prog, $(PROGS), coverage-$(prog))
+RUN_TARGETS ?= $(addprefix run-, $(PROGS))
+VAL_TARGETS ?= $(addprefix valgrind-, $(PROGS))
+COV_TARGETS ?= $(addprefix coverage-, $(PROGS))
 
 
 ## Κανόνες ###########################################################
@@ -96,7 +96,8 @@ COV_TARGETS ?= $(foreach prog, $(PROGS), coverage-$(prog))
 # Default target, κάνει compile όλα τα εκτελέσιμα
 all: $(PROGS)
 
-# Αυτό χρειάζεται για να μπορούμε να χρησιμοποιήσουμε τα $$(...) και $$@ στης λίστα των dependencies
+# Αυτό χρειάζεται για να μπορούμε να χρησιμοποιήσουμε μεταβλητές στη λίστα των dependencies.
+# Η χρήση αυτή απαιτεί διπλό "$$" στις μεταβλητές, πχ: $$(VAR), $$@, $$*
 .SECONDEXPANSION:
 
 # Για κάθε εκτελέσιμο <program>, δημιουργούμε έναν κανόνα που δηλώνει τα περιεχόμενα του
@@ -123,20 +124,16 @@ clean:
 	@rm -rf coverage
 
 # Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target run-<prog> που το εκτελεί με παραμέτρους <prog>_ARGS
-$(RUN_TARGETS): $$(subst run-,,$$@)
-	$(eval PROG = $(subst run-,,$@))
-	$(eval ARGS = $($(PROG)_ARGS))
-	./$(PROG) $(ARGS)
+# Το run-% είναι "pattern rule", δημιουργεί έναν κανόνα για κάθε run-<foo>, θέτωντας το $* σε "foo".
+run-%: $$*
+	./$* $($*_ARGS)
 
 # Το make run εκτελεί όλα τα run targets
 run: $(RUN_TARGETS)
 
 # Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target valgrind-<prog> που το εκτελεί μέσω valgrind με παραμέτρους <prog>_ARGS (default -E)
-$(VAL_TARGETS): $$(subst valgrind-,,$$@)
-	$(eval PROG = $(subst valgrind-,,$@))
-	$(eval ARGS = $($(PROG)_ARGS))
-	$(eval ARGS = $(if $(ARGS),$(ARGS),-E))
-	valgrind --error-exitcode=1 --leak-check=full ./$(PROG) $(ARGS)
+valgrind-%: $$*
+	valgrind --error-exitcode=1 --leak-check=full ./$* $(or $($*_ARGS), -E)
 
 valgrind: $(VAL_TARGETS)
 
@@ -150,12 +147,17 @@ lcov:
 	@echo "$$PWD/coverage/index.html"
 
 # Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target coverage-<prog> που το εκτελεί και μετά φτιάχνει coverage report
-$(COV_TARGETS): clean $$(subst coverage-,run-,$$@) lcov
-
+coverage-%: clean $$* lcov
 coverage: clean run lcov
+
+# Τα targets που ορίζονται από pattern rules (eg foo-%) δεν εμφανίζονται στο bash auto-complete. Τα παρακάτω κενά rules
+# δεν επηρεάζουν σε τίποτα τη λειτουργία του Makefile, απλά επιτρέπουν στο auto-complete να "δει" αυτά τα targets.
+$(RUN_TARGETS):
+$(VAL_TARGETS):
+$(COV_TARGETS):
 
 # Δηλώνουμε ότι οι παρακάτω κανόνες είναι εικονικοί, δεν παράγουν αρχεία. Θέλουμε δηλαδή
 # το "make clean" να εκτελεστεί ακόμα και αν συμπτωματικά υπάρχει ένα αρχείο "clean" στο
 # τρέχον directory.
 #
-.PHONY: clean run valgrind coverage lcov $(RUN_TARGETS) $(VAL_TARGETS) $(COV_TARGETS)
+.PHONY: clean run valgrind coverage lcov
