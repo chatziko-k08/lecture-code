@@ -6,8 +6,14 @@
 
 ```bash
 cd programs/vector_example
-make
-./vector_example
+
+make cat
+./cat Makefile
+
+make io_tests
+./io_tests
+
+make clean
 ```
 
 ### Project structure
