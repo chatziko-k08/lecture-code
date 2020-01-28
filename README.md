@@ -5,7 +5,7 @@
 ### Παράδειγμα χρήσης
 
 ```bash
-cd programs/vector_example
+cd programs/cat
 
 make cat
 ./cat Makefile
