@@ -4,7 +4,7 @@
 #
 int_vector_example_OBJS = main.o ADTIntVector.o $(LIB)/k08.a
 
-ADTIntVector_tests_OBJS = ADTIntVector_tests.o ADTIntVector.o $(LIB)/k08.a
+ADTIntVector.test_OBJS = ADTIntVector.test.o ADTIntVector.o $(LIB)/k08.a
 
 # Ο βασικός κορμός του Makefile
 include ../../common.mk

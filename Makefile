@@ -20,7 +20,7 @@ programs-%:
 programs: $(addprefix programs-, $(PROGRAMS))		# depend στο programs-<foo> για κάθε στοιχείο του PROGRAMS
 
 tests:
-	$(MAKE) -C ADT_tests all
+	$(MAKE) -C tests all
 
 lib:
 	$(MAKE) -C lib all
@@ -34,7 +34,7 @@ run-programs-%:
 run-programs: $(addprefix run-programs-, $(PROGRAMS))
 
 run-tests:
-	$(MAKE) -C ADT_tests run
+	$(MAKE) -C tests run
 
 # Εκτέλεση με valgrind: όλα, προγράμματα, tests
 valgrind: valgrind-tests valgrind-programs
@@ -45,14 +45,14 @@ valgrind-programs-%:
 valgrind-programs: $(addprefix valgrind-programs-, $(PROGRAMS))
 
 valgrind-tests:
-	$(MAKE) -C ADT_tests valgrind
+	$(MAKE) -C tests valgrind
 
 # Εκκαθάριση
 clean-programs-%:
 	$(MAKE) -C programs/$* clean
 
 clean: $(addprefix clean-programs-, $(PROGRAMS))
-	$(MAKE) -C ADT_tests clean
+	$(MAKE) -C tests clean
 	$(MAKE) -C lib clean
 
 # Δηλώνουμε ότι οι παρακάτω κανόνες είναι εικονικοί, δεν παράγουν αρχεία. Θέλουμε δηλαδή

@@ -10,8 +10,8 @@ cd programs/vector_example
 make cat
 ./cat Makefile
 
-make io_tests
-./io_tests
+make io.test
+./io.test
 
 make clean
 ```
@@ -41,9 +41,9 @@ make clean
   δομή δεδομένων που υλοποιεί το ADT, πχ το `UsingDynamicArray/ADTVector.c` υλοποιεί ένα `Vector`
   μέσω Dynamic Array.
 
-- `ADT_tests`
+- `tests`
 
-  Tests για κάθε ADT. Οποιαδήποτε υλοποίηση ενός ADT οφείλει να περνάει το αντίστοιχο test.
-  Για να φτιάξουμε ένα εκτελέσιμο κάνουμε link
+  Tests για κοινόχρηστα modules (ένα για κάθε ADT). Οποιαδήποτε υλοποίηση ενός ADT οφείλει να
+  περνάει το αντίστοιχο test. Για να φτιάξουμε ένα εκτελέσιμο κάνουμε link
   το test με την υλοποίηση που θέλουμε να ελέγξουμε, πχ
-  το `ADTVector_tests.o` με το `UsingDynamicArray/ADTVector.o`.
+  το `ADTVector.test.o` με το `UsingDynamicArray/ADTVector.o`.
