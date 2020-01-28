@@ -57,19 +57,17 @@ BSTNode bst_find_node(BSTNode node, CompareFunc compare, Pointer value) {
 // Επιστρέφει τον μικρότερο κόμβο του δέντρου με ρίζα node
 
 BSTNode bst_find_min_node(BSTNode node) {
-	// Αν υπάρχει αριστερό υποδέντρο, η μικρότερη τιμή βρίσκεται εκεί
-	// Διαφορετικά η μικρότερη τιμή είναι στο ίδιο το node
-	//
-	return node == NULL || node->left == NULL ? node : bst_find_min_node(node->left);
+	return node != NULL && node->left != NULL
+		? bst_find_min_node(node->left)			// Υπάρχει αριστερό υποδέντρο, η μικρότερη τιμή βρίσκεται εκεί
+		: node;									// Αλλιώς η μικρότερη τιμή είναι στο ίδιο το node
 }
 
 // Επιστρέφει τον μεγαλύτερο κόμβο του δέντρου με ρίζα node
 
 BSTNode bst_find_max_node(BSTNode node) {
-	// Αν υπάρχει δεξί υποδέντρο, η μεγαλύτερη τιμή βρίσκεται εκεί
-	// Διαφορετικά η μεγαλύτερη τιμή είναι στο ίδιο το node
-	//
-	return node == NULL || node->right == NULL ? node : bst_find_max_node(node->right);
+	return node != NULL && node->right != NULL
+		? bst_find_max_node(node->right)		// Υπάρχει δεξί υποδέντρο, η μεγαλύτερη τιμή βρίσκεται εκεί
+		: node;									// Αλλιώς η μεγαλύτερη τιμή είναι στο ίδιο το node
 }
 
 // Επιστρέφει τον προηγούμενο του node στη σειρά διάταξης, ή NULL αν ο node είναι ο μικρότερος όλου του δέντρου
