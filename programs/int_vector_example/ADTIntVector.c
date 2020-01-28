@@ -31,12 +31,12 @@ int int_vector_size(IntVector vec) {
 void int_vector_set_at(IntVector vec, int pos, int value) {
 	// Αλλάζουμε την τιμή ενός υπάρχοντος στοιχείου, έχουμε ήδη μνήμη για αυτό! (από το αντίστοιχο insert)
 	int *p = vector_get_at((Vector)vec, pos);		// το vector περιέχει int pointers
-	*p = value;							// αλλαγή τιμής
+	*p = value;										// αλλαγή τιμής
 }
 
 int int_vector_get_at(IntVector vec, int pos) {
 	int *p = vector_get_at((Vector)vec, pos);		// το vector περιέχει int pointers
-	return *p;
+	return p == NULL ? INT_MIN : *p;
 }
 
 void int_vector_insert(IntVector vec, int value) {
@@ -47,10 +47,10 @@ void int_vector_insert(IntVector vec, int value) {
 }
 
 int int_vector_remove(IntVector vec) {
-	// Αφαίρεση στοιχείου, πρέπει να κάνουμε free!
-	int *p = vector_remove((Vector)vec);
-	int value = *p;				// Αποθήκευση πριν κάνουμε free, μετά θα είναι αργά!
-	free(p);
+	// Η remove κάνει αυτόματα free, πρέπει να διαβάσουμε τα περιεχόμενα πριν!
+	int value = int_vector_get_at(vec, int_vector_size(vec) - 1);
+
+	vector_remove((Vector)vec);
 	return value;
 }
 
@@ -58,9 +58,9 @@ int compare(Pointer a, Pointer b) {
 	return *(int*)a - *(int*)b;
 }
 
-int int_vector_find(Vector vec, int value) {
+int int_vector_find(IntVector vec, int value) {
 	int* res = vector_find((Vector)vec, &value, compare);
-	return *res;
+	return res == NULL ? INT_MIN : *res;
 }
 
 void int_vector_destroy(IntVector vec) {

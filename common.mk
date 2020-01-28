@@ -67,7 +67,6 @@ K08LIB_OBJS =									\
 	$(MODULES)/UsingDynamicArray/ADTVector.o	\
 	$(MODULES)/UsingLinkedList/ADTList.o		\
 	$(MODULES)/UsingBinarySearchTree/ADTSet.o	\
-	$(MODULES)/UsingADTVector/ADTIntVector.o	\
 	$(MODULES)/UsingADTList/ADTStack.o			\
 	$(MODULES)/UsingADTList/ADTQueue.o			\
 	$(MODULES)/UsingADTSet/ADTMap.o
