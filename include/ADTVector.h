@@ -45,7 +45,7 @@ void vector_insert(Vector vec, Pointer value);
 
 Pointer vector_remove(Vector vec);
 
-// Επιστρέφει την τιμή στη θέση pos του vector vec, ή NULL αν pos >= size.
+// Επιστρέφει την τιμή στη θέση pos του vector vec, ή NULL αν pos < 0 ή pos >= size.
 
 Pointer vector_get_at(Vector vec, int pos);
 
