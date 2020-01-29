@@ -89,6 +89,11 @@ RUN_TARGETS ?= $(addprefix run-, $(PROGS))
 VAL_TARGETS ?= $(addprefix valgrind-, $(PROGS))
 COV_TARGETS ?= $(addprefix coverage-, $(PROGS))
 
+# Για κάθε test (*.test) θέτουμε τις παρεμέτρους του (<test>_ARGS) από default σε --time
+$(foreach test, $(filter %.test, $(PROGS)),	\
+	$(eval $(test)_ARGS ?= --time)			\
+)
+
 
 ## Κανόνες ###########################################################
 
@@ -130,9 +135,9 @@ run-%: $$*
 # Το make run εκτελεί όλα τα run targets
 run: $(RUN_TARGETS)
 
-# Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target valgrind-<prog> που το εκτελεί μέσω valgrind με παραμέτρους <prog>_ARGS (default -E)
+# Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target valgrind-<prog> που το εκτελεί μέσω valgrind με παραμέτρους <prog>_ARGS
 valgrind-%: $$*
-	valgrind --error-exitcode=1 --leak-check=full ./$* $(or $($*_ARGS), -E)
+	valgrind --error-exitcode=1 --leak-check=full ./$* $($*_ARGS)
 
 valgrind: $(VAL_TARGETS)
 
