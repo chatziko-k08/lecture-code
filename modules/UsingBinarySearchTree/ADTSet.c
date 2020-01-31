@@ -20,7 +20,6 @@ struct set {
 
 // Ενώ το struct set_node είναι κόμβος ενός Δυαδικού Δέντρου Αναζήτησης
 struct set_node {
-	SetNode parent;				// Πατέρας
 	SetNode left, right;		// Παιδιά
 	Pointer value;
 };
@@ -35,11 +34,10 @@ struct set_node {
 // Οι set_* συναρτήσεις (πιο μετά στο αρχείο), υλοποιούν τις συναρτήσεις του ADT Set, και είναι απλές, καλώντας τις αντίστοιχες node_*.
 
 
-// Δημιουργεί και επιστρέφει έναν κόμβο με τιμή value (χωρίς πατέρα/παιδιά)
+// Δημιουργεί και επιστρέφει έναν κόμβο με τιμή value (χωρίς παιδιά)
 
 SetNode node_create(Pointer value) {
 	SetNode node = malloc(sizeof(*node));
-	node->parent = NULL;
 	node->left = NULL;
 	node->right = NULL;
 	node->value = value;
@@ -81,42 +79,50 @@ SetNode node_find_max(SetNode node) {
 		: node;									// Αλλιώς η μεγαλύτερη τιμή είναι στο ίδιο το node
 }
 
-// Επιστρέφει τον προηγούμενο του node στη σειρά διάταξης, ή NULL αν ο node είναι ο μικρότερος όλου του δέντρου
+// Επιστρέφει τον προηγούμενο (στη σειρά διάταξης) του κόμβου target στο υποδέντρο με ρίζα node,
+// ή NULL αν ο target είναι ο μικρότερος του υποδέντρου. Το υποδέντρο πρέπει να περιέχει τον κόμβο
+// target, οπότε δεν μπορεί να είναι κενό.
 
-SetNode node_find_previous(SetNode node, CompareFunc compare) {
-	// Αν έχουμε αριστερό παιδί τότε όλο το αριστερό υποδέντρο είναι μικρότεροι κόμβοι.
-	// Ο πρηγούμενος είναι ο μεγαλύτερος από αυτούς.
-	if(node->left != NULL)
+SetNode node_find_previous(SetNode node, CompareFunc compare, SetNode target) {
+	if(node == target) {
+		// Ο target είναι η ρίζα του υποδέντρου, o προηγούμενός του είναι ο μεγαλύτερος του αριστερού υποδέντρου.
+		// (Aν δεν υπάρχει αριστερό παιδί, τότε ο κόμβος με τιμή value είναι ο μικρότερος του υποδέντρου, οπότε
+		// η node_find_max θα επιστρέψει NULL όπως θέλουμε.)
 		return node_find_max(node->left);
 
-	// Δεν έχουμε αριστερό παιδί, μπορεί όμως να υπάρχουν μικρότεροι κόμβοι σε άλλα σημεία του υποδέντρου.
-	// Προχωράμε προς τη ρίζα, ψάχνοντας για κόμβο που να είναι _δεξί_ παιδί του πατέρα του, άρα ο πατέρας
-	// είναι ο ακριβώς προγούμενός του.
-	for(; node != NULL; node = node->parent)
-		if(node->parent != NULL && node->parent->right == node)
-			return node->parent;
+	} else if(compare(target->value, node->value) < 0) {
+		// Ο target είναι στο αριστερό υποδέντρο, οπότε και ο προηγούμενός του είναι εκεί.
+		return node_find_previous(node->left, compare, target);
 
-	// φτάσαμε στη ρίζα ακολουθώντας μόνο _αριστερά_ links, άρα είμαστε ο αριστερότερος (μικρότερος) κόμβος όλου του δέντρου!
-	return NULL;
+	} else {
+		// Ο target είναι στο δεξί υποδέντρο, ο προηγούμενός του μπορεί να είναι επίσης εκεί, διαφορετικά
+		// ο προηγούμενός του είναι ο ίδιος ο node.
+		SetNode res = node_find_previous(node->right, compare, target);
+		return res != NULL ? res : node;
+	}
 }
 
-// Επιστρέφει τον επόμενο του node στη σειρά διάταξης, ή NULL αν ο node είναι ο μεγαλύτερος όλου του δέντρου
+// Επιστρέφει τον επόμενο (στη σειρά διάταξης) του κόμβου target στο υποδέντρο με ρίζα node,
+// ή NULL αν ο target είναι ο μεγαλύτερος του υποδέντρου. Το υποδέντρο πρέπει να περιέχει τον κόμβο
+// target, οπότε δεν μπορεί να είναι κενό.
 
-SetNode node_find_next(SetNode node, CompareFunc compare) {
-	// Αν έχουμε δεξί παιδί τότε όλο το δεξί υποδέντρο είναι μικρότεροι κόμβοι.
-	// Ο επόμενος είναι ο μεγαλύτερος από αυτούς.
-	if(node->right != NULL)
+SetNode node_find_next(SetNode node, CompareFunc compare, SetNode target) {
+	if(node == target) {
+		// Ο target είναι η ρίζα του υποδέντρου, o προηγούμενός του είναι ο μεγαλύτερος του αριστερού υποδέντρου.
+		// (Aν δεν υπάρχει αριστερό παιδί, τότε ο κόμβος με τιμή value είναι ο μικρότερος του υποδέντρου, οπότε
+		// η node_find_max θα επιστρέψει NULL όπως θέλουμε.)
 		return node_find_min(node->right);
 
-	// Δεν έχουμε δεξί παιδί, μπορεί όμως να υπάρχουν μεγαλύτεροι κόμβοι σε άλλα σημεία του υποδέντρου.
-	// Προχωράμε προς τη ρίζα, ψάχνοντας για κόμβο που να είναι _αριστερό_ παιδί του πατέρα του, άρα ο πατέρας
-	// είναι ο ακριβώς επόμενός του.
-	for(; node != NULL; node = node->parent)
-		if(node->parent != NULL && node->parent->left == node)
-			return node->parent;
+	} else if(compare(target->value, node->value) > 0) {
+		// Ο target είναι στο αριστερό υποδέντρο, οπότε και ο προηγούμενός του είναι εκεί.
+		return node_find_next(node->right, compare, target);
 
-	// φτάσαμε στη ρίζα ακολουθώντας μόνο _δεξιά_ links, άρα είμαστε ο δεξιότερος (μεγαλύτερος) κόμβος όλου του δέντρου!
-	return NULL;
+	} else {
+		// Ο target είναι στο δεξί υποδέντρο, ο προηγούμενός του μπορεί να είναι επίσης εκεί, διαφορετικά
+		// ο προηγούμενός του είναι ο ίδιος ο node.
+		SetNode res = node_find_next(node->left, compare, target);
+		return res != NULL ? res : node;
+	}
 }
 
 // Αν υπάρχει κόμβος με τιμή ισοδύναμη της value, αλλάζει την τιμή του σε value, διαφορετικά προσθέτει
@@ -125,7 +131,6 @@ SetNode node_find_next(SetNode node, CompareFunc compare) {
 
 SetNode node_insert(SetNode node, CompareFunc compare, Pointer value, bool* inserted, Pointer* old_value) {
 	// Αν το υποδέντρο είναι κενό, δημιουργούμε νέο κόμβο ο οποίος γίνεται ρίζα του υποδέντρου
-	// Ο κόμβος για την ώρα δεν έχει πατέρα, μπορεί να αποκτήσει αν το υποδέντρο τοποθετηθεί ως παιδί άλλου δέντρου.
 	if(node == NULL) {
 		*inserted = true;			// κάναμε προσθήκη
 		return node_create(value);
@@ -142,16 +147,12 @@ SetNode node_insert(SetNode node, CompareFunc compare, Pointer value, bool* inse
 		node->value = value;
 
 	} else if(compare_res < 0) {
-		// value < node->value, συνεχίζουμε αριστερά. Η ρίζα του αριστερού υποδέντρου
-		// ίσως αλλαξει, οπότε ενημερώνουμε το node->left με τη νέα ρίζα!
+		// value < node->value, συνεχίζουμε αριστερά.
 		node->left = node_insert(node->left, compare, value, inserted, old_value);
-		node->left->parent = node;
 
 	} else {
-		// value > node->value, συνεχίζουμε αριστερά. Η ρίζα του δεξιού υποδέντρου
-		// ίσως αλλαξει, οπότε ενημερώνουμε το node->right με τη νέα ρίζα!
+		// value > node->value, συνεχίζουμε δεξιά
 		node->right = node_insert(node->right, compare, value, inserted, old_value);
-		node->right->parent = node;
 	}
 
 	return node;	// η ρίζα του υποδέντρου δεν αλλάζει
@@ -164,18 +165,13 @@ SetNode node_remove_min(SetNode node, SetNode* min_node) {
 	if(node->left == NULL) {
 		// Δεν έχουμε αριστερό υποδέντρο, οπότε ο μικρότερος είναι ο ίδιος ο node
 		*min_node = node;
-
-		SetNode right = node->right;	// αποθήκευση πριν το free
-		if(right != NULL)
-			right->parent = node->parent;
-
-		return right;					// νέα ρίζα είναι το δεξιό παιδί
+		return node->right;		// νέα ρίζα είναι το δεξιό παιδί
 
 	} else {
 		// Εχουμε αριστερό υποδέντρο, οπότε η μικρότερη τιμή είναι εκεί. Συνεχίζουμε αναδρομικά
 		// και ενημερώνουμε το node->left με τη νέα ρίζα του υποδέντρου.
 		node->left = node_remove_min(node->left, min_node);
-		return node;
+		return node;			// η ρίζα δεν μεταβάλλεται
 	}
 }
 
@@ -197,18 +193,12 @@ SetNode node_remove(SetNode node, CompareFunc compare, Pointer value, bool* remo
 		if(node->left == NULL) {
 			// Δεν υπάρχει αριστερό υποδέντρο, οπότε διαγράφεται απλά ο κόμβος και νέα ρίζα μπαίνει το δεξί παιδί
 			SetNode right = node->right;	// αποθήκευση πριν το free!
-			if(right != NULL)
-				right->parent = node->parent;
-
 			free(node);
 			return right;
 
 		} else if(node->right == NULL) {
 			// Δεν υπάρχει δεξί υποδέντρο, οπότε διαγράφεται απλά ο κόμβος και νέα ρίζα μπαίνει το αριστερό παιδί
 			SetNode left = node->left;		// αποθήκευση πριν το free!
-			if(left != NULL)
-				left->parent = node->parent;
-
 			free(node);
 			return left;
 
@@ -220,7 +210,6 @@ SetNode node_remove(SetNode node, CompareFunc compare, Pointer value, bool* remo
 			node->right = node_remove_min(node->right, &min_right);
 
 			// Σύνδεση του min_right στη θέση του node
-			min_right->parent = node->parent;
 			min_right->left = node->left;
 			min_right->right = node->right;
 
@@ -321,11 +310,11 @@ SetNode set_last(Set set) {
 }
 
 SetNode set_previous(Set set, SetNode node) {
-	return node_find_previous(node, set->compare);
+	return node_find_previous(set->root, set->compare, node);
 }
 
 SetNode set_next(Set set, SetNode node) {
-	return node_find_next(node, set->compare);
+	return node_find_next(set->root, set->compare, node);
 }
 
 Pointer set_node_value(Set set, SetNode node) {
