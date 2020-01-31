@@ -1,13 +1,12 @@
-// Αποδοτική αναδρομική υλοποίηση της ακολουθίας fibonacci
-// απομνημονεύοντας στοιχεία που έχουμε ήδη υπολογίσει.
-
-#include <stdio.h>
 #include <stdlib.h>
 
 // Χρησιμοποιούμε ένα specialization του ADTVector που παρέχει Vectors από ακεραίους
 #include "ADTIntVector.h"
 
-IntVector memory = NULL;
+IntVector memory = NULL;			// int vector για την αποθήκευση των στοιχείων
+
+// Αποδοτική αναδρομική υλοποίηση της ακολουθίας fibonacci
+// απομνημονεύοντας στοιχεία που έχουμε ήδη υπολογίσει.
 
 int fibonacci(int n) {
 	if(memory == NULL) {
@@ -26,14 +25,6 @@ int fibonacci(int n) {
 	return int_vector_get_at(memory, n);
 }
 
-int main(int argc, char* argv[]) {
-	if(argc != 2) {
-		fprintf(stderr, "usage: fibonacci <n>\n");
-		return 1;
-	}
-
-	int n = atoi(argv[1]);	
-	printf("fibonacci(%d): %d\n", n, fibonacci(n));
-
+void fibonacci_destroy() {
 	int_vector_destroy(memory);
 }
