@@ -10,8 +10,8 @@ cd programs/cat
 make cat
 ./cat Makefile
 
-make io.test
-./io.test
+make io_test
+./io_test
 
 make clean
 ```
@@ -46,4 +46,4 @@ make clean
   Tests για κοινόχρηστα modules (ένα για κάθε ADT). Οποιαδήποτε υλοποίηση ενός ADT οφείλει να
   περνάει το αντίστοιχο test. Για να φτιάξουμε ένα εκτελέσιμο κάνουμε link
   το test με την υλοποίηση που θέλουμε να ελέγξουμε, πχ
-  το `ADTVector.test.o` με το `UsingDynamicArray/ADTVector.o`.
+  το `ADTVector_test.o` με το `UsingDynamicArray/ADTVector.o`.
