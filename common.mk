@@ -59,6 +59,9 @@ ifneq (,$(findstring coverage,$(MAKECMDGOALS)))
 	LDFLAGS += --coverage
 endif
 
+# compiler
+CC = gcc
+
 # Λίστα με όλα τα εκτελέσιμα <prog> για τα οποία υπάρχει μια μεταβλητή <prog>_OBJS
 PROGS := $(subst _OBJS,,$(filter %_OBJS,$(.VARIABLES)))
 
@@ -124,8 +127,8 @@ $(LIB)/k08.a: $(K08LIB_OBJS)
 
 # Το make clean καθαρίζει οτιδήποτε φτιάχνεται από αυτό το Makefile
 clean:
-	@rm -f $(PROGS) $(OBJS) $(DEPS) $(COV_FILES)
-	@rm -rf coverage
+	@$(RM) $(PROGS) $(OBJS) $(DEPS) $(COV_FILES)
+	@$(RM) -r coverage
 
 # Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target run-<prog> που το εκτελεί με παραμέτρους <prog>_ARGS
 # Το run-% είναι "pattern rule", δημιουργεί έναν κανόνα για κάθε run-<foo>, θέτωντας το $* σε "foo".
