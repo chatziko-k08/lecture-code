@@ -6,7 +6,7 @@ cat_OBJS		= cat.o io.o $(LIB)/k08.a
 io_test_OBJS	= io_test.o io.o $(LIB)/k08.a
 
 # Ορίσματα που χρησιμοποιούνται από το make run
-cat_ARGS = Makefile
+cat_ARGS = input-file
 
 # Ο βασικός κορμός του Makefile
 include ../../common.mk
