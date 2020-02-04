@@ -2,7 +2,7 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "make",
+			"label": "make program",
 			"type": "shell",
 			"command": "make",
 			"options": {
@@ -24,7 +24,7 @@
 			}
 		},
 		{
-			"label": "run",
+			"label": "run program",
 			"type": "shell",
 			"command": "./${config:c_project.program}",
 			"args": [
@@ -45,7 +45,7 @@
 			"presentation": {
 				"clear": true
 			},
-			"dependsOn": "make"
+			"dependsOn": "make program"
 		},
 		{
 			"label": "build open file with gcc",
