@@ -30,7 +30,7 @@
 					"ignoreFailures": false
 				}
 			],
-			"preLaunchTask": "make"
+			"preLaunchTask": "Build <program> with make"
 		}
 	]
 }
