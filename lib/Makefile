@@ -1,8 +1,11 @@
-# Οι κανόνες για τη δημιουργία του k08.a υπάρχουν στο common.mk (για να είναι διαθέσιμοι
-# σε όλα τα Makefiles). Το Makefile αυτό χρησιμεύει απλά για να μπορούμε να δημιουργήσουμετο
-# k08.a εκτελέντας "make" στο lib directory.
+# Λίστα με objects που περιέχει το k08.a library
+k08.a_OBJS =									\
+	$(MODULES)/UsingDynamicArray/ADTVector.o	\
+	$(MODULES)/UsingLinkedList/ADTList.o		\
+	$(MODULES)/UsingBinarySearchTree/ADTSet.o	\
+	$(MODULES)/UsingADTList/ADTStack.o			\
+	$(MODULES)/UsingADTList/ADTQueue.o			\
+	$(MODULES)/UsingADTSet/ADTMap.o
 
+# Ο βασικός κορμός του Makefile
 include ../common.mk
-
-all: k08.a
-k08.a: $(LIB)/k08.a

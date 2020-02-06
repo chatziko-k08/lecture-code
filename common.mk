@@ -62,20 +62,13 @@ endif
 # compiler
 CC = gcc
 
-# Λίστα με όλα τα εκτελέσιμα <prog> για τα οποία υπάρχει μια μεταβλητή <prog>_OBJS
-PROGS := $(subst _OBJS,,$(filter %_OBJS,$(.VARIABLES)))
-
-# Λίστα με objects που περιέχει το k08.a library
-K08LIB_OBJS =									\
-	$(MODULES)/UsingDynamicArray/ADTVector.o	\
-	$(MODULES)/UsingLinkedList/ADTList.o		\
-	$(MODULES)/UsingBinarySearchTree/ADTSet.o	\
-	$(MODULES)/UsingADTList/ADTStack.o			\
-	$(MODULES)/UsingADTList/ADTQueue.o			\
-	$(MODULES)/UsingADTSet/ADTMap.o
+# Λίστα με όλα τα εκτελέσιμα & βιβλιοθήκες <foo> για τα οποία υπάρχει μια μεταβλητή <foo>_OBJS
+WITH_OBJS := $(subst _OBJS,,$(filter %_OBJS,$(.VARIABLES)))
+PROGS := $(filter-out %.a,$(WITH_OBJS))
+LIBS := $(filter %.a,$(WITH_OBJS))
 
 # Μαζεύουμε όλα τα objects σε μία μεταβλητή
-OBJS := $(foreach prog, $(PROGS), $($(prog)_OBJS)) $(K08LIB_OBJS)
+OBJS := $(foreach target, $(WITH_OBJS), $($(target)_OBJS))
 
 # Για κάθε .o ο gcc παράγει ένα .d, τα αποθηκεύουμε εδώ (το filter κρατάει μόνο τα .o, όχι τα .a)
 DEPS := $(patsubst %.o, %.d, $(filter %.o, $(OBJS)))
@@ -100,8 +93,8 @@ $(foreach test, $(filter %_test, $(PROGS)),	\
 
 ## Κανόνες ###########################################################
 
-# Default target, κάνει compile όλα τα εκτελέσιμα
-all: $(PROGS)
+# Default target, κάνει compile όλα τα εκτελέσιμα & τις βιβλιοθήκες
+all: $(PROGS) $(LIBS)
 
 # Αυτό χρειάζεται για να μπορούμε να χρησιμοποιήσουμε μεταβλητές στη λίστα των dependencies.
 # Η χρήση αυτή απαιτεί διπλό "$$" στις μεταβλητές, πχ: $$(VAR), $$@, $$*
@@ -114,6 +107,12 @@ all: $(PROGS)
 $(PROGS): $$($$@_OBJS)
 	$(CC) $(LDFLAGS) $^ -o $@
 
+# Για κάθε βιβλιοθήκη <lib>, δημιουργούμε έναν κανόνα που δηλώνει τα περιεχόμενα του
+# <lib>_OBJS ως depedencies του <lib>.
+#
+$(LIBS): $$($$@_OBJS)
+	ar -rcs $@ $^
+
 # Κάνουμε include τα .d αρχεία που παράγει ο gcc (το "-" αγνοεί την εντολή αν αποτύχει)
 # Ενα αρχείο foo.d περιέχει όλα τα αρχεία (.c και .h) που χρειάστηκε o gcc για να κάνει compile
 # το foo.o, στη μορφή του Makefile. Οπότε κάνοντας include το foo.d δηλώνουμε ότι αν οποιοδήποτε
@@ -121,13 +120,9 @@ $(PROGS): $$($$@_OBJS)
 #
 -include $(DEPS)
 
-# Δημιουργία του k08.a library, προσθέτωντας τα αντίστοιχα object files
-$(LIB)/k08.a: $(K08LIB_OBJS)
-	ar -rcs $@ $^
-
 # Το make clean καθαρίζει οτιδήποτε φτιάχνεται από αυτό το Makefile
 clean:
-	@$(RM) $(PROGS) $(OBJS) $(DEPS) $(COV_FILES)
+	@$(RM) $(PROGS) $(LIBS) $(OBJS) $(DEPS) $(COV_FILES)
 	@$(RM) -r coverage
 
 # Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target run-<prog> που το εκτελεί με παραμέτρους <prog>_ARGS
