@@ -101,12 +101,14 @@ Pointer list_remove(List list, ListNode node) {
 	ListNode removed = node->next;
 	assert(removed != NULL);		// LCOV_EXCL_LINE
 
-	Pointer value = node->value;
+	Pointer value = removed->value;
+
 	if(list->destroy_value != NULL)
 		list->destroy_value(value);
 
 	// Σύνδεση του node με τον επόμενο του removed
 	node->next = removed->next;		// πριν το free!
+
 	free(removed);
 
 	// Ενημέρωση των size & last
