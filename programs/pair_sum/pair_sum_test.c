@@ -19,6 +19,8 @@ void test_pair_sum() {
 	TEST_ASSERT(!pair_sum(90, numbers, &a, &b));
 	TEST_ASSERT( pair_sum(15, numbers, &a, &b));
 	TEST_ASSERT(a + b == 15);
+
+	vector_destroy(numbers);
 }
 
 
