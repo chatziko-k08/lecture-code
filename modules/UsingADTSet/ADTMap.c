@@ -24,12 +24,12 @@ struct map_node {
 	Map owner;
 };
 
-int compare_map_nodes(MapNode a, MapNode b) {
+static int compare_map_nodes(MapNode a, MapNode b) {
 	return a->owner->compare(a->key, b->key);
 }
 
 // Συνάρτηση που καταστρέφει ένα map node
-void destroy_map_node(MapNode node) {
+static void destroy_map_node(MapNode node) {
 	if(node->owner->destroy_key != NULL)
 		node->owner->destroy_key(node->key);
 

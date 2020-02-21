@@ -36,7 +36,7 @@ struct set_node {
 
 // Δημιουργεί και επιστρέφει έναν κόμβο με τιμή value (χωρίς παιδιά)
 
-SetNode node_create(Pointer value) {
+static SetNode node_create(Pointer value) {
 	SetNode node = malloc(sizeof(*node));
 	node->left = NULL;
 	node->right = NULL;
@@ -46,7 +46,7 @@ SetNode node_create(Pointer value) {
 
 // Επιστρέφει τον κόμβο με τιμή ίση με value στο υποδέντρο με ρίζα node, διαφορετικά NULL
 
-SetNode node_find_equal(SetNode node, CompareFunc compare, Pointer value) {
+static SetNode node_find_equal(SetNode node, CompareFunc compare, Pointer value) {
 	// κενό υποδέντρο, δεν υπάρχει η τιμή
 	if(node == NULL)
 		return NULL;
@@ -65,7 +65,7 @@ SetNode node_find_equal(SetNode node, CompareFunc compare, Pointer value) {
 
 // Επιστρέφει τον μικρότερο κόμβο του υποδέντρου με ρίζα node
 
-SetNode node_find_min(SetNode node) {
+static SetNode node_find_min(SetNode node) {
 	return node != NULL && node->left != NULL
 		? node_find_min(node->left)				// Υπάρχει αριστερό υποδέντρο, η μικρότερη τιμή βρίσκεται εκεί
 		: node;									// Αλλιώς η μικρότερη τιμή είναι στο ίδιο το node
@@ -73,7 +73,7 @@ SetNode node_find_min(SetNode node) {
 
 // Επιστρέφει τον μεγαλύτερο κόμβο του υποδέντρου με ρίζα node
 
-SetNode node_find_max(SetNode node) {
+static SetNode node_find_max(SetNode node) {
 	return node != NULL && node->right != NULL
 		? node_find_max(node->right)			// Υπάρχει δεξί υποδέντρο, η μεγαλύτερη τιμή βρίσκεται εκεί
 		: node;									// Αλλιώς η μεγαλύτερη τιμή είναι στο ίδιο το node
@@ -83,7 +83,7 @@ SetNode node_find_max(SetNode node) {
 // ή NULL αν ο target είναι ο μικρότερος του υποδέντρου. Το υποδέντρο πρέπει να περιέχει τον κόμβο
 // target, οπότε δεν μπορεί να είναι κενό.
 
-SetNode node_find_previous(SetNode node, CompareFunc compare, SetNode target) {
+static SetNode node_find_previous(SetNode node, CompareFunc compare, SetNode target) {
 	if(node == target) {
 		// Ο target είναι η ρίζα του υποδέντρου, o προηγούμενός του είναι ο μεγαλύτερος του αριστερού υποδέντρου.
 		// (Aν δεν υπάρχει αριστερό παιδί, τότε ο κόμβος με τιμή value είναι ο μικρότερος του υποδέντρου, οπότε
@@ -106,7 +106,7 @@ SetNode node_find_previous(SetNode node, CompareFunc compare, SetNode target) {
 // ή NULL αν ο target είναι ο μεγαλύτερος του υποδέντρου. Το υποδέντρο πρέπει να περιέχει τον κόμβο
 // target, οπότε δεν μπορεί να είναι κενό.
 
-SetNode node_find_next(SetNode node, CompareFunc compare, SetNode target) {
+static SetNode node_find_next(SetNode node, CompareFunc compare, SetNode target) {
 	if(node == target) {
 		// Ο target είναι η ρίζα του υποδέντρου, o προηγούμενός του είναι ο μεγαλύτερος του αριστερού υποδέντρου.
 		// (Aν δεν υπάρχει αριστερό παιδί, τότε ο κόμβος με τιμή value είναι ο μικρότερος του υποδέντρου, οπότε
@@ -129,7 +129,7 @@ SetNode node_find_next(SetNode node, CompareFunc compare, SetNode target) {
 // νέο κόμβο με τιμή value. Επιστρέφει τη νέα ρίζα του υποδέντρου, και θέτει το *inserted σε true
 // αν έγινε προσθήκη, ή false αν έγινε ενημέρωση.
 
-SetNode node_insert(SetNode node, CompareFunc compare, Pointer value, bool* inserted, Pointer* old_value) {
+static SetNode node_insert(SetNode node, CompareFunc compare, Pointer value, bool* inserted, Pointer* old_value) {
 	// Αν το υποδέντρο είναι κενό, δημιουργούμε νέο κόμβο ο οποίος γίνεται ρίζα του υποδέντρου
 	if(node == NULL) {
 		*inserted = true;			// κάναμε προσθήκη
@@ -161,7 +161,7 @@ SetNode node_insert(SetNode node, CompareFunc compare, Pointer value, bool* inse
 // Αφαιρεί και αποθηκεύει στο min_node τον μικρότερο κόμβο του υποδέντρου με ρίζα node.
 // Επιστρέφει τη νέα ρίζα του υποδέντρου.
 
-SetNode node_remove_min(SetNode node, SetNode* min_node) {
+static SetNode node_remove_min(SetNode node, SetNode* min_node) {
 	if(node->left == NULL) {
 		// Δεν έχουμε αριστερό υποδέντρο, οπότε ο μικρότερος είναι ο ίδιος ο node
 		*min_node = node;
@@ -178,7 +178,7 @@ SetNode node_remove_min(SetNode node, SetNode* min_node) {
 // Διαγράφει το κόμβο με τιμή ισοδύναμη της value, αν υπάρχει. Επιστρέφει τη νέα ρίζα του
 // υποδέντρου, και θέτει το *removed σε true αν έγινε πραγματικά διαγραφή.
 
-SetNode node_remove(SetNode node, CompareFunc compare, Pointer value, bool* removed, Pointer* old_value) {
+static SetNode node_remove(SetNode node, CompareFunc compare, Pointer value, bool* removed, Pointer* old_value) {
 	if(node == NULL) {
 		*removed = false;		// κενό υποδέντρο, δεν υπάρχει η τιμή
 		return NULL;
@@ -229,7 +229,7 @@ SetNode node_remove(SetNode node, CompareFunc compare, Pointer value, bool* remo
 
 // Καταστρέφει όλο το υποδέντρο με ρίζα node
 
-void node_destroy(SetNode node, DestroyFunc destroy_value) {
+static void node_destroy(SetNode node, DestroyFunc destroy_value) {
 	if(node == NULL)
 		return;
 	
