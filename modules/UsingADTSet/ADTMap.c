@@ -130,3 +130,19 @@ Pointer map_node_key(Map map, MapNode node) {
 Pointer map_node_value(Map map, MapNode node) {
 	return node->value;
 }
+
+
+
+//// Dummy υλοποίηση των συναρτήσεων που αφορούν hashing, αφού η συγκεκριμένη υλοποίηση του ADTMap δε χρησιμοποιεί hashing
+
+int hash_string(const Pointer value) {
+	return 0;
+}
+int hash_int(const Pointer value) {
+	return 0;
+}
+int hash_pointer(const Pointer value) {
+	return 0;
+}
+void map_set_hash_function(Map map, HashFunc hash_func) {
+}
