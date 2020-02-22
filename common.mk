@@ -97,7 +97,7 @@ $(foreach test, $(filter %_test, $(PROGS)),	\
 all: $(PROGS) $(LIBS)
 
 # Αυτό χρειάζεται για να μπορούμε να χρησιμοποιήσουμε μεταβλητές στη λίστα των dependencies.
-# Η χρήση αυτή απαιτεί διπλό "$$" στις μεταβλητές, πχ: $$(VAR), $$@, $$*
+# Η χρήση αυτή απαιτεί διπλό "$$" στις μεταβλητές, πχ: $$(VAR), $$@
 .SECONDEXPANSION:
 
 # Για κάθε εκτελέσιμο <program>, δημιουργούμε έναν κανόνα που δηλώνει τα περιεχόμενα του
@@ -127,14 +127,14 @@ clean:
 
 # Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target run-<prog> που το εκτελεί με παραμέτρους <prog>_ARGS
 # Το run-% είναι "pattern rule", δημιουργεί έναν κανόνα για κάθε run-<foo>, θέτωντας το $* σε "foo".
-run-%: $$*
+run-%: %
 	./$* $($*_ARGS)
 
 # Το make run εκτελεί όλα τα run targets
 run: $(RUN_TARGETS)
 
 # Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target valgrind-<prog> που το εκτελεί μέσω valgrind με παραμέτρους <prog>_ARGS
-valgrind-%: $$*
+valgrind-%: %
 	valgrind --error-exitcode=1 --leak-check=full ./$* $($*_ARGS)
 
 valgrind: $(VAL_TARGETS)
@@ -149,7 +149,8 @@ lcov:
 	@echo "$$PWD/coverage/index.html"
 
 # Για κάθε εκτελέσιμο <prog> φτιάχνουμε ένα target coverage-<prog> που το εκτελεί και μετά φτιάχνει coverage report
-coverage-%: clean $$* lcov
+coverage-%: clean run-% lcov
+	@true 						# dummy εντολή, γιατί ένα pattern rule αγνοείται αν δεν υπάρχουν εντολές για το target)
 coverage: clean run lcov
 
 # Τα targets που ορίζονται από pattern rules (eg foo-%) δεν εμφανίζονται στο bash auto-complete. Τα παρακάτω κενά rules
