@@ -40,7 +40,7 @@ static void destroy_map_node(MapNode node) {
 }
 
 Map map_create(CompareFunc compare, DestroyFunc destroy_key, DestroyFunc destroy_value) {
-	assert(compare != NULL);
+	assert(compare != NULL);	// LCOV_EXCL_LINE
 
 	Map map = malloc(sizeof(*map));
 	map->set = set_create((CompareFunc)compare_map_nodes, (DestroyFunc)destroy_map_node);
@@ -99,7 +99,7 @@ Pointer map_remove(Map map, Pointer key) {
 }
 
 void map_destroy(Map map) {
-	// destroy το set, τα περιοεχόμενα θα τα κάνει free η destroy_map_node
+	// destroy το set, τα περιεχόμενα θα τα κάνει free η destroy_map_node
 	set_destroy(map->set);
 
 	// free το ίδιο το map
@@ -135,6 +135,7 @@ Pointer map_node_value(Map map, MapNode node) {
 
 //// Dummy υλοποίηση των συναρτήσεων που αφορούν hashing, αφού η συγκεκριμένη υλοποίηση του ADTMap δε χρησιμοποιεί hashing
 
+// LCOV_EXCL_START (δεν πρόκειται να κληθούν)
 int hash_string(const Pointer value) {
 	return 0;
 }
@@ -144,5 +145,7 @@ int hash_int(const Pointer value) {
 int hash_pointer(const Pointer value) {
 	return 0;
 }
+// LCOV_EXCL_STOP
+
 void map_set_hash_function(Map map, HashFunc hash_func) {
 }

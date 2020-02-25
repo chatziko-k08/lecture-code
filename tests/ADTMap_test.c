@@ -9,11 +9,188 @@
 
 #include "ADTMap.h"
 
-// TODO
 
+// Δημιουργούμε μια ειδική compare συνάρτηση
+int compare_ints(void *a, void *b) {
+	return *(int*)a - *(int*)b;
+}
+
+
+void test_create(void) {
+
+	// Δημιουργούμε μια κενή λίστα (χωρίς αυτόματο free)
+	Map map = map_create(compare_ints, NULL, NULL);
+	map_set_hash_function(map, hash_int);
+
+	// Ελέγχουμε ότι δεν απέτυχε η malloc στην λίστα, και ότι
+	// αρχικοποιείται με μέγεθος 0 (δηλαδή χωρίς κόμβους)
+	TEST_CHECK(map != NULL);
+	TEST_CHECK(map_size(map) == 0);
+
+	map_destroy(map);
+}
+
+// Επιστρέφει έναν ακέραιο σε νέα μνήμη με τιμή value
+int* create_int(int value) {
+	int* p = malloc(sizeof(int));
+	*p = value;
+	return p;
+}
+
+// Βοηθητική συνάρτηση, κάνει insert και ελέγχει αν έγινε η εισαγωγή
+void insert_and_test(Map map, Pointer key, Pointer value) {
+	map_insert(map, key, value);
+	TEST_CHECK(map_find(map, key) == value);
+}
+
+void test_insert(void) {
+
+	Map map = map_create(compare_ints, free, free);
+	map_set_hash_function(map, hash_int);
+
+	int N = 1000;
+	int* key_array[N];
+	int* value_array[N];
+
+	// Δοκιμάζουμε την insert εισάγοντας κάθε φορά νέους κόμβους
+	for(int i = 0; i < N; i++) {
+		key_array[i] = create_int(i);
+		value_array[i] = create_int(i);
+
+		// Εισαγωγή, δοκιμή και έλεγχος ότι ενημερώθηκε το size
+		insert_and_test(map, key_array[i], value_array[i]);
+
+		TEST_CHECK(map_size(map) == (i + 1));
+	}
+
+	// Προσθέτουμε ένα κλειδί που είναι __ισοδύναμο__ (όχι ίσο) με το κλειδί του πρώτου κόμβο
+	// Και ελέγχουμε αν και το key και το value έχουν ενημερωθεί
+	int* new_key = create_int(0);
+	int* new_value = create_int(99);
+
+	insert_and_test(map, new_key, new_value);
+
+	map_destroy(map);
+
+	// Δοκιμάζουμε ότι insert/replace δουλεύει σωστά και χωρίς αυτόματο free
+	Map map2 = map_create(compare_ints, NULL, NULL);
+
+	int key1 = 0, key2 = 0;
+	int value1 = 0, value2 = 0;
+
+	insert_and_test(map2, &key1, &value1);
+	insert_and_test(map2, &key1, &value2);
+	insert_and_test(map2, &key2, &value2);
+
+	map_destroy(map2);
+}
+
+
+void test_remove(void) {
+
+	Map map = map_create(compare_ints, free, free);
+	map_set_hash_function(map, hash_int);
+
+	int N = 1000;
+	int* key_array[N];
+	int* value_array[N];
+
+	for(int i = 0; i < N; i++) {
+		key_array[i] = create_int(i);
+		value_array[i] = create_int(i);
+
+		map_insert(map, key_array[i], value_array[i]);
+	}
+
+	// Δοκιμάζουμε, πριν διαγράψουμε κανονικά τους κόμβους, ότι η map_remove διαχειρίζεται 
+	// σωστά ένα κλειδί που δεν υπάρχει στο Map και γυρνάει NULL 
+	int not_exists = 2000;
+	Pointer removed_value = map_remove(map, &not_exists);
+	TEST_CHECK(removed_value == NULL);
+
+	// Διαγράφουμε όλους τους κόμβους και ελέγχουμε εάν η τιμή που μας επιστρέφει η map_remove είναι σωστή
+	for(int i = 0; i < N; i++) {
+		Pointer value = map_remove(map, key_array[i]);
+
+		TEST_CHECK(value == value_array[i]);
+	}
+
+	map_destroy(map);
+}
+
+
+void test_find() {
+
+	Map map = map_create(compare_ints, free, free);
+	map_set_hash_function(map, hash_int);
+
+	int N = 1000;
+	int* key_array[N];
+	int* value_array[N];
+
+	for(int i = 0; i < N; i++) {
+		key_array[i] = create_int(i);
+		value_array[i] = create_int(i);
+
+		map_insert(map, key_array[i], value_array[i]);
+		MapNode found = map_find_node(map, key_array[i]);
+		Pointer found_key = map_node_key(map, found);
+		Pointer found_val = map_node_value(map, found);
+
+		// Δοκιμάζουμε ότι ο κόμβος που μόλις κάναμε insert έχει το ίδιο Key και Value 
+		TEST_CHECK(found != MAP_EOF); 
+		TEST_CHECK(found_key == key_array[i]);
+		TEST_CHECK(found_val == value_array[i]);
+	}	
+
+	// Αναζήτηση στοιχείου πυο δεν υπάρχει στο map
+	int not_exists = 2000;
+	TEST_CHECK(map_find_node(map, &not_exists) == MAP_EOF);
+	TEST_CHECK(map_find(map, &not_exists) == NULL);
+
+	map_destroy(map);
+
+}
+
+void test_iterate() {
+	Map map = map_create(compare_ints, free, free);
+
+	// first σε κενό map
+	TEST_CHECK(map_first(map) == MAP_EOF);
+
+	// Προσθέτουμε Ν ακεραίους, το value κάθε ακεραίου i είναι 2*i
+	int N = 1000;
+	for(int i = 0; i < N; i++)
+		map_insert(map, create_int(i), create_int(2*i));
+
+	// Ελέγχουμε ότι διατρέχοντας το map βρίσκουμε όλους τους ακεραίους από μία φορά τον καθένα
+	// Στον πίνακα seen κρατάμε αν έχουμε ήδη δει τον κάθε αριθμό
+	bool seen[N];
+	for(int i = 0; i < N; i++)
+		seen[i] = false;
+
+	for(MapNode node = map_first(map); node != MAP_EOF; node = map_next(map, node)) {
+		int* key = map_node_key(map, node);
+		int* value = map_node_value(map, node);
+
+		TEST_CHECK(*key >= 0 && *key < N && !seen[*key]);
+		TEST_CHECK(*value == 2 * *key);
+
+		seen[*key] = true;
+	}
+
+	map_destroy(map);
+}
 
 // Λίστα με όλα τα tests προς εκτέλεση
 TEST_LIST = {
 	// { "create", test_create },
+
+	{ "create", test_create },
+	{ "insert", test_insert },
+	{ "remove", test_remove },
+	{ "find", 	test_find },
+	{ "iterate",test_iterate },
+
 	{ NULL, NULL } // τερματίζουμε τη λίστα με NULL
-};
+}; 
