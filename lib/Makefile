@@ -7,5 +7,8 @@ k08.a_OBJS =									\
 	$(MODULES)/UsingADTList/ADTQueue.o			\
 	$(MODULES)/UsingADTSet/ADTMap.o
 
+# Για machine-independent compilation
+CFLAGS = -fPIC
+
 # Ο βασικός κορμός του Makefile
 include ../common.mk
