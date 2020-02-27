@@ -107,7 +107,7 @@ all: $(PROGS) $(LIBS)
 # αλλά για να το χρησιμοποιήσουμε στη λίστα των dependencies χρειάζεται $$@ και .SECONDEXPANSION
 #
 $(PROGS): $$($$@_OBJS)
-	$(CC) $(LDFLAGS) $^ -o $@
+	$(CC)  $^ -o $@ $(LDFLAGS)
 
 # Για κάθε βιβλιοθήκη <lib>, δημιουργούμε έναν κανόνα που δηλώνει τα περιεχόμενα του
 # <lib>_OBJS ως depedencies του <lib>.

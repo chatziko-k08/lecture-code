@@ -60,7 +60,7 @@ void test_insert(void) {
 		// Εισαγωγή, δοκιμή και έλεγχος ότι ενημερώθηκε το size
 		insert_and_test(map, key_array[i], value_array[i]);
 
-		TEST_CHECK(map_size(map) == (i + 1));
+		TEST_CHECK(map_size(map) == (i + 1)); 
 	}
 
 	// Προσθέτουμε ένα κλειδί που είναι __ισοδύναμο__ (όχι ίσο) με το κλειδί του πρώτου κόμβο
@@ -74,6 +74,7 @@ void test_insert(void) {
 
 	// Δοκιμάζουμε ότι insert/replace δουλεύει σωστά και χωρίς αυτόματο free
 	Map map2 = map_create(compare_ints, NULL, NULL);
+	map_set_hash_function(map2, hash_int);
 
 	int key1 = 0, key2 = 0;
 	int value1 = 0, value2 = 0;
@@ -154,10 +155,9 @@ void test_find() {
 
 void test_iterate() {
 	Map map = map_create(compare_ints, free, free);
-
+	map_set_hash_function(map, hash_int);
 	// first σε κενό map
 	TEST_CHECK(map_first(map) == MAP_EOF);
-
 	// Προσθέτουμε Ν ακεραίους, το value κάθε ακεραίου i είναι 2*i
 	int N = 1000;
 	for(int i = 0; i < N; i++)

@@ -72,7 +72,7 @@ MapNode map_next(Map map, MapNode node);
 
 // Επιστρέφει το κλειδί του κόμβου node
 
-Pointer map_node_key(Map map, MapNode node);;
+Pointer map_node_key(Map map, MapNode node);
 
 // Επιστρέφει το περιεχόμενο του κόμβου node
 
