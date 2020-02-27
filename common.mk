@@ -44,7 +44,9 @@ LIB		:= $(MY_PATH)lib
 #   -Werror    Αντιμετωπίζει τα warnings σαν errors, σταματώντας το compilation
 #   -MDD       Δημιουργεί ένα .d αρχείο με τα dependencies, το οποίο μπορούμε να κάνουμε include στο Makefile
 #
-CFLAGS += -g -Wall -Werror -MMD -I$(INCLUDE)
+# Το override επιτρέπει την προσθήκη επιπλέον παραμέτρων από τη γραμμή εντολών: make CFLAGS=...
+#
+override CFLAGS += -g -Wall -Werror -MMD -I$(INCLUDE)
 
 # Linker options
 #   -lm        Link με τη math library
