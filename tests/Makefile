@@ -14,6 +14,10 @@ UsingLinkedList_ADTList_test_OBJS     = ADTList_test.o $(MODULES)/UsingLinkedLis
 UsingADTList_ADTStack_test_OBJS       = ADTStack_test.o $(MODULES)/UsingADTList/ADTStack.o $(MODULES)/UsingLinkedList/ADTList.o
 UsingADTList_ADTQueue_test_OBJS       = ADTQueue_test.o $(MODULES)/UsingADTList/ADTQueue.o $(MODULES)/UsingLinkedList/ADTList.o
 
+# Υλοποιήσεις μέσω BinarySearchTree
+#
+UsingBinarySearchTree_ADTSet_test_OBJS  = ADTSet_test.o $(MODULES)/UsingBinarySearchTree/ADTSet.o
+
 # Υλοποιήσεις μέσω HashTable.
 #
 UsingHashTable_ADTMap_tests_OBJS	= ADTMap_test.o $(MODULES)/UsingHashTable/ADTMap.o

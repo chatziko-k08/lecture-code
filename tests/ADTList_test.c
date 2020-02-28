@@ -178,10 +178,10 @@ void test_find_node() {
 
 // Λίστα με όλα τα tests προς εκτέλεση
 TEST_LIST = {
-	{ "create", test_create },
-	{ "insert", test_insert },
-	{ "remove", test_remove },
-	{ "find", test_find },
-	{ "find_node", test_find_node },
+	{ "list_create", test_create },
+	{ "list_insert", test_insert },
+	{ "list_remove", test_remove },
+	{ "list_find", test_find },
+	{ "list_find_node", test_find_node },
 	{ NULL, NULL } // τερματίζουμε τη λίστα με NULL
 };

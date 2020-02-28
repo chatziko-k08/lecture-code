@@ -247,7 +247,7 @@ static void node_destroy(SetNode node, DestroyFunc destroy_value) {
 //// Συναρτήσεις του ADT Set. Γενικά πολύ απλές, αφού καλούν τις αντίστοιχες node_*
 
 Set set_create(CompareFunc compare, DestroyFunc destroy_value) {
-	assert(compare != NULL);
+	assert(compare != NULL);	// LCOV_EXCL_LINE
 
 	// δημιουργούμε το stuct
 	Set set = malloc(sizeof(*set));

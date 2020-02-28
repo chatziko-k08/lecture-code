@@ -142,12 +142,12 @@ void test_destroy() {
 
 // Λίστα με όλα τα tests προς εκτέλεση
 TEST_LIST = {
-	{ "create", test_create },
-	{ "insert", test_insert },
-	{ "remove", test_remove },
-	{ "get_set_at", test_get_set_at },
-	{ "iterate", test_iterate },
-	{ "find", test_find },
-	{ "destroy", test_destroy },
+	{ "vector_create", test_create },
+	{ "vector_insert", test_insert },
+	{ "vector_remove", test_remove },
+	{ "vector_get_set_at", test_get_set_at },
+	{ "vector_iterate", test_iterate },
+	{ "vector_find", test_find },
+	{ "vector_destroy", test_destroy },
 	{ NULL, NULL } // τερματίζουμε τη λίστα με NULL
 };

@@ -144,7 +144,7 @@ void test_find() {
 		TEST_CHECK(found_val == value_array[i]);
 	}	
 
-	// Αναζήτηση στοιχείου πυο δεν υπάρχει στο map
+	// Αναζήτηση στοιχείου που δεν υπάρχει στο map
 	int not_exists = 2000;
 	TEST_CHECK(map_find_node(map, &not_exists) == MAP_EOF);
 	TEST_CHECK(map_find(map, &not_exists) == NULL);
@@ -186,11 +186,11 @@ void test_iterate() {
 TEST_LIST = {
 	// { "create", test_create },
 
-	{ "create", test_create },
-	{ "insert", test_insert },
-	{ "remove", test_remove },
-	{ "find", 	test_find },
-	{ "iterate",test_iterate },
+	{ "map_create", test_create },
+	{ "map_insert", test_insert },
+	{ "map_remove", test_remove },
+	{ "map_find", 	test_find },
+	{ "map_iterate",test_iterate },
 
 	{ NULL, NULL } // τερματίζουμε τη λίστα με NULL
 }; 
