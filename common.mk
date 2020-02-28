@@ -57,8 +57,8 @@ LDFLAGS += -lm
 # coverage*, τότε προσθέτουμε το --coverage στα compile & link flags
 #
 ifneq (,$(findstring coverage,$(MAKECMDGOALS)))
-	CFLAGS += --coverage
-	LDFLAGS += --coverage
+	override CFLAGS += --coverage
+	override LDFLAGS += --coverage
 endif
 
 # compiler
