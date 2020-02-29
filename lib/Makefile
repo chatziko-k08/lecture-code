@@ -2,7 +2,7 @@
 k08.a_OBJS =									\
 	$(MODULES)/UsingDynamicArray/ADTVector.o	\
 	$(MODULES)/UsingLinkedList/ADTList.o		\
-	$(MODULES)/UsingBinarySearchTree/ADTSet.o	\
+	$(MODULES)/UsingAVL/ADTSet.o	\
 	$(MODULES)/UsingADTList/ADTStack.o			\
 	$(MODULES)/UsingADTList/ADTQueue.o			\
 	$(MODULES)/UsingADTSet/ADTMap.o
