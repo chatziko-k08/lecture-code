@@ -213,7 +213,7 @@ MapNode search(Map map, Pointer key, int* position) {
 		}
 		// Έχουμε linear probing, άρα κάθε φορά πηγαίνουμε στο επόμενο στοιχείο του πίνακα
 		// Αν ξαναφτάσουμε στο σημείο από όπου ξεκινήσαμε, αυτό σημαίνει οτι το στοιχείο δεν υπάρχει οπότε επιστρέφουμε MAPEOF
-		it = (it + 1) * map->capacity;
+		it = (it + 1) % map->capacity;
 		if (it == *position) {
 			return MAP_EOF;
 		}
