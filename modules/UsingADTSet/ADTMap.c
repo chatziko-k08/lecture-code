@@ -148,13 +148,13 @@ Pointer map_node_value(Map map, MapNode node) {
 //// Dummy υλοποίηση των συναρτήσεων που αφορούν hashing, αφού η συγκεκριμένη υλοποίηση του ADTMap δε χρησιμοποιεί hashing
 
 // LCOV_EXCL_START (δεν πρόκειται να κληθούν)
-int hash_string(const Pointer value) {
+uint hash_string(const Pointer value) {
 	return 0;
 }
-int hash_int(const Pointer value) {
+uint hash_int(const Pointer value) {
 	return 0;
 }
-int hash_pointer(const Pointer value) {
+uint hash_pointer(const Pointer value) {
 	return 0;
 }
 // LCOV_EXCL_STOP

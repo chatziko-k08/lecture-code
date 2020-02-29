@@ -108,7 +108,7 @@ void map_insert(Map map, Pointer key, Pointer value) {
 	// Σκανάρουμε το Hash Table μέχρι να βρούμε διαθέσιμη θέση για να τοποθετήσουμε το ζευγάρι,
 	// ή μέχρι να βρούμε το κλειδί ώστε να το αντικαταστήσουμε.
 	bool already_in_map = false;
-	int pos;
+	uint pos;
 	for(pos = map->hash_function(key) % map->capacity;		// ξεκινώντας από τη θέση που κάνει hash το key
 		map->array[pos].state == OCCUPIED;					// αν φτάσουμε σε EMPTY ή DELETED σταματάμε
 		pos = (pos + 1) % map->capacity) {					// linear probing, γυρνώντας στην αρχή όταν φτάσουμε στη τέλος του πίνακα
@@ -233,7 +233,7 @@ Pointer map_node_value(Map map, MapNode node) {
 MapNode map_find_node(Map map, Pointer key) {
 	// Διασχίζουμε τον πίνακα, ξεκινώντας από τη θέση που κάνει hash το key, και για όσο δε βρίσκουμε EMPTY
 	int count = 0;
-	for(int pos = map->hash_function(key) % map->capacity;		// ξεκινώντας από τη θέση που κάνει hash το key
+	for(uint pos = map->hash_function(key) % map->capacity;		// ξεκινώντας από τη θέση που κάνει hash το key
 		map->array[pos].state != EMPTY;							// αν φτάσουμε σε EMPTY σταματάμε
 		pos = (pos + 1) % map->capacity) {						// linear probing, γυρνώντας στην αρχή όταν φτάσουμε στη τέλος του πίνακα
 
@@ -255,6 +255,17 @@ void map_set_hash_function(Map map, HashFunc func) {
 	map->hash_function = func;
 }
 
-int hash_int(const Pointer value) {
+uint hash_string(Pointer value) {
+    uint hash = 5381;
+    for (char* s = value; *s != '\0'; s++)
+		hash = (hash << 5) + hash + *s;			// hash = (hash * 33) + *s. Το foo << 5 είναι γρηγορότερη εκδοχή του foo * 32.
+    return hash;
+}
+
+uint hash_int(const Pointer value) {
 	return *(int*)value;
+}
+
+uint hash_pointer(const Pointer value) {
+	return (size_t)value;				// cast σε sizt_t, που έχει το ίδιο μήκος με έναν pointer
 }

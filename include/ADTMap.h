@@ -94,13 +94,13 @@ MapNode map_find_node(Map map, Pointer key);
 
 // Τύπος συνάρτησης κατακερματισμού
 
-typedef int (*HashFunc)(const Pointer);
+typedef uint (*HashFunc)(const Pointer);
 
 // Υλοποιημένες συναρτήσεις κατακερματισμού για συχνούς τύπους δεδομένων
 
-int hash_string(const Pointer value);		// Χρήση όταν το key είναι char*
-int hash_int(const Pointer value);			// Χρήση όταν το key είναι int*
-int hash_pointer(const Pointer value);		// Χρήση όταν το key είναι pointer που θεωρείται διαφορετικός από οποιονδήποτε άλλο pointer
+uint hash_string(const Pointer value);		// Χρήση όταν το key είναι char*
+uint hash_int(const Pointer value);			// Χρήση όταν το key είναι int*
+uint hash_pointer(const Pointer value);		// Χρήση όταν το key είναι pointer που θεωρείται διαφορετικός από οποιονδήποτε άλλο pointer
 
 // Ορίζει τη συνάρτηση κατακερματισμού hash για το συγκεκριμένο map
 // Πρέπει να κληθεί μετά την map_create και πριν από οποιαδήποτε άλλη συνάρτηση.
