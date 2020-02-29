@@ -1,30 +1,38 @@
 # Κάνοντας compile το <foo>_test.c με μια υλοποίηση <foo>.c του
 # συγκεκριμένου τύπου, παράγουμε ένα tets για την υλοποίηση αυτή.
 
-# Υλοποιήσεις μέσω dynamic array
+# Υλοποιήσεις μέσω dynamic array: ADTVector
 #
 UsingDynamicArray_ADTVector_test_OBJS = ADTVector_test.o $(MODULES)/UsingDynamicArray/ADTVector.o
 
-# Υλοποιήσεις μέσω συνδεδεμένης λίστας
+# Υλοποιήσεις μέσω συνδεδεμένης λίστας: ADTList
 #
 UsingLinkedList_ADTList_test_OBJS     = ADTList_test.o $(MODULES)/UsingLinkedList/ADTList.o
 
-# Υλοποιήσεις μέσω ADTList. Χρειάζονται πέρα από το .o της υλοποίησης (πχ ADTStack.o) και μια υλοποίηση του ADTList!
+# Υλοποιήσεις μέσω ADTList: ADTStack, ADTQueue
+# Πέρα από το .o της κάθε υλοποίησης (πχ ADTStack.o), χρειάζεται και μια υλοποίηση του ίδιου του ADTList!
 #
 UsingADTList_ADTStack_test_OBJS       = ADTStack_test.o $(MODULES)/UsingADTList/ADTStack.o $(MODULES)/UsingLinkedList/ADTList.o
 UsingADTList_ADTQueue_test_OBJS       = ADTQueue_test.o $(MODULES)/UsingADTList/ADTQueue.o $(MODULES)/UsingLinkedList/ADTList.o
 
-# Υλοποιήσεις μέσω BinarySearchTree
+# Υλοποιήσεις μέσω BinarySearchTree: ADTSet
 #
 UsingBinarySearchTree_ADTSet_test_OBJS  = ADTSet_test.o $(MODULES)/UsingBinarySearchTree/ADTSet.o
 
-# Υλοποιήσεις μέσω HashTable.
+# Υλοποιήσεις μέσω AVL Tree: ADTSet
+#
+UsingAVL_ADTSet_test_OBJS  = ADTSet_test.o $(MODULES)/UsingAVL/ADTSet.o
+
+# Υλοποιήσεις μέσω HashTable: ADTMap
 #
 UsingHashTable_ADTMap_tests_OBJS	= ADTMap_test.o $(MODULES)/UsingHashTable/ADTMap.o
 
-# Υλοποιήσεις μέσω ADTSet. Χρειάζονται πέρα από το .o της υλοποίησης (πχ ADTMap.o) και μια υλοποίηση του ADTSet!
+# Υλοποιήσεις μέσω ADTSet: ADTMap
+# Πέρα από το .o της κάθε υλοποίησης (πχ ADTMap.o), χρειάζεται και μια υλοποίηση του ίδιου του ADTSet.
+# Οπότε μπορούμενα φτιάξουμε πολλαπλά tests, για διαφορετικές υλοποιήσεις του ADTSet, ώστε να τις τεστάρουμε όλες.
 #
-UsingADTSet_ADTMap_test_OBJS          = ADTMap_test.o   $(MODULES)/UsingADTSet/ADTMap.o    $(MODULES)/UsingBinarySearchTree/ADTSet.o
+UsingADTSet_ADTMap_test1_OBJS          = ADTMap_test.o   $(MODULES)/UsingADTSet/ADTMap.o    $(MODULES)/UsingBinarySearchTree/ADTSet.o
+UsingADTSet_ADTMap_test2_OBJS          = ADTMap_test.o   $(MODULES)/UsingADTSet/ADTMap.o    $(MODULES)/UsingAVL/ADTSet.o
 
 # Ο βασικός κορμός του Makefile
 include ../common.mk
