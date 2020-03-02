@@ -4,7 +4,7 @@
 // Οποιαδήποτε υλοποίηση οφείλει να περνάει όλα τα tests.
 //
 //////////////////////////////////////////////////////////////////
-
+#include <stdlib.h>
 #include "acutest.h"			// Απλή βιβλιοθήκη για unit testing
 
 #include "ADTMap.h"
@@ -43,6 +43,19 @@ void insert_and_test(Map map, Pointer key, Pointer value) {
 	TEST_CHECK(map_find(map, key) == value);
 }
 
+// Βοηθητική συνάρτηση για το ανακάτεμα του πίνακα τιμών
+void shuffle(int* array[], int n) {
+	if (n < 1)
+		return;
+
+	for (int i = 0; i < n; i++) {
+		int j = i + rand() / (RAND_MAX / (n - i) + 1);
+		int* t = array[j];
+		array[j] = array[i];
+		array[i] = t;
+	}
+}
+
 void test_insert(void) {
 
 	Map map = map_create(compare_ints, free, free);
@@ -52,9 +65,15 @@ void test_insert(void) {
 	int* key_array[N];
 	int* value_array[N];
 
+	for (int i = 0; i < N; i++) {
+		key_array[i] = create_int(i);
+	}
+
+	// Ανακατεύουμε το key_array ώστε να υπάρχει ομοιόμορφη εισαγωγή τιμών
+	shuffle(key_array, N);
+
 	// Δοκιμάζουμε την insert εισάγοντας κάθε φορά νέους κόμβους
 	for(int i = 0; i < N; i++) {
-		key_array[i] = create_int(i);
 		value_array[i] = create_int(i);
 
 		// Εισαγωγή, δοκιμή και έλεγχος ότι ενημερώθηκε το size
@@ -65,7 +84,7 @@ void test_insert(void) {
 
 	// Προσθέτουμε ένα κλειδί που είναι __ισοδύναμο__ (όχι ίσο) με το κλειδί του πρώτου κόμβο
 	// Και ελέγχουμε αν και το key και το value έχουν ενημερωθεί
-	int* new_key = create_int(0);
+	int* new_key = create_int(*key_array[0]);
 	int* new_value = create_int(99);
 
 	insert_and_test(map, new_key, new_value);
@@ -101,6 +120,9 @@ void test_remove(void) {
 		value_array[i] = create_int(i);
 
 		map_insert(map, key_array[i], value_array[i]);
+		// Ανά τακτά χρονικά διαστήματα διαγράφουμε κάποιο κλειδί που μόλις βάλαμε
+		if (i % (N / 20) == 0) 
+			map_remove(map, key_array[i]);
 	}
 
 	// Δοκιμάζουμε, πριν διαγράψουμε κανονικά τους κόμβους, ότι η map_remove διαχειρίζεται 
@@ -111,11 +133,16 @@ void test_remove(void) {
 
 	// Διαγράφουμε όλους τους κόμβους και ελέγχουμε εάν η τιμή που μας επιστρέφει η map_remove είναι σωστή
 	for(int i = 0; i < N; i++) {
-		Pointer value = map_remove(map, key_array[i]);
-
-		TEST_CHECK(value == value_array[i]);
+		// (Αν δεν το έχουμε διαγράψει ήδη)
+		if (i % (N / 20) != 0) {
+			Pointer value = map_remove(map, key_array[i]);
+			TEST_CHECK(value == value_array[i]);
+		}
 	}
-
+	// Ελέγχουμε την συμπεριφορά της remove σε κάτι που έχει ήδη διαγραφεί.
+	int key1 = 100;
+	Pointer deleted =  map_remove(map, &key1);
+	TEST_CHECK(deleted == NULL); 
 	map_destroy(map);
 }
 

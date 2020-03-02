@@ -61,7 +61,7 @@ int find_next_capacity(int cap) {
 		if (prime_sizes[i] > cap)
 			return prime_sizes[i]; 
 	}
-	return 2 * cap;
+	return 2 * cap; //LCOV_EXCL_LINE, καθώς στα test που θα κάνουμε δεν θα χρησιμοποιήσουμε τόσο μεγάλα hash table.
 }
 
 // Επιστρέφει τον αριθμό των entries του map σε μία χρονική στιγμή.
