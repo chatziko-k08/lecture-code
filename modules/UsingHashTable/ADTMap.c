@@ -262,10 +262,10 @@ uint hash_string(Pointer value) {
     return hash;
 }
 
-uint hash_int(const Pointer value) {
+uint hash_int(Pointer value) {
 	return *(int*)value;
 }
 
-uint hash_pointer(const Pointer value) {
+uint hash_pointer(Pointer value) {
 	return (size_t)value;				// cast σε sizt_t, που έχει το ίδιο μήκος με έναν pointer
 }
