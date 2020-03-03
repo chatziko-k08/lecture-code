@@ -26,134 +26,11 @@ struct set_node {
 };
 
 
-// Οι παρακάτω συναρτήσεις είναι βοηθητικές για την υλοποίηση των rotation σε ένα AVL δέντρο
 
-// Επιστρέφει τη max τιμή μεταξύ 2 ακεραίων
-
-static int max(int a, int b) {
-	return (a > b) ? a : b ;
-}
-
-// Επιστρέφει το ύψος που βρίσκεται ο κόμβος στο δέντρο
-
-static int get_height(SetNode node) {
-	if (!node) return 0;
-	return node->height;
-}
-
-// Επιστρέφει τη διαφορά ύψους μεταξύ αριστερού και δεξιού υπόδεντρου
-
-static int get_balance(SetNode node) {
-	assert(node != NULL);	// LCOV_EXCL_LINE
-	return get_height(node->left) - get_height(node->right);
-}
-
-// Rotations : Όταν η διαφορά ύψους μεταξύ αριστερού και δεξιού υπόδεντρου
-// είναι μεγαλύτερη του 1, θεωρούμε πως το δέντρο μας έχει "χάσει" την ισορροπία του
-// οπότε εφαρμόζουμε το κατάλληλο rotation ανάλογα την περίπτωση.
-
-// Περίπτωση 1: Left Left Case
-// To δέντρο μας έγινε unbalanced έπειτα από την εισαγωγή ενός κόμβου 
-// στο αριστερό υπόδεντρο του αριστερού υπόδεντρου.
-
-static SetNode right_rotation(SetNode node) {
-	SetNode left_node = node->left;
-	SetNode right_subtree = left_node->right;
-
-	left_node->right = node;
-	node->left = right_subtree;
-
-	node->height = max(get_height(node->left),get_height(node->right)) +1;
-	left_node->height = max(get_height(left_node->left),get_height(left_node->right)) +1;
-	
-	return left_node;
-}
-
-// Περίπτωση 2: Right Right Case
-// To δέντρο μας έγινε unbalanced έπειτα από την εισαγωγή ενός κόμβου 
-// στο δεξί υπόδεντρο του δεξιού υπόδεντρου.
-
-static SetNode left_rotation(SetNode node) {
-	SetNode right_node = node->right;
-	SetNode left_subtree = right_node->left;
-
-	right_node->left = node;
-	node->right = left_subtree;
-
-	node->height = max(get_height(node->left),get_height(node->right)) +1;
-	right_node->height = max(get_height(right_node->left),get_height(right_node->right)) +1;
-	
-	return right_node;
-}
-
-// Περίπτωση 3: Right Left Case
-// To δέντρο μας έγινε unbalanced έπειτα από την εισαγωγή ενός κόμβου 
-// στο δεξί υπόδεντρο του αριστερού υπόδεντρου.
-
-static SetNode left_right_rotation(SetNode node) {
-	node->left = left_rotation(node->left);
-	return right_rotation(node);
-}
-
-// Περίπτωση 4: Left Right Case
-// To δέντρο μας έγινε unbalanced έπειτα από την εισαγωγή ενός κόμβου 
-// στο αριστερό υπόδεντρο του δεξιού υπόδεντρου.
-
-static SetNode right_left_rotation(SetNode node) {
-	node->right = right_rotation(node->right);
-	return left_rotation(node);
-}
-
-// Εξετάζουμε αν το υπόδεντρο είναι unbalanced και ανάλογα
-// την περίπτωση εφαρμόζουμε το κατάλληλο rotation
-
-static SetNode balance_after_insertion(SetNode node, Pointer key, int balance, CompareFunc compare) {
-	if (balance > 1) {
-		// το αριστερό υπόδεντρο είναι unbalanced
-		if (compare(key, node->left->value) < 0)	// key  <  node->left->value
-			return right_rotation(node);
-		else 
-			return left_right_rotation(node);
-
-	} else if (balance < -1) {
-		// το δεξί υπόδεντρο είναι unbalanced
-		if (compare(key, node->right->value) > 0)	// key  >  node->right->value
-			return left_rotation(node);
-		else
-			return right_left_rotation(node);
-	}
-
-	// δεν χρειάστηκε να πραγματοποιηθεί rotation
-	return node;
-}
-
-static SetNode balance_after_deletion(SetNode node, int balance) {
-	if (balance > 1) {
-		// το αριστερό υπόδεντρο είναι unbalanced
-		if (get_balance(node->left) >= 0) 
-			return right_rotation(node);
-		else 
-			return left_right_rotation(node);
-
-	} else if (balance < -1) {
-		// το δεξί υπόδεντρο είναι unbalanced
-		if (get_balance(node->right) <= 0)
-			return left_rotation(node);
-		else
-			return right_left_rotation(node);
-	}
-
-	// δεν χρειάστηκε να πραγματοποιηθεί rotation
-	return node;
-}
-
-// Παρατηρήσεις για τις node_* συναρτήσεις
-// - είναι βοηθητικές (κρυφές από το χρήστη) και υλοποιούν διάφορες λειτουργίες πάνω σε κόμβους του BST.
-// - είναι αναδρομικές, η αναδρομή είναι γενικά πολύ βοηθητική στα δέντρα.
-// - όσες συναρτήσεις _τροποποιούν_ το δέντρο, ουσιαστικά ενεργούν στο _υποδέντρο_ με ρίζα τον κόμβο node, και επιστρέφουν τη νέα
-//   ρίζα του υποδέντρου μετά την τροποποίηση. Η νέα ρίζα χρησιμοποιείται από την προηγούμενη αναδρομική κλήση.
+//// Συναρτήσεις που είναι _ολόιδιες_ με τις αντίστοιχες της BST υλοποίησης ////////////////
 //
-// Οι set_* συναρτήσεις (πιο μετά στο αρχείο), υλοποιούν τις συναρτήσεις του ADT Set, και είναι απλές, καλώντας τις αντίστοιχες node_*.
+// Είναι σημαντικό να κατανοήσουμε πρώτα τον κώδικα του BST πριν από αυτόν του AVL.
+// Θα μπορούσαμε οργανώνοντας τον κώδικα διαφορετικά να επαναχρησιμοποιήσουμε τις συναρτήσεις αυτές.
 
 // Δημιουργεί και επιστρέφει έναν κόμβο με τιμή value (χωρίς παιδιά)
 //
@@ -164,47 +41,6 @@ static SetNode node_create(Pointer value) {
 	node->value = value;
 	node->height = 1;
 	return node;
-}
-
-// Αν υπάρχει κόμβος με τιμή ισοδύναμη της value, αλλάζει την τιμή του σε value, διαφορετικά προσθέτει
-// νέο κόμβο με τιμή value. Επιστρέφει τη νέα ρίζα του υποδέντρου, και θέτει το *inserted σε true
-// αν έγινε προσθήκη, ή false αν έγινε ενημέρωση.
-
-static SetNode node_insert(SetNode node, CompareFunc compare, Pointer value, bool* inserted, Pointer* old_value) {
-	// Αν το υποδέντρο είναι κενό, δημιουργούμε νέο κόμβο ο οποίος γίνεται ρίζα του υποδέντρου
-	if (node == NULL) {
-		*inserted = true;			// κάναμε προσθήκη
-		return node_create(value);
-	}
-
-	// Το που θα γίνει η προσθήκη εξαρτάται από τη διάταξη της τιμής
-	// value σε σχέση με την τιμή του τρέχοντος κόμβου (node->value)
-	//
-	int compare_res = compare(value, node->value);
-	if (compare_res == 0) {
-		// βρήκαμε ισοδύναμη τιμή, κάνουμε update
-		*inserted = false;
-		*old_value = node->value;
-		node->value = value;
-
-	} else if (compare_res < 0) {
-		// value < node->value, συνεχίζουμε αριστερά.
-		node->left = node_insert(node->left, compare, value, inserted, old_value);
-
-	} else {
-		// value > node->value, συνεχίζουμε δεξιά
-		node->right = node_insert(node->right, compare, value, inserted, old_value);
-	}
-
-	// Ενημερώνουμε το ύψος του τρέχοντα κόμβου
-	int rsubtree_height = get_height(node->right);
-	int lsubtree_height = get_height(node->left);
-	node->height = 1 + max(rsubtree_height, lsubtree_height);
-	int balance = lsubtree_height - rsubtree_height;
-	
-	// Kάνουμε balance το δέντρο αν χρειάζεται, διαφορετικά 
-	// ο κόμβος node επιστρέφεται χωρίς καμία αλλαγή
-	return balance_after_insertion(node, value, balance, compare);
 }
 
 // Επιστρέφει τον κόμβο με τιμή ίση με value στο υποδέντρο με ρίζα node, διαφορετικά NULL
@@ -288,6 +124,39 @@ static SetNode node_find_next(SetNode node, CompareFunc compare, SetNode target)
 	}
 }
 
+// Αν υπάρχει κόμβος με τιμή ισοδύναμη της value, αλλάζει την τιμή του σε value, διαφορετικά προσθέτει
+// νέο κόμβο με τιμή value. Επιστρέφει τη νέα ρίζα του υποδέντρου, και θέτει το *inserted σε true
+// αν έγινε προσθήκη, ή false αν έγινε ενημέρωση.
+
+static SetNode node_insert(SetNode node, CompareFunc compare, Pointer value, bool* inserted, Pointer* old_value) {
+	// Αν το υποδέντρο είναι κενό, δημιουργούμε νέο κόμβο ο οποίος γίνεται ρίζα του υποδέντρου
+	if (node == NULL) {
+		*inserted = true;			// κάναμε προσθήκη
+		return node_create(value);
+	}
+
+	// Το πού θα γίνει η προσθήκη εξαρτάται από τη διάταξη της τιμής
+	// value σε σχέση με την τιμή του τρέχοντος κόμβου (node->value)
+	//
+	int compare_res = compare(value, node->value);
+	if (compare_res == 0) {
+		// βρήκαμε ισοδύναμη τιμή, κάνουμε update
+		*inserted = false;
+		*old_value = node->value;
+		node->value = value;
+
+	} else if (compare_res < 0) {
+		// value < node->value, συνεχίζουμε αριστερά.
+		node->left = node_insert(node->left, compare, value, inserted, old_value);
+
+	} else {
+		// value > node->value, συνεχίζουμε δεξιά
+		node->right = node_insert(node->right, compare, value, inserted, old_value);
+	}
+
+	return node;	// η ρίζα του υποδέντρου δεν αλλάζει
+}
+
 // Αφαιρεί και αποθηκεύει στο min_node τον μικρότερο κόμβο του υποδέντρου με ρίζα node.
 // Επιστρέφει τη νέα ρίζα του υποδέντρου.
 
@@ -304,6 +173,9 @@ static SetNode node_remove_min(SetNode node, SetNode* min_node) {
 		return node;			// η ρίζα δεν μεταβάλλεται
 	}
 }
+
+// Διαγράφει το κόμβο με τιμή ισοδύναμη της value, αν υπάρχει. Επιστρέφει τη νέα ρίζα του
+// υποδέντρου, και θέτει το *removed σε true αν έγινε πραγματικά διαγραφή.
 
 static SetNode node_remove(SetNode node, CompareFunc compare, Pointer value, bool* removed, Pointer* old_value) {
 	if (node == NULL) {
@@ -351,13 +223,7 @@ static SetNode node_remove(SetNode node, CompareFunc compare, Pointer value, boo
 	else
 		node->right = node_remove(node->right, compare, value, removed, old_value);
 
-	// Ενημερώνουμε το ύψος του τρέχοντα κόμβου
-	int rsubtree_height = get_height(node->right);
-	int lsubtree_height = get_height(node->left);
-	node->height = 1 + max(rsubtree_height, lsubtree_height);
-	int balance = lsubtree_height - rsubtree_height;
-
-	return balance_after_deletion(node, balance);
+	return node;
 }
 
 // Καταστρέφει όλο το υποδέντρο με ρίζα node
@@ -377,6 +243,144 @@ static void node_destroy(SetNode node, DestroyFunc destroy_value) {
 }
 
 
+//// Επιπλεόν συναρτήσεις για τις λειτουργίες του AVL /////////////////////////////////////
+
+// Επιστρέφει τη max τιμή μεταξύ 2 ακεραίων
+
+static int int_max(int a, int b) {
+	return (a > b) ? a : b ;
+}
+
+// Επιστρέφει το ύψος που βρίσκεται ο κόμβος στο δέντρο
+
+static int node_height(SetNode node) {
+	if (!node) return 0;
+	return node->height;
+}
+
+// Επιστρέφει τη διαφορά ύψους μεταξύ αριστερού και δεξιού υπόδεντρου
+
+static int node_balance(SetNode node) {
+	assert(node != NULL);	// LCOV_EXCL_LINE
+	return node_height(node->left) - node_height(node->right);
+}
+
+// Rotations : Όταν η διαφορά ύψους μεταξύ αριστερού και δεξιού υπόδεντρου είναι
+// μεγαλύτερη του 1 το δέντρο δεν είναι πια AVL. Υπάρχουν 4 διαφορετικά
+// rotations που εφαρμόζονται ανάλογα με την περίπτωση για να αποκατασταθεί η
+// ισορροπία. Η κάθε συνάρτηση παίρνει ως όρισμα τον κόμβο που πρέπει να γίνει
+// rotate, και επιστρέφει τη ρίζα του νέου υποδέντρου.
+
+// Single left rotation
+
+static SetNode node_rotate_left(SetNode node) {
+	SetNode right_node = node->right;
+	SetNode left_subtree = right_node->left;
+
+	right_node->left = node;
+	node->right = left_subtree;
+
+	node->height = int_max(node_height(node->left), node_height(node->right)) + 1;
+	right_node->height = int_max(node_height(right_node->left), node_height(right_node->right)) + 1;
+	
+	return right_node;
+}
+
+// Single right rotation
+
+static SetNode node_rotate_right(SetNode node) {
+	SetNode left_node = node->left;
+	SetNode left_right = left_node->right;
+
+	left_node->right = node;
+	node->left = left_right;
+
+	node->height = int_max(node_height(node->left), node_height(node->right)) +1;
+	left_node->height = int_max(node_height(left_node->left), node_height(left_node->right)) +1;
+	
+	return left_node;
+}
+
+// Double left-right rotation
+
+static SetNode node_rotate_left_right(SetNode node) {
+	node->left = node_rotate_left(node->left);
+	return node_rotate_right(node);
+}
+
+// Double right-left rotation
+
+static SetNode node_rotate_right_left(SetNode node) {
+	node->right = node_rotate_right(node->right);
+	return node_rotate_left(node);
+}
+
+// Καλεί τη node_insert (κλασσικό BST insert), και στη συνέχεια κάνει balance το
+// νέο υποδέντρο εκτελώντας το κατάλληλο rotate.
+
+static SetNode node_insert_and_balance(SetNode node, CompareFunc compare, Pointer value, bool* inserted, Pointer* old_value) {
+	// Το "κλασσικό" insert
+	node = node_insert(node, compare, value, inserted, old_value);
+	if(node == NULL)
+		return node;
+
+	// Ενημερώνουμε το ύψος του κόμβου
+	node->height = 1 + int_max(node_height(node->left), node_height(node->right));
+
+	// Αν έχουμε imbalance, πραγματοποιούμε το κατάλληλο rotation (ανάλογα με το είδος)
+	int balance = node_balance(node);
+	if (balance > 1) {
+		// το αριστερό υπόδεντρο είναι unbalanced
+		if (compare(value, node->left->value) < 0)	// key  <  node->left->value
+			return node_rotate_right(node);
+		else 
+			return node_rotate_left_right(node);
+
+	} else if (balance < -1) {
+		// το δεξί υπόδεντρο είναι unbalanced
+		if (compare(value, node->right->value) > 0)	// key  >  node->right->value
+			return node_rotate_left(node);
+		else
+			return node_rotate_right_left(node);
+	}
+
+	// δεν χρειάστηκε να πραγματοποιηθεί rotation
+	return node;
+}
+
+// Καλεί τη node_remove (κλασσικό BST remove), και στη συνέχεια κάνει balance το
+// νέο υποδέντρο εκτελώντας το κατάλληλο rotate.
+
+static SetNode node_remove_and_balance(SetNode node, CompareFunc compare, Pointer value, bool* removed, Pointer* old_value) {
+	// Το "κλασσικό" remove
+	node = node_remove(node, compare, value, removed, old_value);
+	if(node == NULL)
+		return node;
+
+	// Ενημερώνουμε το ύψος του κόμβου
+	node->height = 1 + int_max(node_height(node->left), node_height(node->right));
+
+	// Αν έχουμε imbalance, πραγματοποιούμε το κατάλληλο rotation (ανάλογα με το είδος)
+	int balance = node_balance(node);
+	if (balance > 1) {
+		// το αριστερό υπόδεντρο είναι unbalanced
+		if (node_balance(node->left) >= 0) 
+			return node_rotate_right(node);
+		else 
+			return node_rotate_left_right(node);
+
+	} else if (balance < -1) {
+		// το δεξί υπόδεντρο είναι unbalanced
+		if (node_balance(node->right) <= 0)
+			return node_rotate_left(node);
+		else
+			return node_rotate_right_left(node);
+	}
+
+	// δεν χρειάστηκε να πραγματοποιηθεί rotation
+	return node;
+}
+
 
 //// Συναρτήσεις του ADT Set. Γενικά πολύ απλές, αφού καλούν τις αντίστοιχες node_* //////////////////////////////////
 
@@ -389,6 +393,7 @@ Set set_create(CompareFunc compare, DestroyFunc destroy_value) {
 	set->size = 0;
 	set->compare = compare;
 	set->destroy_value = destroy_value;
+
 	return set;
 }
 
@@ -399,7 +404,7 @@ int set_size(Set set) {
 void set_insert(Set set, Pointer value) {
 	bool inserted;
 	Pointer old_value;
-	set->root = node_insert(set->root, set->compare, value, &inserted, &old_value);
+	set->root = node_insert_and_balance(set->root, set->compare, value, &inserted, &old_value);
 	
 	// Το size αλλάζει μόνο αν μπει νέος κόμβος. Στα updates κάνουμε destroy την παλιά τιμή
 	if (inserted)
@@ -411,7 +416,7 @@ void set_insert(Set set, Pointer value) {
 Pointer set_remove(Set set, Pointer value) {
 	bool removed;
 	Pointer old_value = NULL;
-	set->root = node_remove(set->root, set->compare, value, &removed, &old_value);
+	set->root = node_remove_and_balance(set->root, set->compare, value, &removed, &old_value);
 
 	// Το size αλλάζει μόνο αν πραγματικά αφαιρεθεί ένας κόμβος
 	if (removed) {
@@ -420,6 +425,7 @@ Pointer set_remove(Set set, Pointer value) {
 		if (set->destroy_value != NULL)
 			set->destroy_value(old_value);
 	}
+
 	return old_value;
 }
 
