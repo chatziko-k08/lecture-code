@@ -15,6 +15,11 @@ UsingLinkedList_ADTList_test_OBJS     = ADTList_test.o $(MODULES)/UsingLinkedLis
 UsingADTList_ADTStack_test_OBJS       = ADTStack_test.o $(MODULES)/UsingADTList/ADTStack.o $(MODULES)/UsingLinkedList/ADTList.o
 UsingADTList_ADTQueue_test_OBJS       = ADTQueue_test.o $(MODULES)/UsingADTList/ADTQueue.o $(MODULES)/UsingLinkedList/ADTList.o
 
+# Υλοποιήσεις μέσω Heap: ADTPriorityQueue
+# Το Heap χρησιμοποιεί Vector, οπότε χρειαζόμαστε και μια υλοποίηση του ADTVector.
+#
+UsingHeap_ADTPriorityQueue_test_OBJS  = ADTPriorityQueue_test.o $(MODULES)/UsingHeap/ADTPriorityQueue.o $(MODULES)/UsingDynamicArray/ADTVector.o
+
 # Υλοποιήσεις μέσω BinarySearchTree: ADTSet
 #
 UsingBinarySearchTree_ADTSet_test_OBJS  = ADTSet_test.o $(MODULES)/UsingBinarySearchTree/ADTSet.o

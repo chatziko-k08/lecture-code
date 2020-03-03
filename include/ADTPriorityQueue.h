@@ -21,25 +21,30 @@ typedef struct priority_queue* PriorityQueue;
 // στοιχεία συγκρίνονται με βάση τη συνάρτηση compare.
 // Αν destroy_value != NULL, τότε καλείται destroy_value(value) κάθε φορά που αφαιρείται ένα στοιχείο.
 
-PriorityQueue priority_queue_create(CompareFunc compare, DestroyFunc destroy_value);
+PriorityQueue pqueue_create(CompareFunc compare, DestroyFunc destroy_value);
 
 // Επιστρέψει τον αριθμό στοιχείων που περιέχει η ουρά pqueue
 
-int priority_queue_size(PriorityQueue pqueue);
+int pqueue_size(PriorityQueue pqueue);
 
-// Επιστρέφει το μεγαλύτερο στοιχείο της ουράς (μη ορισμένο αποτέλεσμα αν η ουρά είναι κενή)
+// Επιστρέφει το μεγαλύτερο στοιχείο της ουράς (ή NULL αν η ουρά είναι κενή)
 
-Pointer priority_queue_top(PriorityQueue pqueue);
+Pointer pqueue_top(PriorityQueue pqueue);
 
 // Προσθέτει την τιμή value στην ουρά pqueue.
 
-void priority_queue_insert(PriorityQueue pqueue, Pointer value);
+void pqueue_insert(PriorityQueue pqueue, Pointer value);
 
 // Αφαιρεί και επιστρέφει  την μεγαλύτερη τιμή της ουράς (μη ορισμένο αποτέλεσμα αν η ουρά είναι κενή)
 
-Pointer priority_queue_remove(PriorityQueue pqueue);
+Pointer pqueue_remove(PriorityQueue pqueue);
+
+// Αλλάζει τη συνάρτηση που καλείται σε κάθε αφαίρεση/αντικατάσταση στοιχείου σε
+// destroy_value. Επιστρέφει την προηγούμενη τιμή της συνάρτησης.
+
+DestroyFunc pqueue_set_destroy_value(PriorityQueue pqueue, DestroyFunc destroy_value);
 
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει η ουρά pqueue.
 // Οποιαδήποτε λειτουργία πάνω στη ουρά μετά το destroy είναι μη ορισμένη.
 
-void priority_queue_destroy(PriorityQueue pqueue);
+void pqueue_destroy(PriorityQueue pqueue);
