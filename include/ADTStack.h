@@ -42,6 +42,11 @@ void stack_insert(Stack stack, Pointer value);
 
 Pointer stack_remove(Stack stack);
 
+// Αλλάζει τη συνάρτηση που καλείται σε κάθε αφαίρεση/αντικατάσταση στοιχείου σε
+// destroy_value. Επιστρέφει την προηγούμενη τιμή της συνάρτησης.
+
+DestroyFunc stack_set_destroy_value(Stack stack, DestroyFunc destroy_value);
+
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει η στοιβα stack.
 // Οποιαδήποτε λειτουργία πάνω στη στοίβα μετά το destroy είναι μη ορισμένη.
 

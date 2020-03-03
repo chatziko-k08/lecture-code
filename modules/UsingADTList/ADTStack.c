@@ -57,6 +57,11 @@ Pointer stack_remove(Stack stack) {
 	return result;
 }
 
+DestroyFunc stack_set_destroy_value(Stack stack, DestroyFunc destroy_value) {
+	List list = (List)stack;
+	return list_set_destroy_value(list, destroy_value);
+}
+
 void stack_destroy(Stack stack) {
 	List list = (List)stack;
 	list_destroy(list);

@@ -49,6 +49,11 @@ Pointer list_remove(List list, ListNode node);
 
 Pointer list_find(List list, Pointer value, CompareFunc compare);
 
+// Αλλάζει τη συνάρτηση που καλείται σε κάθε αφαίρεση/αντικατάσταση στοιχείου σε
+// destroy_value. Επιστρέφει την προηγούμενη τιμή της συνάρτησης.
+
+DestroyFunc list_set_destroy_value(List list, DestroyFunc destroy_value);
+
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει η λίστα list.
 // Οποιαδήποτε λειτουργία πάνω στη λίστα μετά το destroy είναι μη ορισμένη.
 

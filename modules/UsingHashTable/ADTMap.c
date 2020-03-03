@@ -256,6 +256,18 @@ Pointer map_remove(Map map, Pointer key) {
 	return node->value;
 }
 
+DestroyFunc map_set_destroy_key(Map map, DestroyFunc destroy_key) {
+	DestroyFunc old = map->destroy_key;
+	map->destroy_key = destroy_key;
+	return old;
+}
+
+DestroyFunc map_set_destroy_value(Map map, DestroyFunc destroy_value) {
+	DestroyFunc old = map->destroy_value;
+	map->destroy_value = destroy_value;
+	return old;
+}
+
 // Απελευθέρωση μνήμης που δεσμεύει το map
 void map_destroy(Map map) {
 	for (int i = 0; i < map->capacity; i++) {

@@ -42,6 +42,11 @@ void queue_insert(Queue queue, Pointer value);
 
 Pointer queue_remove(Queue queue);
 
+// Αλλάζει τη συνάρτηση που καλείται σε κάθε αφαίρεση/αντικατάσταση στοιχείου σε
+// destroy_value. Επιστρέφει την προηγούμενη τιμή της συνάρτησης.
+
+DestroyFunc queue_set_destroy_value(Queue queue, DestroyFunc destroy_value);
+
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει η ουρά queue.
 // Οποιαδήποτε λειτουργία πάνω στη ουρά μετά το destroy είναι μη ορισμένη.
 

@@ -134,6 +134,12 @@ Pointer list_find(List list, Pointer value, CompareFunc compare) {
 	return node == NULL ? NULL : node->value;
 }
 
+DestroyFunc list_set_destroy_value(List list, DestroyFunc destroy_value) {
+	DestroyFunc old = list->destroy_value;
+	list->destroy_value = destroy_value;
+	return old;
+}
+
 void list_destroy(List list) {
 	// Διασχίζουμε όλη τη λίστα και κάνουμε free όλους τους κόμβους,
 	// συμπεριλαμβανομένου και του dummy!

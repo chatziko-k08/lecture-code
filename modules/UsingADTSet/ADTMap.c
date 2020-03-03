@@ -98,6 +98,18 @@ Pointer map_remove(Map map, Pointer key) {
 	return value;
 }
 
+DestroyFunc map_set_destroy_key(Map map, DestroyFunc destroy_key) {
+	DestroyFunc old = map->destroy_key;
+	map->destroy_key = destroy_key;
+	return old;
+}
+
+DestroyFunc map_set_destroy_value(Map map, DestroyFunc destroy_value) {
+	DestroyFunc old = map->destroy_value;
+	map->destroy_value = destroy_value;
+	return old;
+}
+
 void map_destroy(Map map) {
 	// destroy το set, τα περιεχόμενα θα τα κάνει free η destroy_map_node
 	set_destroy(map->set);

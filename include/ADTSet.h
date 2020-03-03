@@ -45,6 +45,11 @@ Pointer set_remove(Set set, Pointer value);
 
 Pointer set_find(Set set, Pointer value);
 
+// Αλλάζει τη συνάρτηση που καλείται σε κάθε αφαίρεση/αντικατάσταση στοιχείου σε
+// destroy_value. Επιστρέφει την προηγούμενη τιμή της συνάρτησης.
+
+DestroyFunc set_set_destroy_value(Set set, DestroyFunc destroy_value);
+
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει το σύνολο.
 // Οποιαδήποτε λειτουργία πάνω στο set μετά το destroy είναι μη ορισμένη.
 

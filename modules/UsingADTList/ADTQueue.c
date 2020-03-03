@@ -56,6 +56,10 @@ Pointer queue_remove(Queue queue) {
 	return result;
 }
 
+DestroyFunc queue_set_destroy_value(Queue queue, DestroyFunc destroy_value) {
+	return list_set_destroy_value(queue->list, destroy_value);
+}
+
 void queue_destroy(Queue queue) {
 	// Τη μνήμη της λίστας την κάνει free η list_destroy, αλλά το struct που περιέχει
 	// τη λίστα το δημιουργήσαμε εμείς, οπότε πρέπει εμείς να το κάνουμε free.

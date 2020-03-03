@@ -46,6 +46,12 @@ Pointer map_remove(Map map, Pointer key);
 
 Pointer map_find(Map map, Pointer key);
 
+// Αλλάζει τη συνάρτηση που καλείται σε κάθε αφαίρεση/αντικατάσταση key/value.
+// Επιστρέφει την προηγούμενη τιμή της συνάρτησης.
+
+DestroyFunc map_set_destroy_key  (Map map, DestroyFunc destroy_key  );
+DestroyFunc map_set_destroy_value(Map map, DestroyFunc destroy_value);
+
 // Ελευθερώνει όλη τη μνήμη που δεσμεύει το map.
 // Οποιαδήποτε λειτουργία πάνω στο map μετά το destroy είναι μη ορισμένη.
 

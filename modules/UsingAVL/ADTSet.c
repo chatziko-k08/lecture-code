@@ -428,6 +428,12 @@ Pointer set_find(Set set, Pointer value) {
 	return node == NULL ? NULL : node->value;
 }
 
+DestroyFunc set_set_destroy_value(Set vec, DestroyFunc destroy_value) {
+	DestroyFunc old = vec->destroy_value;
+	vec->destroy_value = destroy_value;
+	return old;
+}
+
 void set_destroy(Set set) {
 	node_destroy(set->root, set->destroy_value);
 	free(set);
