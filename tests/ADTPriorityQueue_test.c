@@ -25,7 +25,6 @@ void test_create(void) {
 
 	TEST_CHECK(pqueue != NULL);
 	TEST_CHECK(pqueue_size(pqueue) == 0);
-	TEST_CHECK(pqueue_max(pqueue) == NULL);
 
 	pqueue_destroy(pqueue);
 }
@@ -61,9 +60,6 @@ void test_remove(void) {
 		TEST_CHECK(pqueue_remove_max(pqueue) == value);
 		TEST_CHECK(pqueue_size(pqueue) == i);
 	}
-
-	// remove σε κενό pqueue
-	TEST_CHECK(pqueue_remove_max(pqueue) == NULL);
 
 	pqueue_destroy(pqueue);
 }

@@ -61,9 +61,6 @@ void test_get_set_at(void) {
 	Vector vec = vector_create(0, NULL);
 	int array[1000];
 
-	// at σε κενό vector
-	TEST_CHECK(vector_get_at(vec, 0) == NULL);
-
 	// insert πολλαπλά NULL, θα τα αλλάξουμε μετά με replace
 	for(int i = 0; i < 1000; i++)
 		vector_insert_last(vec, NULL);
@@ -73,10 +70,6 @@ void test_get_set_at(void) {
 		vector_set_at(vec, i, &array[i]);
 		TEST_CHECK(vector_get_at(vec, i) == &array[i]);
 	}
-
-	// at εκτός μεγέθους κενό vector
-	TEST_CHECK(vector_get_at(vec, -1) == NULL);
-	TEST_CHECK(vector_get_at(vec, 1000) == NULL);
 
 	vector_destroy(vec);
 }

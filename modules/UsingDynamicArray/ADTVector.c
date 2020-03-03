@@ -53,15 +53,12 @@ int vector_size(Vector vec) {
 }
 
 Pointer vector_get_at(Vector vec, int pos) {
-	if(pos >= 0 && pos < vec->size)
-		return vec->array[pos];
-	else
-		return NULL;
-	
+	assert(pos >= 0 && pos < vec->size);	// LCOV_EXCL_LINE (αγνοούμε το branch από τα coverage reports, είναι δύσκολο να τεστάρουμε το false γιατί θα κρασάρει το test)
+	return vec->array[pos];
 }
 
 void vector_set_at(Vector vec, int pos, Pointer value) {
-	assert(pos >= 0 && pos < vec->size);	// LCOV_EXCL_LINE (αγνοούμε το branch από τα coverage reports, είναι δύσκολο να τεστάρουμε το false γιατί θα κρασάρει το test)
+	assert(pos >= 0 && pos < vec->size);	// LCOV_EXCL_LINE
 
 	// Αν υπάρχει συνάρτηση destroy_value, την καλούμε για το στοιχείο που αντικαθίσταται
 	if(value != vec->array[pos] && vec->destroy_value != NULL)

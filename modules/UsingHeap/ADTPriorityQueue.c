@@ -100,8 +100,7 @@ void pqueue_insert(PriorityQueue pqueue, Pointer value) {
 
 Pointer pqueue_remove_max(PriorityQueue pqueue) {
 	int last_node = pqueue_size(pqueue);
-	if(last_node == 0)
-		return NULL;		// κενός σωρός
+	assert(last_node != 0);		// LCOV_ΕΧCL_LINE
 
 	// Αποθήκευση πριν αφαιρεθεί, και destroy
 	Pointer top = pqueue_max(pqueue);
