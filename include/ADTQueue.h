@@ -26,7 +26,7 @@ typedef struct queue* Queue;
 
 Queue queue_create(DestroyFunc destroy_value);
 
-// Επιστρέψει τον αριθμό στοιχείων που περιέχει η ουρά queue
+// Επιστρέφει τον αριθμό στοιχείων που περιέχει η ουρά queue
 
 int queue_size(Queue queue);
 
@@ -38,11 +38,11 @@ Pointer queue_front(Queue queue);
 
 Pointer queue_back(Queue queue);
 
-// Προσθέτει την τιμή value στo τέλος της ουράς queue.
+// Προσθέτει την τιμή value στo πίσω μέρος της ουράς queue.
 
 void queue_insert_back(Queue queue, Pointer value);
 
-// Αφαιρεί και επιστρέφει  την τιμή στην κορυφή της ουράς (μη ορισμένο αποτέλεσμα αν η ουρά είναι κενή)
+// Αφαιρεί και επιστρέφει την τιμή στο μπροστά μέρος της ουράς (μη ορισμένο αποτέλεσμα αν η ουρά είναι κενή)
 
 Pointer queue_remove_front(Queue queue);
 

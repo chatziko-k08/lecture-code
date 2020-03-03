@@ -30,7 +30,7 @@ typedef struct vector* Vector;
 
 Vector vector_create(int size, DestroyFunc destroy_value);
 
-// Επιστρέψει τον αριθμό στοιχείων που περιέχει το vector vec.
+// Επιστρέφει τον αριθμό στοιχείων που περιέχει το vector vec.
 
 int vector_size(Vector vec);
 

@@ -26,7 +26,7 @@ typedef struct stack* Stack;
 
 Stack stack_create(DestroyFunc destroy_value);
 
-// Επιστρέψει τον αριθμό στοιχείων που περιέχει η στοίβα stack
+// Επιστρέφει τον αριθμό στοιχείων που περιέχει η στοίβα stack
 
 int stack_size(Stack stack);
 

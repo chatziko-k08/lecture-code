@@ -32,7 +32,7 @@ typedef struct list_node* ListNode;
 
 List list_create(DestroyFunc destroy_value);
 
-// Επιστρέψει τον αριθμό στοιχείων που περιέχει η λίστα.
+// Επιστρέφει τον αριθμό στοιχείων που περιέχει η λίστα.
 
 int list_size(List list);
 

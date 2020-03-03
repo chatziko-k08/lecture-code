@@ -23,7 +23,7 @@ typedef struct priority_queue* PriorityQueue;
 
 PriorityQueue pqueue_create(CompareFunc compare, DestroyFunc destroy_value);
 
-// Επιστρέψει τον αριθμό στοιχείων που περιέχει η ουρά pqueue
+// Επιστρέφει τον αριθμό στοιχείων που περιέχει η ουρά pqueue
 
 int pqueue_size(PriorityQueue pqueue);
 
