@@ -237,11 +237,12 @@ MapNode map_find_node(Map map, Pointer key) {
 		map->array[pos].state != EMPTY;							// αν φτάσουμε σε EMPTY σταματάμε
 		pos = (pos + 1) % map->capacity) {						// linear probing, γυρνώντας στην αρχή όταν φτάσουμε στη τέλος του πίνακα
 
-		// Μόνο σε OCCUPIED θέσεις (όχι DELETE), ελέγχουμε αν το key είναι εδώ
+		// Μόνο σε OCCUPIED θέσεις (όχι DELETED), ελέγχουμε αν το key είναι εδώ
 		if (map->array[pos].state == OCCUPIED && map->compare(map->array[pos].key, key) == 0)
 			return &map->array[pos];
 
-		// Αν διασχίσουμε ολόκληρο τον πίνακα σταματάμε
+		// Αν διασχίσουμε ολόκληρο τον πίνακα σταματάμε. Εφόσον ο πίνακας δεν μπορεί να είναι όλος OCCUPIED,
+		// αυτό μπορεί να συμβεί μόνο στην ακραία περίπτωση που ο πίνακας έχει γεμίσει DELETED τιμές!
 		count++;
 		if (count == map->capacity)
 			break;
