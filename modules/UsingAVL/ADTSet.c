@@ -26,12 +26,110 @@ struct set_node {
 };
 
 
-// forward declarations
-static SetNode node_insert_and_balance(SetNode node, CompareFunc compare, Pointer value, bool* inserted, Pointer* old_value);
-static SetNode node_remove_and_balance(SetNode node, CompareFunc compare, Pointer value, bool* removed, Pointer* old_value);
+//// Συναρτήσεις που υλοποιούν επιπλέον λειτουργίες του AVL σε σχέση με ένα απλό BST /////////////////////////////////////
+
+// Επιστρέφει τη max τιμή μεταξύ 2 ακεραίων
+
+static int int_max(int a, int b) {
+	return (a > b) ? a : b ;
+}
+
+// Επιστρέφει το ύψος που βρίσκεται ο κόμβος στο δέντρο
+
+static int node_height(SetNode node) {
+	if (!node) return 0;
+	return node->height;
+}
+
+// Ενημερώνει το ύψος ενός κόμβου
+
+static void node_update_height(SetNode node) {
+	node->height = 1 + int_max(node_height(node->left), node_height(node->right));
+}
+
+// Επιστρέφει τη διαφορά ύψους μεταξύ αριστερού και δεξιού υπόδεντρου
+
+static int node_balance(SetNode node) {
+	return node_height(node->left) - node_height(node->right);
+}
+
+// Rotations : Όταν η διαφορά ύψους μεταξύ αριστερού και δεξιού υπόδεντρου είναι
+// μεγαλύτερη του 1 το δέντρο δεν είναι πια AVL. Υπάρχουν 4 διαφορετικά
+// rotations που εφαρμόζονται ανάλογα με την περίπτωση για να αποκατασταθεί η
+// ισορροπία. Η κάθε συνάρτηση παίρνει ως όρισμα τον κόμβο που πρέπει να γίνει
+// rotate, και επιστρέφει τη ρίζα του νέου υποδέντρου.
+
+// Single left rotation
+
+static SetNode node_rotate_left(SetNode node) {
+	SetNode right_node = node->right;
+	SetNode left_subtree = right_node->left;
+
+	right_node->left = node;
+	node->right = left_subtree;
+
+	node_update_height(node);
+	node_update_height(right_node);
+	
+	return right_node;
+}
+
+// Single right rotation
+
+static SetNode node_rotate_right(SetNode node) {
+	SetNode left_node = node->left;
+	SetNode left_right = left_node->right;
+
+	left_node->right = node;
+	node->left = left_right;
+
+	node_update_height(node);
+	node_update_height(left_node);
+	
+	return left_node;
+}
+
+// Double left-right rotation
+
+static SetNode node_rotate_left_right(SetNode node) {
+	node->left = node_rotate_left(node->left);
+	return node_rotate_right(node);
+}
+
+// Double right-left rotation
+
+static SetNode node_rotate_right_left(SetNode node) {
+	node->right = node_rotate_right(node->right);
+	return node_rotate_left(node);
+}
+
+// Επισκευή του AVL property αν δεν ισχύει
+
+static SetNode node_repair_balance(SetNode node) {
+	node_update_height(node);
+
+	int balance = node_balance(node);
+	if (balance > 1) {
+		// το αριστερό υπόδεντρο είναι unbalanced
+		if (node_balance(node->left) >= 0) 
+			return node_rotate_right(node);
+		else 
+			return node_rotate_left_right(node);
+
+	} else if (balance < -1) {
+		// το δεξί υπόδεντρο είναι unbalanced
+		if (node_balance(node->right) <= 0)
+			return node_rotate_left(node);
+		else
+			return node_rotate_right_left(node);
+	}
+
+	// δεν χρειάστηκε να πραγματοποιηθεί rotation
+	return node;
+}
 
 
-//// Συναρτήσεις που είναι _(σχεδόν) ολόιδιες_ με τις αντίστοιχες της BST υλοποίησης ////////////////
+//// Συναρτήσεις που είναι (σχεδόν) _ολόιδιες_ με τις αντίστοιχες της BST υλοποίησης ////////////////
 //
 // Είναι σημαντικό να κατανοήσουμε πρώτα τον κώδικα του BST πριν από αυτόν του AVL.
 // Θα μπορούσαμε οργανώνοντας τον κώδικα διαφορετικά να επαναχρησιμοποιήσουμε τις συναρτήσεις αυτές.
@@ -153,14 +251,14 @@ static SetNode node_insert(SetNode node, CompareFunc compare, Pointer value, boo
 
 	} else if (compare_res < 0) {
 		// value < node->value, συνεχίζουμε αριστερά.
-		node->left = node_insert_and_balance(node->left, compare, value, inserted, old_value);		// AVL, καλούμε την node_insert_and_balance αναδρομικά
+		node->left = node_insert(node->left, compare, value, inserted, old_value);
 
 	} else {
 		// value > node->value, συνεχίζουμε δεξιά
-		node->right = node_insert_and_balance(node->right, compare, value, inserted, old_value);	// AVL, καλούμε την node_insert_and_balance αναδρομικά
+		node->right = node_insert(node->right, compare, value, inserted, old_value);
 	}
 
-	return node;	// η ρίζα του υποδέντρου δεν αλλάζει
+	return node_repair_balance(node);	// AVL
 }
 
 // Αφαιρεί και αποθηκεύει στο min_node τον μικρότερο κόμβο του υποδέντρου με ρίζα node.
@@ -176,7 +274,8 @@ static SetNode node_remove_min(SetNode node, SetNode* min_node) {
 		// Εχουμε αριστερό υποδέντρο, οπότε η μικρότερη τιμή είναι εκεί. Συνεχίζουμε αναδρομικά
 		// και ενημερώνουμε το node->left με τη νέα ρίζα του υποδέντρου.
 		node->left = node_remove_min(node->left, min_node);
-		return node;			// η ρίζα δεν μεταβάλλεται
+
+		return node_repair_balance(node);	// AVL
 	}
 }
 
@@ -219,17 +318,18 @@ static SetNode node_remove(SetNode node, CompareFunc compare, Pointer value, boo
 			min_right->right = node->right;
 
 			free(node);
-			return min_right;
+
+			return node_repair_balance(min_right);	// AVL
 		}
 	}
 
 	// compare_res != 0, συνεχίζουμε στο αριστερό ή δεξί υποδέντρο, η ρίζα δεν αλλάζει.
 	if (compare_res < 0)
-		node->left  = node_remove_and_balance(node->left,  compare, value, removed, old_value);		// AVL, καλούμε την node_remove_and_balance αναδρομικά
+		node->left  = node_remove(node->left,  compare, value, removed, old_value);
 	else
-		node->right = node_remove_and_balance(node->right, compare, value, removed, old_value);		// AVL, καλούμε την node_remove_and_balance αναδρομικά
+		node->right = node_remove(node->right, compare, value, removed, old_value);
 
-	return node;
+	return node_repair_balance(node);	// AVL
 }
 
 // Καταστρέφει όλο το υποδέντρο με ρίζα node
@@ -249,152 +349,9 @@ static void node_destroy(SetNode node, DestroyFunc destroy_value) {
 }
 
 
-//// Επιπλεόν συναρτήσεις για τις λειτουργίες του AVL /////////////////////////////////////
-
-// Επιστρέφει τη max τιμή μεταξύ 2 ακεραίων
-
-static int int_max(int a, int b) {
-	return (a > b) ? a : b ;
-}
-
-// Επιστρέφει το ύψος που βρίσκεται ο κόμβος στο δέντρο
-
-static int node_height(SetNode node) {
-	if (!node) return 0;
-	return node->height;
-}
-
-// Επιστρέφει τη διαφορά ύψους μεταξύ αριστερού και δεξιού υπόδεντρου
-
-static int node_balance(SetNode node) {
-	assert(node != NULL);	// LCOV_EXCL_LINE
-	return node_height(node->left) - node_height(node->right);
-}
-
-// Rotations : Όταν η διαφορά ύψους μεταξύ αριστερού και δεξιού υπόδεντρου είναι
-// μεγαλύτερη του 1 το δέντρο δεν είναι πια AVL. Υπάρχουν 4 διαφορετικά
-// rotations που εφαρμόζονται ανάλογα με την περίπτωση για να αποκατασταθεί η
-// ισορροπία. Η κάθε συνάρτηση παίρνει ως όρισμα τον κόμβο που πρέπει να γίνει
-// rotate, και επιστρέφει τη ρίζα του νέου υποδέντρου.
-
-// Single left rotation
-
-static SetNode node_rotate_left(SetNode node) {
-	SetNode right_node = node->right;
-	SetNode left_subtree = right_node->left;
-
-	right_node->left = node;
-	node->right = left_subtree;
-
-	node->height = int_max(node_height(node->left), node_height(node->right)) + 1;
-	right_node->height = int_max(node_height(right_node->left), node_height(right_node->right)) + 1;
-	
-	return right_node;
-}
-
-// Single right rotation
-
-static SetNode node_rotate_right(SetNode node) {
-	SetNode left_node = node->left;
-	SetNode left_right = left_node->right;
-
-	left_node->right = node;
-	node->left = left_right;
-
-	node->height = int_max(node_height(node->left), node_height(node->right)) +1;
-	left_node->height = int_max(node_height(left_node->left), node_height(left_node->right)) +1;
-	
-	return left_node;
-}
-
-// Double left-right rotation
-
-static SetNode node_rotate_left_right(SetNode node) {
-	node->left = node_rotate_left(node->left);
-	return node_rotate_right(node);
-}
-
-// Double right-left rotation
-
-static SetNode node_rotate_right_left(SetNode node) {
-	node->right = node_rotate_right(node->right);
-	return node_rotate_left(node);
-}
-
-// Καλεί τη node_insert (κλασσικό BST insert), και στη συνέχεια κάνει balance το
-// νέο υποδέντρο εκτελώντας το κατάλληλο rotate.
-
-static SetNode node_insert_and_balance(SetNode node, CompareFunc compare, Pointer value, bool* inserted, Pointer* old_value) {
-	// Το "κλασσικό" insert
-	node = node_insert(node, compare, value, inserted, old_value);
-
-	// Ενημερώνουμε το ύψος του κόμβου
-	node->height = 1 + int_max(node_height(node->left), node_height(node->right));
-
-	// Αν έχουμε imbalance, πραγματοποιούμε το κατάλληλο rotation (ανάλογα με το είδος)
-	int balance = node_balance(node);
-	if (balance > 1) {
-		// το αριστερό υπόδεντρο είναι unbalanced
-		if (compare(value, node->left->value) < 0)	// key  <  node->left->value
-			return node_rotate_right(node);
-		else 
-			return node_rotate_left_right(node);
-
-	} else if (balance < -1) {
-		// το δεξί υπόδεντρο είναι unbalanced
-		if (compare(value, node->right->value) > 0)	// key  >  node->right->value
-			return node_rotate_left(node);
-		else
-			return node_rotate_right_left(node);
-	}
-
-	// δεν χρειάστηκε να πραγματοποιηθεί rotation
-	return node;
-}
-
-// Καλεί τη node_remove (κλασσικό BST remove), και στη συνέχεια κάνει balance το
-// νέο υποδέντρο εκτελώντας το κατάλληλο rotate.
-
-static SetNode node_remove_and_balance(SetNode node, CompareFunc compare, Pointer value, bool* removed, Pointer* old_value) {
-	// Το "κλασσικό" remove
-	node = node_remove(node, compare, value, removed, old_value);
-	if(node == NULL)
-		return node;
-
-	// Ενημερώνουμε το ύψος του κόμβου
-	node->height = 1 + int_max(node_height(node->left), node_height(node->right));
-
-	// Αν έχουμε imbalance, πραγματοποιούμε το κατάλληλο rotation (ανάλογα με το είδος)
-	int balance = node_balance(node);
-	if (balance > 1) {
-		// το αριστερό υπόδεντρο είναι unbalanced
-		if (node_balance(node->left) >= 0) 
-			return node_rotate_right(node);
-		else 
-			return node_rotate_left_right(node);
-
-	} else if (balance < -1) {
-		// το δεξί υπόδεντρο είναι unbalanced
-		if (node_balance(node->right) <= 0)
-			return node_rotate_left(node);
-		else
-			return node_rotate_right_left(node);
-	}
-
-	// δεν χρειάστηκε να πραγματοποιηθεί rotation
-	return node;
-}
-
-
 //// Συναρτήσεις του ADT Set. Γενικά πολύ απλές, αφού καλούν τις αντίστοιχες node_* //////////////////////////////////
-
-void assert_avl(SetNode node) {
-	if(!node) return;
-	int b = node_balance(node);
-	assert(b >= -1 && b <= 1);
-	assert_avl(node->left);
-	assert_avl(node->right);
-}
+//
+// Επίσης ολόιδιες με αυτές του BST-based Set
 
 Set set_create(CompareFunc compare, DestroyFunc destroy_value) {
 	assert(compare != NULL);	// LCOV_EXCL_LINE
@@ -416,8 +373,7 @@ int set_size(Set set) {
 void set_insert(Set set, Pointer value) {
 	bool inserted;
 	Pointer old_value;
-	set->root = node_insert_and_balance(set->root, set->compare, value, &inserted, &old_value);
-	assert_avl(set->root);
+	set->root = node_insert(set->root, set->compare, value, &inserted, &old_value);
 	
 	// Το size αλλάζει μόνο αν μπει νέος κόμβος. Στα updates κάνουμε destroy την παλιά τιμή
 	if (inserted)
@@ -429,8 +385,7 @@ void set_insert(Set set, Pointer value) {
 Pointer set_remove(Set set, Pointer value) {
 	bool removed;
 	Pointer old_value = NULL;
-	set->root = node_remove_and_balance(set->root, set->compare, value, &removed, &old_value);
-	assert_avl(set->root);
+	set->root = node_remove(set->root, set->compare, value, &removed, &old_value);
 
 	// Το size αλλάζει μόνο αν πραγματικά αφαιρεθεί ένας κόμβος
 	if (removed) {
@@ -482,3 +437,42 @@ Pointer set_node_value(Set set, SetNode node) {
 SetNode set_find_node(Set set, Pointer value) {
 	return node_find_equal(set->root, set->compare, value);
 }
+
+
+
+// Συναρτήσεις που δεν υπάρχουν στο public interface αλλά χρησιμοποιούνται στα tests
+// Ελέγχουν ότι το δέντρο είναι ένα σωστό AVL.
+
+// LCOV_EXCL_START (δε μας ενδιαφέρει το coverage των test εντολών, και επιπλέον μόνο τα true branches εξετάζονται σε ένα επιτυχημένο test)
+
+bool node_is_avl(SetNode node, CompareFunc compare) {
+	if (node == NULL)
+		return true;
+
+	// Ο κόμβος έχει την BST ιδιότητα
+	SetNode left_max = node_find_max(node->left);
+	SetNode right_min = node_find_min(node->right);
+	bool res =
+		(left_max  == NULL || compare(left_max->value,  node->value) < 0) &&
+		(right_min == NULL || compare(right_min->value, node->value) > 0);
+
+	// Το ύψος είναι σωστό
+	res = res && node->height == 1 + int_max(node_height(node->left), node_height(node->right));
+
+	// Ο κόμβος έχει την AVL ιδιότητα
+	int balance = node_balance(node);
+	res = res && balance >= -1 && balance <= 1;
+
+	// Τα υποδέντρα είναι σωστά
+	res = res &&
+		node_is_avl(node->left, compare) &&
+		node_is_avl(node->right, compare);
+
+	return res;
+}
+
+bool set_is_proper(Set node) {
+	return node_is_avl(node->root, node->compare);
+}
+
+// LCOV_EXCL_STOP
