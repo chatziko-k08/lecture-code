@@ -42,17 +42,21 @@ int queue_size(Queue queue) {
 	return list_size(queue->list);
 }
 
-Pointer queue_top(Queue queue) {
+Pointer queue_front(Queue queue) {
 	return list_node_value(queue->list, list_first(queue->list));
 }
 
-void queue_insert(Queue queue, Pointer value) {
-	list_insert(queue->list, list_last(queue->list), value);		// Προσθήκη στο _τέλος_
+Pointer queue_back(Queue queue) {
+	return list_node_value(queue->list, list_last(queue->list));
 }
 
-Pointer queue_remove(Queue queue) {
-	Pointer result = queue_top(queue);	// Αποθήκευση πριν κάνουμε remove
-	list_remove(queue->list, NULL);
+void queue_insert_back(Queue queue, Pointer value) {
+	list_insert_next(queue->list, list_last(queue->list), value);		// Προσθήκη στο _τέλος_
+}
+
+Pointer queue_remove_front(Queue queue) {
+	Pointer result = queue_front(queue);	// Αποθήκευση πριν κάνουμε remove
+	list_remove_next(queue->list, NULL);
 	return result;
 }
 

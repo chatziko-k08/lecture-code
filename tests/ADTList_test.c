@@ -35,7 +35,7 @@ void test_insert(void) {
 	for(int i = 0; i < 1000; i++) {
 
 		// LIST_BOF για εισαγωγή στην αρχή
-		list_insert(list, LIST_BOF, &array[i]);
+		list_insert_next(list, LIST_BOF, &array[i]);
 		
 		// Ελέγχουμε εάν ενημερώθηκε (αυξήθηκε) το μέγεθος της λίστας.
 		TEST_CHECK(list_size(list) == (i + 1));	
@@ -54,7 +54,7 @@ void test_insert(void) {
 
 	// Εισαγωγή σε ενδιάμεσο κόμβο: προσθέτουμε το NULL σαν δεύτερο κόμβο
 	ListNode first_node = list_first(list);
-	list_insert(list, first_node, NULL);
+	list_insert_next(list, first_node, NULL);
 	TEST_CHECK(list_node_value(list, list_next(list, first_node)) == NULL);
 
 	list_destroy(list);
@@ -73,14 +73,14 @@ void test_remove(void) {
 		// Δημιουργούμε δυναμικά δεσμευμένα αντικείμενα για να δοκιμάσουμε την destroy_function
 		array[i]  = malloc(sizeof(int));
 		*array[i] = i;
-		list_insert(list, LIST_BOF, array[i]);
+		list_insert_next(list, LIST_BOF, array[i]);
 	}
 
 
 	for(int i = 999; i >= 0; i--) {
 		// Διαγράφουμε απο την αρχή και ελέγχουμε εάν η τιμή του πρώτου κόμβου 
 		// ήταν η ίδια με αυτή που κάναμε insert παραπάνω
-		TEST_CHECK(list_remove(list, LIST_BOF) == array[i]);
+		TEST_CHECK(list_remove_next(list, LIST_BOF) == array[i]);
 
 		// Ελέγχουμε ότι ενημερώνεται (μειώνεται) το size/μέγεθος της λίστας
 		TEST_CHECK(list_size(list) == i);
@@ -90,16 +90,16 @@ void test_remove(void) {
 	for(int i = 0; i < 1000; i++) {
 		array[i]  = malloc(sizeof(int));
 		*array[i] = i;
-		list_insert(list, LIST_BOF, array[i]);
+		list_insert_next(list, LIST_BOF, array[i]);
 	}	
 
 	// Δοκιμάζουμε την διαγραφή κόμβων ενδιάμεσα της λίστας, και συγκεκριμένα του δεύτερου κόμβου απο την αρχή
 	ListNode first_node = list_first(list);
 
 	// Αποθηκεύουμε την τιμή του δεύτερου κόμβου και την συγκρίνουμε με αυτή 
-	// που θα μας γυρίσει η list_remove μετά την διαγραφή του
+	// που θα μας γυρίσει η list_remove_next μετά την διαγραφή του
 	Pointer next_node_value = list_node_value(list, list_next(list, first_node));
-	Pointer removed_value = list_remove(list, first_node);
+	Pointer removed_value = list_remove_next(list, first_node);
 
 	TEST_CHECK(next_node_value == removed_value);
 
@@ -120,7 +120,7 @@ void test_find() {
 	// Εισάγουμε δοκιμαστικές τιμές στον πίνακα , για να ελέγξουμε την test_find
 	for(int i = 0; i < 1000; i++) {
 		array[i] = i;
-		list_insert(list, LIST_BOF, &array[i]);
+		list_insert_next(list, LIST_BOF, &array[i]);
 	}
 
 	// Εύρεση όλων των στοιχείων
@@ -147,7 +147,7 @@ void test_find_node() {
 	// Εισαγωγή τιμών στον πίνακα
 	for(int i = 0; i < 1000; i++) {
 		array[i] = i;
-		list_insert(list, LIST_BOF, &array[i]);
+		list_insert_next(list, LIST_BOF, &array[i]);
 	}
 
 	// Ξεκινάμε από την αρχή της λίστας
@@ -179,8 +179,8 @@ void test_find_node() {
 // Λίστα με όλα τα tests προς εκτέλεση
 TEST_LIST = {
 	{ "list_create", test_create },
-	{ "list_insert", test_insert },
-	{ "list_remove", test_remove },
+	{ "list_insert_next", test_insert },
+	{ "list_remove_next", test_remove },
 	{ "list_find", test_find },
 	{ "list_find_node", test_find_node },
 	{ NULL, NULL } // τερματίζουμε τη λίστα με NULL

@@ -23,7 +23,7 @@ void test_insert(void) {
 
 	// insert 1000 στοιχεία ώστε να συμβούν πολλαπλά resizes
 	for(int i = 0; i < 1000; i++) {
-		int_vector_insert(vec, i);
+		int_vector_insert_last(vec, i);
 		TEST_CHECK(int_vector_size(vec) == i+1);	// Το size ενημερώθηκε;
 		TEST_CHECK(int_vector_get_at(vec, i) == i);	// Μπορούμε να κάνουμε at το στοιχείο που μόλις βάλαμε;
 	}
@@ -44,12 +44,12 @@ void test_remove(void) {
 
 	// Διαδοχικά remove ώστε να συμβούν και resizes
 	for(int i = 999; i >= 0; i--) {
-		TEST_CHECK(int_vector_remove(vec) == i);
+		TEST_CHECK(int_vector_remove_last(vec) == i);
 		TEST_CHECK(int_vector_size(vec) == i);
 	}
 
 	// remove σε κενό vector
-	TEST_CHECK(int_vector_remove(vec) == INT_MIN);
+	TEST_CHECK(int_vector_remove_last(vec) == INT_MIN);
 
 	int_vector_destroy(vec);
 }
@@ -59,7 +59,7 @@ void test_get_set_at(void) {
 
 	// insert πολλαπλά 0, θα τα αλλάξουμε μετά με replace
 	for(int i = 0; i < 1000; i++)
-		int_vector_insert(vec, 0);
+		int_vector_insert_last(vec, 0);
 
 	for(int i = 0; i < 1000; i++) {
 		TEST_CHECK(int_vector_get_at(vec, i) == 0);
@@ -98,8 +98,8 @@ void test_destroy() {
 	IntVector vec = int_vector_create(1);
 
 	int_vector_set_at(vec, 0, 1);
-	int_vector_insert(vec, 1);
-	int_vector_remove(vec);
+	int_vector_insert_last(vec, 1);
+	int_vector_remove_last(vec);
 
 	int_vector_destroy(vec);
 }

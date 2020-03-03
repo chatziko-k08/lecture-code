@@ -43,16 +43,16 @@ Pointer stack_top(Stack stack) {
 	return list_node_value(list, list_first(list));
 }
 
-void stack_insert(Stack stack, Pointer value) {
+void stack_insert_top(Stack stack, Pointer value) {
 	List list = (List)stack;
-	list_insert(list, NULL, value);
+	list_insert_next(list, NULL, value);
 }
 
-Pointer stack_remove(Stack stack) {
+Pointer stack_remove_top(Stack stack) {
 	List list = (List)stack;
 
 	Pointer result = stack_top(stack);	// Αποθήκευση πριν κάνουμε remove
-	list_remove(list, NULL);
+	list_remove_next(list, NULL);
 
 	return result;
 }

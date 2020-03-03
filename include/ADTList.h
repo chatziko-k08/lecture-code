@@ -38,11 +38,11 @@ int list_size(List list);
 
 // Προσθέτει έναν νέο κόμβο __μετά__ τον node, ή στην αρχή αν node == LIST_BOF, με περιεχόμενο value.
 
-void list_insert(List list, ListNode node, Pointer value);
+void list_insert_next(List list, ListNode node, Pointer value);
 
 // Αφαιρεί τον __επόμενο__ κόμβο από τον node, ή τον πρώτο κόμβο αν node == LIST_BOF, και επιστρέφει την τιμή που περιείχε.
 
-Pointer list_remove(List list, ListNode node);
+Pointer list_remove_next(List list, ListNode node);
 
 // Επιστρέφει την πρώτη τιμή που είναι ισοδύναμη με value
 // (με βάση τη συνάρτηση compare), ή NULL αν δεν υπάρχει

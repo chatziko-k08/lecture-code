@@ -26,9 +26,9 @@ IntVector int_vector_create(int size);
 
 int int_vector_size(IntVector vec);
 
-void int_vector_insert(IntVector vec, int value);
+void int_vector_insert_last(IntVector vec, int value);
 
-int int_vector_remove(IntVector vec);
+int int_vector_remove_last(IntVector vec);
 
 void int_vector_set_at(IntVector vec, int pos, int value);
 

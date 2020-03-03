@@ -29,15 +29,15 @@ int pqueue_size(PriorityQueue pqueue);
 
 // Επιστρέφει το μεγαλύτερο στοιχείο της ουράς (ή NULL αν η ουρά είναι κενή)
 
-Pointer pqueue_top(PriorityQueue pqueue);
+Pointer pqueue_max(PriorityQueue pqueue);
 
 // Προσθέτει την τιμή value στην ουρά pqueue.
 
 void pqueue_insert(PriorityQueue pqueue, Pointer value);
 
-// Αφαιρεί και επιστρέφει  την μεγαλύτερη τιμή της ουράς (μη ορισμένο αποτέλεσμα αν η ουρά είναι κενή)
+// Αφαιρεί και επιστρέφει  την μεγαλύτερη τιμή της ουράς (ή NULL αν η ουρά είναι κενή)
 
-Pointer pqueue_remove(PriorityQueue pqueue);
+Pointer pqueue_remove_max(PriorityQueue pqueue);
 
 // Αλλάζει τη συνάρτηση που καλείται σε κάθε αφαίρεση/αντικατάσταση στοιχείου σε
 // destroy_value. Επιστρέφει την προηγούμενη τιμή της συνάρτησης.

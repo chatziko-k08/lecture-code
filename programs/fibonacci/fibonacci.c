@@ -12,14 +12,14 @@ int fibonacci(int n) {
 	if(memory == NULL) {
 		// Αρχικοποίηση της μνήμης με τα πρώτα 2 στοιχεία της ακολουθίας
 		memory = int_vector_create(0);
-		int_vector_insert(memory, 0);
-		int_vector_insert(memory, 1);
+		int_vector_insert_last(memory, 0);
+		int_vector_insert_last(memory, 1);
 	}
 
 	// Αν δεν έχουμε ήδη το αποτέλεσμα το υπολογίζουμε και το αποθηκεύουμε
 	if(n >= int_vector_size(memory)) {
 		int res = fibonacci(n-2) + fibonacci(n-1);
-		int_vector_insert(memory, res);
+		int_vector_insert_last(memory, res);
 	}
 
 	return int_vector_get_at(memory, n);

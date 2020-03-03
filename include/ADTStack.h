@@ -36,11 +36,11 @@ Pointer stack_top(Stack stack);
 
 // Προσθέτει την τιμή value στην κορυφή της στοίβας stack.
 
-void stack_insert(Stack stack, Pointer value);
+void stack_insert_top(Stack stack, Pointer value);
 
 // Αφαιρεί και επιστρέφει  την τιμή στην κορυφή της στοίβας (μη ορισμένο αποτέλεσμα αν η στοίβα είναι κενή)
 
-Pointer stack_remove(Stack stack);
+Pointer stack_remove_top(Stack stack);
 
 // Αλλάζει τη συνάρτηση που καλείται σε κάθε αφαίρεση/αντικατάσταση στοιχείου σε
 // destroy_value. Επιστρέφει την προηγούμενη τιμή της συνάρτησης.

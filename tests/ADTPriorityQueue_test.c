@@ -25,7 +25,7 @@ void test_create(void) {
 
 	TEST_CHECK(pqueue != NULL);
 	TEST_CHECK(pqueue_size(pqueue) == 0);
-	TEST_CHECK(pqueue_top(pqueue) == NULL);
+	TEST_CHECK(pqueue_max(pqueue) == NULL);
 
 	pqueue_destroy(pqueue);
 }
@@ -40,7 +40,7 @@ void test_insert(void) {
 		array[i] = i;
 		pqueue_insert(pqueue, &array[i]);
 		TEST_CHECK(pqueue_size(pqueue) == i+1);			// Το size ενημερώθηκε;
-		TEST_CHECK(pqueue_top(pqueue) == &array[i]);	// Εισαγωγή σε αύξουσα σειρά, το στοιχείο που μόλις βάλαμε πρέπει να είναι στην κορυφή
+		TEST_CHECK(pqueue_max(pqueue) == &array[i]);	// Εισαγωγή σε αύξουσα σειρά, το στοιχείο που μόλις βάλαμε πρέπει να είναι στην κορυφή
 	}
 
 	pqueue_destroy(pqueue);
@@ -56,14 +56,14 @@ void test_remove(void) {
 
 	// Διαδοχικά remove ώστε να συμβούν και resizes
 	for(int i = N-1; i >= 0; i--) {
-		int* value = pqueue_top(pqueue);
+		int* value = pqueue_max(pqueue);
 		TEST_CHECK(*value == i);
-		TEST_CHECK(pqueue_remove(pqueue) == value);
+		TEST_CHECK(pqueue_remove_max(pqueue) == value);
 		TEST_CHECK(pqueue_size(pqueue) == i);
 	}
 
 	// remove σε κενό pqueue
-	TEST_CHECK(pqueue_remove(pqueue) == NULL);
+	TEST_CHECK(pqueue_remove_max(pqueue) == NULL);
 
 	pqueue_destroy(pqueue);
 }
@@ -73,7 +73,7 @@ void test_remove(void) {
 TEST_LIST = {
 	{ "pqueue_create", test_create },
 	{ "pqueue_insert", test_insert },
-	{ "pqueue_remove", test_remove },
+	{ "pqueue_remove_max", test_remove },
 
 	{ NULL, NULL } // τερματίζουμε τη λίστα με NULL
 };

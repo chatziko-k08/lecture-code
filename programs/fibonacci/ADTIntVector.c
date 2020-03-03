@@ -39,18 +39,18 @@ int int_vector_get_at(IntVector vec, int pos) {
 	return p == NULL ? INT_MIN : *p;
 }
 
-void int_vector_insert(IntVector vec, int value) {
+void int_vector_insert_last(IntVector vec, int value) {
 	// Νέο στοιχείο, χρειαζόμαστε μνήμη!
 	int *p = malloc(sizeof(int));
 	*p = value;
-	vector_insert((Vector)vec, p);		// προσθήκη του int pointer στο vector
+	vector_insert_last((Vector)vec, p);		// προσθήκη του int pointer στο vector
 }
 
-int int_vector_remove(IntVector vec) {
+int int_vector_remove_last(IntVector vec) {
 	// Η remove κάνει αυτόματα free, πρέπει να διαβάσουμε τα περιεχόμενα πριν!
 	int value = int_vector_get_at(vec, int_vector_size(vec) - 1);
 
-	vector_remove((Vector)vec);
+	vector_remove_last((Vector)vec);
 	return value;
 }
 

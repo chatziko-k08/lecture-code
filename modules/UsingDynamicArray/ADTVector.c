@@ -70,7 +70,7 @@ void vector_set_at(Vector vec, int pos, Pointer value) {
 	vec->array[pos] = value;
 }
 
-void vector_insert(Vector vec, Pointer value) {
+void vector_insert_last(Vector vec, Pointer value) {
 	// Μεγαλώνουμε τον πίνακα (αν χρειαστεί), ώστε να χωράει τουλάχιστον size στοιχεία
 	// Διπλασιάζουμε κάθε φορά το capacity (σημαντικό για την πολυπλοκότητα!)
 	if(vec->capacity == vec->size) {
@@ -93,7 +93,7 @@ void vector_insert(Vector vec, Pointer value) {
 	vec->size++;
 }
 
-Pointer vector_remove(Vector vec) {
+Pointer vector_remove_last(Vector vec) {
 	if(vec->size == 0)
 		return NULL;
 

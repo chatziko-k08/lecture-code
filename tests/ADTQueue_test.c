@@ -25,9 +25,10 @@ void test_insert(void) {
 
 	// insert 1000 στοιχεία
 	for(int i = 0; i < 1000; i++) {
-		queue_insert(queue, &array[i]);
-		TEST_CHECK(queue_size(queue) == i+1);		// Το size πρέπει να μεγαλώσει
-		TEST_CHECK(queue_top(queue) == &array[0]);	// Το στοιχείο στην κορυφή είναι πάντα το array[0] !!
+		queue_insert_back(queue, &array[i]);
+		TEST_CHECK(queue_size(queue) == i+1);			// Το size πρέπει να μεγαλώσει
+		TEST_CHECK(queue_front(queue) == &array[0]);	// Το μπροστινό στοιχείο στην κορυφή είναι πάντα το array[0]
+		TEST_CHECK(queue_back(queue) == &array[i]);		// Το πίσω στοιχείο είναι αυτό που μόλις βάλαμε
 	}
 
 	queue_destroy(queue);
@@ -39,11 +40,11 @@ void test_remove(void) {
 
 	// insert για προσθήκη δεδομένων, χωρίς ελέγχους (έχουμε ξεχωριστό test για το insert)
 	for(int i = 0; i < 1000; i++)
-		queue_insert(queue, &array[i]);
+		queue_insert_back(queue, &array[i]);
 
 	// Διαδοχικά remove, πρέπει να βγουν με την ίδια σειρά που είναι στο array
 	for(int i = 0; i < 1000; i++) {
-		TEST_CHECK(queue_remove(queue) == &array[i]);
+		TEST_CHECK(queue_remove_front(queue) == &array[i]);
 		TEST_CHECK(queue_size(queue) == 999-i);
 	}
 
@@ -59,7 +60,7 @@ void test_remove(void) {
 // Λίστα με όλα τα tests προς εκτέλεση
 TEST_LIST = {
 	{ "queue_create", test_create },
-	{ "queue_insert", test_insert },
-	{ "queue_remove", test_remove },
+	{ "queue_insert_back", test_insert },
+	{ "queue_remove_front", test_remove },
 	{ NULL, NULL } // τερματίζουμε τη λίστα με NULL
 };

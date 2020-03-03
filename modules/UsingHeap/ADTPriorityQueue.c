@@ -87,30 +87,30 @@ int pqueue_size(PriorityQueue pqueue) {
 	return vector_size(pqueue->vector);
 }
 
-Pointer pqueue_top(PriorityQueue pqueue) {
+Pointer pqueue_max(PriorityQueue pqueue) {
 	return node_value(pqueue, 1);		// root
 }
 
 void pqueue_insert(PriorityQueue pqueue, Pointer value) {
 	// Προσθέτουμε την τιμή στο τέλος και καλούμε την heapify_up για να επισκευάσει
 	// το σωρό, με όρισμα τον τελευταίο κόμβο (το 1-based id του είναι όσο το νέο μέγεθος του σωρού)
-	vector_insert(pqueue->vector, value);
+	vector_insert_last(pqueue->vector, value);
 	heapify_up(pqueue, pqueue_size(pqueue));
 }
 
-Pointer pqueue_remove(PriorityQueue pqueue) {
+Pointer pqueue_remove_max(PriorityQueue pqueue) {
 	int last_node = pqueue_size(pqueue);
 	if(last_node == 0)
 		return NULL;		// κενός σωρός
 
 	// Αποθήκευση πριν αφαιρεθεί, και destroy
-	Pointer top = pqueue_top(pqueue);
+	Pointer top = pqueue_max(pqueue);
 	if(pqueue->destroy_value != NULL)
 		pqueue->destroy_value(top);
 
 	// Αντικαθιστούμε τον πρώτο κόμβο με τον τελευταίο και αφαιρούμε τον τελευταίο
 	node_swap(pqueue, 1, last_node);
-	vector_remove(pqueue->vector);
+	vector_remove_last(pqueue->vector);
 
 	// Επισκευή του σωρού καλώντας τη heapify_down για τη ρίζα
 	heapify_down(pqueue, 1);

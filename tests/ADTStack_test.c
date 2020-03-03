@@ -25,7 +25,7 @@ void test_insert(void) {
 
 	// insert 1000 στοιχεία
 	for(int i = 0; i < 1000; i++) {
-		stack_insert(stack, &array[i]);
+		stack_insert_top(stack, &array[i]);
 		TEST_CHECK(stack_size(stack) == i+1);		// Το μέγεθος πρέπει να μεγαλώσει
 		TEST_CHECK(stack_top(stack) == &array[i]);	// Στην κορυφή είναι πάντα το στοιχείο που μόλις βάλαμε!
 	}
@@ -39,11 +39,11 @@ void test_remove(void) {
 
 	// insert για προσθήκη δεδομένων, χωρίς ελέγχους (έχουμε ξεχωριστό test για το insert)
 	for(int i = 0; i < 1000; i++)
-		stack_insert(stack, &array[i]);
+		stack_insert_top(stack, &array[i]);
 
 	// Διαδοχικά remove
 	for(int i = 999; i >= 0; i--) {
-		TEST_CHECK(stack_remove(stack) == &array[i]);
+		TEST_CHECK(stack_remove_top(stack) == &array[i]);
 		TEST_CHECK(stack_size(stack) == i);
 	}
 
@@ -59,7 +59,7 @@ void test_remove(void) {
 // Λίστα με όλα τα tests προς εκτέλεση
 TEST_LIST = {
 	{ "stack_create", test_create },
-	{ "stack_insert", test_insert },
-	{ "stack_remove", test_remove },
+	{ "stack_insert_top", test_insert },
+	{ "stack_remove_top", test_remove },
 	{ NULL, NULL } // τερματίζουμε τη λίστα με NULL
 };

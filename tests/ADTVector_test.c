@@ -25,7 +25,7 @@ void test_insert(void) {
 
 	// insert 1000 στοιχεία ώστε να συμβούν πολλαπλά resizes
 	for(int i = 0; i < 1000; i++) {
-		vector_insert(vec, &array[i]);
+		vector_insert_last(vec, &array[i]);
 		TEST_CHECK(vector_size(vec) == i+1);		// Το size ενημερώθηκε;
 		TEST_CHECK(vector_get_at(vec, i) == &array[i]);	// Μπορούμε να κάνουμε at το στοιχείο που μόλις βάλαμε;
 	}
@@ -47,12 +47,12 @@ void test_remove(void) {
 
 	// Διαδοχικά remove ώστε να συμβούν και resizes
 	for(int i = 999; i >= 0; i--) {
-		TEST_CHECK(vector_remove(vec) == &array[i]);
+		TEST_CHECK(vector_remove_last(vec) == &array[i]);
 		TEST_CHECK(vector_size(vec) == i);
 	}
 
 	// remove σε κενό vector
-	TEST_CHECK(vector_remove(vec) == NULL);
+	TEST_CHECK(vector_remove_last(vec) == NULL);
 
 	vector_destroy(vec);
 }
@@ -66,7 +66,7 @@ void test_get_set_at(void) {
 
 	// insert πολλαπλά NULL, θα τα αλλάξουμε μετά με replace
 	for(int i = 0; i < 1000; i++)
-		vector_insert(vec, NULL);
+		vector_insert_last(vec, NULL);
 
 	for(int i = 0; i < 1000; i++) {
 		TEST_CHECK(vector_get_at(vec, i) == NULL);
@@ -90,7 +90,7 @@ void test_iterate(void) {
 
 	// insert πολλαπλά NULL
 	for(int i = 0; i < 1000; i++)
-		vector_insert(vec, NULL);
+		vector_insert_last(vec, NULL);
 
 	for(VectorNode node = vector_first(vec); node != VECTOR_EOF; node = vector_next(vec, node))
 		TEST_CHECK(vector_node_value(vec, node) == NULL);
@@ -133,8 +133,8 @@ void test_destroy() {
 	Vector vec = vector_create(1, free);
 
 	vector_set_at(vec, 0, malloc(1));
-	vector_insert(vec, malloc(1));
-	vector_remove(vec);
+	vector_insert_last(vec, malloc(1));
+	vector_remove_last(vec);
 
 	vector_destroy(vec);
 }
@@ -143,8 +143,8 @@ void test_destroy() {
 // Λίστα με όλα τα tests προς εκτέλεση
 TEST_LIST = {
 	{ "vector_create", test_create },
-	{ "vector_insert", test_insert },
-	{ "vector_remove", test_remove },
+	{ "vector_insert_last", test_insert },
+	{ "vector_remove_last", test_remove },
 	{ "vector_get_set_at", test_get_set_at },
 	{ "vector_iterate", test_iterate },
 	{ "vector_find", test_find },

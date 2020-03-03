@@ -12,8 +12,8 @@
 
 void test_io_write_vector_to_file() {
 	Vector vec = vector_create(0, NULL);
-	vector_insert(vec, "foo");
-	vector_insert(vec, "bar");
+	vector_insert_last(vec, "foo");
+	vector_insert_last(vec, "bar");
 
 	// δημιουργία ενός προσωρινού αρχείου
 	TEST_ASSERT(io_write_vector_to_file("io_tests_temp", vec) > 0);

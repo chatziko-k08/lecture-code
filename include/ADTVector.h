@@ -37,13 +37,13 @@ int vector_size(Vector vec);
 // Προσθέτει την τιμή value στο _τέλος_ του vector vec. Το μέγεθος του vector μεγαλώνει κατά 1.
 // Αν δεν υπάρχει διαθέσιμη μνήμη το vector παραμένει όπως ήταν (αυτό μπορεί να ελεγχθεί με τη vector_size)
 
-void vector_insert(Vector vec, Pointer value);
+void vector_insert_last(Vector vec, Pointer value);
 
 // Αφαιρεί και επιστρέφει  την τιμή της τελευταίας θέσης του vector.
 // Το μέγεθος του vector μικραίνει κατά 1.
 // Αν size == 0 επιστρέφει NULL.
 
-Pointer vector_remove(Vector vec);
+Pointer vector_remove_last(Vector vec);
 
 // Επιστρέφει την τιμή στη θέση pos του vector vec, ή NULL αν pos < 0 ή pos >= size.
 

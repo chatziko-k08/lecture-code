@@ -18,7 +18,7 @@ Vector io_read_stream_as_vector(FILE* stream) {
 			*newline = '\0';
 
 		// προσθήκη στο vector
-		vector_insert(vec, strdup(line));
+		vector_insert_last(vec, strdup(line));
 	}
 
 	return vec;
