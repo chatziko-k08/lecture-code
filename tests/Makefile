@@ -30,7 +30,7 @@ UsingAVL_ADTSet_test_OBJS  = ADTSet_test.o $(MODULES)/UsingAVL/ADTSet.o
 
 # Υλοποιήσεις μέσω HashTable: ADTMap
 #
-UsingHashTable_ADTMap_tests_OBJS	= ADTMap_test.o $(MODULES)/UsingHashTable/ADTMap.o
+UsingHashTable_ADTMap_test_OBJS	= ADTMap_test.o $(MODULES)/UsingHashTable/ADTMap.o
 
 # Υλοποιήσεις μέσω ADTSet: ADTMap
 # Πέρα από το .o της κάθε υλοποίησης (πχ ADTMap.o), χρειάζεται και μια υλοποίηση του ίδιου του ADTSet.
