@@ -256,6 +256,7 @@ void map_set_hash_function(Map map, HashFunc func) {
 }
 
 uint hash_string(Pointer value) {
+	// djb2 hash function, απλή, γρήγορη, και σε γενικές γραμμές αποδοτική
     uint hash = 5381;
     for (char* s = value; *s != '\0'; s++)
 		hash = (hash << 5) + hash + *s;			// hash = (hash * 33) + *s. Το foo << 5 είναι γρηγορότερη εκδοχή του foo * 32.
