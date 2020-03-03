@@ -101,7 +101,7 @@ void test_iterate(void) {
 	vector_destroy(vec);
 }
 
-int compare_ints(void* a, void* b) {
+int compare_ints(Pointer a, Pointer b) {
 	return *(int*)a - *(int*)b;
 }
 

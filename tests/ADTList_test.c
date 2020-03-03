@@ -108,7 +108,7 @@ void test_remove(void) {
 
 
 // Σύγκριση δύο int pointers
-int compare_ints(void *a, void *b) {
+int compare_ints(Pointer a, Pointer b) {
 	return *(int*)a - *(int*)b;
 }
 

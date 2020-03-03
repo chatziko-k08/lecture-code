@@ -22,7 +22,7 @@ int* create_int(int value) {
 }
 
 // Δημιουργούμε μια ειδική compare συνάρτηση
-int compare_ints(void *a, void *b) {
+int compare_ints(Pointer a, Pointer b) {
 	return *(int*)a - *(int*)b;
 }
 
