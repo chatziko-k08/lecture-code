@@ -19,7 +19,7 @@ typedef struct int_vector* IntVector;
 // Οι συναρτήσεις είναι ολόιδιες με αυτές του ADTVector, documentation υπάρχει στο ADTVector.h
 //
 // Η μόνη διαφορά είναι ότι τα στοιχεία είναι τύπου int αντί για Pointer.
-// Οι συναρτήσεις vector_int_get_at και vector_int_remove επιστρέφουν INT_MIN αν αποτύχουν.
+// Η συνάρτηση vector_find επιστρέφει INT_MIN αν δεν βρεθεί το στοιχείο.
 
 
 IntVector int_vector_create(int size);

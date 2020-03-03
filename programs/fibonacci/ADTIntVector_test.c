@@ -48,9 +48,6 @@ void test_remove(void) {
 		TEST_CHECK(int_vector_size(vec) == i);
 	}
 
-	// remove σε κενό vector
-	TEST_CHECK(int_vector_remove_last(vec) == INT_MIN);
-
 	int_vector_destroy(vec);
 }
 
@@ -66,10 +63,6 @@ void test_get_set_at(void) {
 		int_vector_set_at(vec, i, i);
 		TEST_CHECK(int_vector_get_at(vec, i) == i);
 	}
-
-	// at εκτός μεγέθους
-	TEST_CHECK(int_vector_get_at(vec, -1) == INT_MIN);
-	TEST_CHECK(int_vector_get_at(vec, 1000) == INT_MIN);
 
 	int_vector_destroy(vec);
 }

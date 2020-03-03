@@ -35,8 +35,7 @@ void int_vector_set_at(IntVector vec, int pos, int value) {
 }
 
 int int_vector_get_at(IntVector vec, int pos) {
-	int *p = vector_get_at((Vector)vec, pos);		// το vector περιέχει int pointers
-	return p == NULL ? INT_MIN : *p;
+	return *(int*)vector_get_at((Vector)vec, pos);		// το vector περιέχει int pointers
 }
 
 void int_vector_insert_last(IntVector vec, int value) {
