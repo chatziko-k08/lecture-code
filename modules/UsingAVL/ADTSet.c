@@ -26,11 +26,17 @@ struct set_node {
 };
 
 
+// forward declarations
+static SetNode node_insert_and_balance(SetNode node, CompareFunc compare, Pointer value, bool* inserted, Pointer* old_value);
+static SetNode node_remove_and_balance(SetNode node, CompareFunc compare, Pointer value, bool* removed, Pointer* old_value);
 
-//// Συναρτήσεις που είναι _ολόιδιες_ με τις αντίστοιχες της BST υλοποίησης ////////////////
+
+//// Συναρτήσεις που είναι _(σχεδόν) ολόιδιες_ με τις αντίστοιχες της BST υλοποίησης ////////////////
 //
 // Είναι σημαντικό να κατανοήσουμε πρώτα τον κώδικα του BST πριν από αυτόν του AVL.
 // Θα μπορούσαμε οργανώνοντας τον κώδικα διαφορετικά να επαναχρησιμοποιήσουμε τις συναρτήσεις αυτές.
+//
+// Οι διαφορές είναι σημειωμένες με "AVL" σε σχόλιο
 
 // Δημιουργεί και επιστρέφει έναν κόμβο με τιμή value (χωρίς παιδιά)
 //
@@ -39,7 +45,7 @@ static SetNode node_create(Pointer value) {
 	node->left = NULL;
 	node->right = NULL;
 	node->value = value;
-	node->height = 1;
+	node->height = 1;			// AVL
 	return node;
 }
 
@@ -147,11 +153,11 @@ static SetNode node_insert(SetNode node, CompareFunc compare, Pointer value, boo
 
 	} else if (compare_res < 0) {
 		// value < node->value, συνεχίζουμε αριστερά.
-		node->left = node_insert(node->left, compare, value, inserted, old_value);
+		node->left = node_insert_and_balance(node->left, compare, value, inserted, old_value);		// AVL, καλούμε την node_insert_and_balance αναδρομικά
 
 	} else {
 		// value > node->value, συνεχίζουμε δεξιά
-		node->right = node_insert(node->right, compare, value, inserted, old_value);
+		node->right = node_insert_and_balance(node->right, compare, value, inserted, old_value);	// AVL, καλούμε την node_insert_and_balance αναδρομικά
 	}
 
 	return node;	// η ρίζα του υποδέντρου δεν αλλάζει
@@ -219,9 +225,9 @@ static SetNode node_remove(SetNode node, CompareFunc compare, Pointer value, boo
 
 	// compare_res != 0, συνεχίζουμε στο αριστερό ή δεξί υποδέντρο, η ρίζα δεν αλλάζει.
 	if (compare_res < 0)
-		node->left  = node_remove(node->left,  compare, value, removed, old_value);
+		node->left  = node_remove_and_balance(node->left,  compare, value, removed, old_value);		// AVL, καλούμε την node_remove_and_balance αναδρομικά
 	else
-		node->right = node_remove(node->right, compare, value, removed, old_value);
+		node->right = node_remove_and_balance(node->right, compare, value, removed, old_value);		// AVL, καλούμε την node_remove_and_balance αναδρομικά
 
 	return node;
 }
@@ -321,8 +327,6 @@ static SetNode node_rotate_right_left(SetNode node) {
 static SetNode node_insert_and_balance(SetNode node, CompareFunc compare, Pointer value, bool* inserted, Pointer* old_value) {
 	// Το "κλασσικό" insert
 	node = node_insert(node, compare, value, inserted, old_value);
-	if(node == NULL)
-		return node;
 
 	// Ενημερώνουμε το ύψος του κόμβου
 	node->height = 1 + int_max(node_height(node->left), node_height(node->right));
@@ -384,6 +388,14 @@ static SetNode node_remove_and_balance(SetNode node, CompareFunc compare, Pointe
 
 //// Συναρτήσεις του ADT Set. Γενικά πολύ απλές, αφού καλούν τις αντίστοιχες node_* //////////////////////////////////
 
+void assert_avl(SetNode node) {
+	if(!node) return;
+	int b = node_balance(node);
+	assert(b >= -1 && b <= 1);
+	assert_avl(node->left);
+	assert_avl(node->right);
+}
+
 Set set_create(CompareFunc compare, DestroyFunc destroy_value) {
 	assert(compare != NULL);	// LCOV_EXCL_LINE
 
@@ -405,6 +417,7 @@ void set_insert(Set set, Pointer value) {
 	bool inserted;
 	Pointer old_value;
 	set->root = node_insert_and_balance(set->root, set->compare, value, &inserted, &old_value);
+	assert_avl(set->root);
 	
 	// Το size αλλάζει μόνο αν μπει νέος κόμβος. Στα updates κάνουμε destroy την παλιά τιμή
 	if (inserted)
@@ -417,6 +430,7 @@ Pointer set_remove(Set set, Pointer value) {
 	bool removed;
 	Pointer old_value = NULL;
 	set->root = node_remove_and_balance(set->root, set->compare, value, &removed, &old_value);
+	assert_avl(set->root);
 
 	// Το size αλλάζει μόνο αν πραγματικά αφαιρεθεί ένας κόμβος
 	if (removed) {

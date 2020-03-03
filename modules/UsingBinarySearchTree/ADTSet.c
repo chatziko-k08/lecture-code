@@ -330,3 +330,26 @@ Pointer set_node_value(Set set, SetNode node) {
 SetNode set_find_node(Set set, Pointer value) {
 	return node_find_equal(set->root, set->compare, value);
 }
+
+
+
+// Συναρτήσεις που δεν υπάρχουν στο public interface αλλά χρησιμοποιούνται στα tests.
+// Ελέγχουν ότι το δέντρο είναι ένα σωστό BST.
+
+static bool node_is_bst(SetNode node, CompareFunc compare) {
+	if (node == NULL)
+		return true;
+
+	SetNode left_max = node_find_max(node->left);
+	SetNode right_min = node_find_min(node->right);
+
+	return
+		(left_max  == NULL || compare(left_max->value,  node->value) < 0) &&
+		(right_min == NULL || compare(right_min->value, node->value) > 0) &&
+		node_is_bst(node->left, compare) &&
+		node_is_bst(node->right, compare);
+}
+
+bool set_is_proper(Set node) {
+	return node_is_bst(node->root, node->compare);
+}

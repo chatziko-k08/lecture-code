@@ -10,6 +10,11 @@
 #include "ADTSet.h"
 
 
+// Η συνάρτηση αυτή δεν υπάρχει στο public interface του Set αλλά χρησιμεύει
+// στα tests, για να ελέγχει αν το set είναι σωστό μετά από κάθε λειτουργία.
+bool set_is_proper(Set set);
+
+
 //
 //  Βοηθητικές συναρτήσεις 
 //
@@ -30,6 +35,7 @@ int compare_ints(Pointer a, Pointer b) {
 void insert_and_test(Set set, Pointer value) {
 
 	set_insert(set, value);
+	TEST_CHECK(set_is_proper(set));
 	TEST_CHECK(set_find(set, value) == value);
 }
 
@@ -136,6 +142,7 @@ void test_remove() {
 	for (int i = 0; i < N; i++) {
 
 		Pointer value = set_remove(set, value_array[i]);
+		TEST_CHECK(set_is_proper(set));
 		TEST_CHECK(value == value_array[i]);
 	}
 
@@ -148,6 +155,7 @@ void test_remove() {
 
 	insert_and_test(set2, &local_value1);
 	TEST_CHECK(set_remove(set2, &local_value1) == &local_value1);
+	TEST_CHECK(set_is_proper(set2));
 	TEST_CHECK(set_size(set2) == 0);
 	
 	set_destroy(set2);
