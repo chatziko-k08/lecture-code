@@ -21,6 +21,8 @@ void test_create(void) {
 	// Δημιουργούμε μια κενή λίστα (χωρίς αυτόματο free)
 	Map map = map_create(compare_ints, NULL, NULL);
 	map_set_hash_function(map, hash_int);
+	map_set_destroy_key(map, NULL);
+	map_set_destroy_value(map, NULL);
 
 	// Ελέγχουμε ότι δεν απέτυχε η malloc στην λίστα, και ότι
 	// αρχικοποιείται με μέγεθος 0 (δηλαδή χωρίς κόμβους)

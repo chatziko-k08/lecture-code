@@ -12,6 +12,7 @@
 
 void test_create(void) {
 	Queue queue = queue_create(NULL);
+	queue_set_destroy_value(queue, NULL);
 
 	TEST_CHECK(queue != NULL);
 	TEST_CHECK(queue_size(queue) == 0);

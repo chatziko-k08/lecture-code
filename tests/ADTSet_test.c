@@ -54,6 +54,7 @@ void test_create() {
 
 	// Δημιουργούμε ένα κενό set (χωρίς συνάρτηση αποδεύσμευσης)
 	Set set = set_create(compare_ints, NULL);
+	set_set_destroy_value(set, NULL);
 
 	TEST_CHECK(set != NULL);
 	TEST_CHECK(set_size(set) == 0);

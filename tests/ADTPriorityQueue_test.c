@@ -22,6 +22,7 @@ int compare_ints(Pointer a, Pointer b) {
 
 void test_create(void) {
 	PriorityQueue pqueue = pqueue_create(compare_ints, NULL);
+	pqueue_set_destroy_value(pqueue, NULL);
 
 	TEST_CHECK(pqueue != NULL);
 	TEST_CHECK(pqueue_size(pqueue) == 0);

@@ -12,6 +12,7 @@
 
 void test_create(void) {
 	Stack stack = stack_create(NULL);
+	stack_set_destroy_value(stack, NULL);
 
 	TEST_CHECK(stack != NULL);
 	TEST_CHECK(stack_size(stack) == 0);

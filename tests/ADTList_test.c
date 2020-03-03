@@ -14,6 +14,7 @@ void test_create(void) {
 
 	// Δημιουργούμε μια κενή λίστα με NULL δείκτη συνάρτησης delete_value
 	List list = list_create(NULL);
+	list_set_destroy_value(list, NULL);
 
 	// Ελέγχουμε ότι δεν απέτυχε η malloc στην λίστα, και ότι
 	// αρχικοποιείται με μέγεθος 0 (δηλαδή χωρίς κόμβους)
