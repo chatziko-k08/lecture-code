@@ -36,7 +36,7 @@ void test_insert(void) {
 	int array[N];					// Στο pqueue θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
 
 	// insert N στοιχεία
-	for(int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++) {
 		array[i] = i;
 		pqueue_insert(pqueue, &array[i]);
 		TEST_CHECK(pqueue_size(pqueue) == i+1);			// Το size ενημερώθηκε;
@@ -51,11 +51,11 @@ void test_remove(void) {
 
 	// προσθήκη δεδομένων
 	int N = 1000;
-	for(int i = 0; i < N; i++)
+	for (int i = 0; i < N; i++)
 		pqueue_insert(pqueue, create_int(i));
 
 	// Διαδοχικά remove ώστε να συμβούν και resizes
-	for(int i = N-1; i >= 0; i--) {
+	for (int i = N-1; i >= 0; i--) {
 		int* value = pqueue_max(pqueue);
 		TEST_CHECK(*value == i);
 		TEST_CHECK(pqueue_remove_max(pqueue) == value);

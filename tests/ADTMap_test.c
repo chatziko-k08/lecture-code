@@ -75,7 +75,7 @@ void test_insert(void) {
 	shuffle(key_array, N);
 
 	// Δοκιμάζουμε την insert εισάγοντας κάθε φορά νέους κόμβους
-	for(int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++) {
 		value_array[i] = create_int(i);
 
 		// Εισαγωγή, δοκιμή και έλεγχος ότι ενημερώθηκε το size
@@ -117,7 +117,7 @@ void test_remove(void) {
 	int* key_array[N];
 	int* value_array[N];
 
-	for(int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++) {
 		key_array[i] = create_int(i);
 		value_array[i] = create_int(i);
 
@@ -134,7 +134,7 @@ void test_remove(void) {
 	TEST_CHECK(removed_value == NULL);
 
 	// Διαγράφουμε όλους τους κόμβους και ελέγχουμε εάν η τιμή που μας επιστρέφει η map_remove είναι σωστή
-	for(int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++) {
 		// (Αν δεν το έχουμε διαγράψει ήδη)
 		if (i % (N / 20) != 0) {
 			Pointer value = map_remove(map, key_array[i]);
@@ -158,7 +158,7 @@ void test_find() {
 	int* key_array[N];
 	int* value_array[N];
 
-	for(int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++) {
 		key_array[i] = create_int(i);
 		value_array[i] = create_int(i);
 
@@ -189,16 +189,16 @@ void test_iterate() {
 	TEST_CHECK(map_first(map) == MAP_EOF);
 	// Προσθέτουμε Ν ακεραίους, το value κάθε ακεραίου i είναι 2*i
 	int N = 1000;
-	for(int i = 0; i < N; i++)
+	for (int i = 0; i < N; i++)
 		map_insert(map, create_int(i), create_int(2*i));
 
 	// Ελέγχουμε ότι διατρέχοντας το map βρίσκουμε όλους τους ακεραίους από μία φορά τον καθένα
 	// Στον πίνακα seen κρατάμε αν έχουμε ήδη δει τον κάθε αριθμό
 	bool seen[N];
-	for(int i = 0; i < N; i++)
+	for (int i = 0; i < N; i++)
 		seen[i] = false;
 
-	for(MapNode node = map_first(map); node != MAP_EOF; node = map_next(map, node)) {
+	for (MapNode node = map_first(map); node != MAP_EOF; node = map_next(map, node)) {
 		int* key = map_node_key(map, node);
 		int* value = map_node_value(map, node);
 

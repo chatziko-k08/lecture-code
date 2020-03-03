@@ -25,7 +25,7 @@ void test_insert(void) {
 	int array[1000];					// Στο stack θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
 
 	// insert 1000 στοιχεία
-	for(int i = 0; i < 1000; i++) {
+	for (int i = 0; i < 1000; i++) {
 		stack_insert_top(stack, &array[i]);
 		TEST_CHECK(stack_size(stack) == i+1);		// Το μέγεθος πρέπει να μεγαλώσει
 		TEST_CHECK(stack_top(stack) == &array[i]);	// Στην κορυφή είναι πάντα το στοιχείο που μόλις βάλαμε!
@@ -39,11 +39,11 @@ void test_remove(void) {
 	int array[1000];
 
 	// insert για προσθήκη δεδομένων, χωρίς ελέγχους (έχουμε ξεχωριστό test για το insert)
-	for(int i = 0; i < 1000; i++)
+	for (int i = 0; i < 1000; i++)
 		stack_insert_top(stack, &array[i]);
 
 	// Διαδοχικά remove
-	for(int i = 999; i >= 0; i--) {
+	for (int i = 999; i >= 0; i--) {
 		TEST_CHECK(stack_remove_top(stack) == &array[i]);
 		TEST_CHECK(stack_size(stack) == i);
 	}

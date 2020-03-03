@@ -33,7 +33,7 @@ Vector vector_create(int size, DestroyFunc destroy_value) {
 
 	// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία
 	// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
-	if(vec == NULL || array == NULL) {
+	if (vec == NULL || array == NULL) {
 		free(vec);		// free αν καταφέραμε να δεσμεύσουμε κάποιο από τα δύο.
 		free(array);	// Αν όχι το free(NULL) απλά δεν κάνει τίποτα.
 		return VECTOR_FAIL;
@@ -61,7 +61,7 @@ void vector_set_at(Vector vec, int pos, Pointer value) {
 	assert(pos >= 0 && pos < vec->size);	// LCOV_EXCL_LINE
 
 	// Αν υπάρχει συνάρτηση destroy_value, την καλούμε για το στοιχείο που αντικαθίσταται
-	if(value != vec->array[pos] && vec->destroy_value != NULL)
+	if (value != vec->array[pos] && vec->destroy_value != NULL)
 		vec->destroy_value(vec->array[pos]);
 
 	vec->array[pos] = value;
@@ -70,12 +70,12 @@ void vector_set_at(Vector vec, int pos, Pointer value) {
 void vector_insert_last(Vector vec, Pointer value) {
 	// Μεγαλώνουμε τον πίνακα (αν χρειαστεί), ώστε να χωράει τουλάχιστον size στοιχεία
 	// Διπλασιάζουμε κάθε φορά το capacity (σημαντικό για την πολυπλοκότητα!)
-	if(vec->capacity == vec->size) {
+	if (vec->capacity == vec->size) {
 		Pointer new_array = realloc(vec->array, 2 * vec->capacity * sizeof(Pointer));
 
 		// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία
 		// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
-		if(new_array == NULL)
+		if (new_array == NULL)
 			return;			// αποτυχία, επιστρέφουμε χωρίς καμία τροποποίηση στο υπάρχον vector
 		// LCOV_EXCL_STOP
 
@@ -91,7 +91,7 @@ void vector_insert_last(Vector vec, Pointer value) {
 }
 
 Pointer vector_remove_last(Vector vec) {
-	if(vec->size == 0)
+	if (vec->size == 0)
 		return NULL;
 
 	// Προσοχή: αποθήκευση του στοιχείου για να μη χαθεί από το realloc!
@@ -104,7 +104,7 @@ Pointer vector_remove_last(Vector vec) {
 	// Για την πολυπλοκότητα είναι σημαντικό να μειώνουμε το μέγεθος στο μισό, και μόνο
 	// αν το capacity είναι τετραπλάσιο του size (δηλαδή το 75% του πίνακα είναι άδειος)
 	//
-	if(vec->capacity > vec->size * 4 && vec->capacity > 2*VECTOR_MIN_CAPACITY) {
+	if (vec->capacity > vec->size * 4 && vec->capacity > 2*VECTOR_MIN_CAPACITY) {
 		Pointer new_array = realloc(vec->array, vec->capacity/2 * sizeof(Pointer));
 
 		// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία,
@@ -112,7 +112,7 @@ Pointer vector_remove_last(Vector vec) {
 		// μπορούμε να εκτελέσομυε κανονικά το remove, απλά θα συνεχίσουμε να δεσμεύουμε παραπάνω μνήμη (στο επόμενο remove θα ξαναπροσπαθήσουμε).
 		//
 		// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
-		if(new_array != NULL) {
+		if (new_array != NULL) {
 			vec->capacity /= 2;
 			vec->array = new_array;
 		}
@@ -120,7 +120,7 @@ Pointer vector_remove_last(Vector vec) {
 	}
 
 	// Αν υπάρχει συνάρτηση destroy_value, την καλούμε για το στοιχείο που αφαιρείται
-	if(vec->destroy_value != NULL)
+	if (vec->destroy_value != NULL)
 		vec->destroy_value(value);
 
 	return value;
@@ -128,8 +128,8 @@ Pointer vector_remove_last(Vector vec) {
 
 Pointer vector_find(Vector vec, Pointer value, CompareFunc compare) {
 	// Διάσχιση του vector
-	for(int i = 0; i < vec->size; i++)
-		if(compare(vec->array[i], value) == 0)
+	for (int i = 0; i < vec->size; i++)
+		if (compare(vec->array[i], value) == 0)
 			return vec->array[i];		// βρέθηκε
 
 	return NULL;				// δεν υπάρχει
@@ -143,8 +143,8 @@ DestroyFunc vector_set_destroy_value(Vector vec, DestroyFunc destroy_value) {
 
 void vector_destroy(Vector vec) {
 	// Αν υπάρχει συνάρτηση destroy_value, την καλούμε για όλα τα στοιχεία
-	if(vec->destroy_value != NULL)
-		for(int i = 0; i < vec->size; i++)
+	if (vec->destroy_value != NULL)
+		for (int i = 0; i < vec->size; i++)
 			vec->destroy_value(vec->array[i]);
 
 	// Πρέπει να κάνουμε free τόσο τον πίνακα όσο και το struct!
@@ -156,7 +156,7 @@ void vector_destroy(Vector vec) {
 // Συναρτήσεις για διάσχιση μέσω node /////////////////////////////////////////////////////
 
 VectorNode vector_first(Vector vec) {
-	if(vec->size == 0)
+	if (vec->size == 0)
 		return VECTOR_BOF;
 		
 	Pointer* p = &vec->array[0];
@@ -164,7 +164,7 @@ VectorNode vector_first(Vector vec) {
 }
 
 VectorNode vector_last(Vector vec) {
-	if(vec->size == 0)
+	if (vec->size == 0)
 		return VECTOR_EOF;
 
 	Pointer* p = &vec->array[vec->size-1];
@@ -174,7 +174,7 @@ VectorNode vector_last(Vector vec) {
 VectorNode vector_next(Vector vec, VectorNode node) {
 	Pointer* p = (Pointer*)node;
 
-	if(p == &vec->array[vec->size-1])
+	if (p == &vec->array[vec->size-1])
 		return VECTOR_EOF;
 	else
 		return (VectorNode)(p + 1);
@@ -183,7 +183,7 @@ VectorNode vector_next(Vector vec, VectorNode node) {
 VectorNode vector_previous(Vector vec, VectorNode node) {
 	Pointer* p = (Pointer*)node;
 
-	if(p == &vec->array[0])
+	if (p == &vec->array[0])
 		return VECTOR_EOF;
 	else
 		return (VectorNode)(p - 1);

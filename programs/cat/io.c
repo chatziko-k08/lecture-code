@@ -11,10 +11,10 @@ Vector io_read_stream_as_vector(FILE* stream) {
 
 	Vector vec = vector_create(0, free);		// αυτόματο free για κάθε στοιχείο που αφαιρείται
 
-	while(fgets(line, max_len, stream)) {
+	while (fgets(line, max_len, stream)) {
 		// αφαίρεση του newline, αν υπάρχει
 		char* newline = strchr(line, '\n');
-		if(newline != NULL)
+		if (newline != NULL)
 			*newline = '\0';
 
 		// προσθήκη στο vector
@@ -27,7 +27,7 @@ Vector io_read_stream_as_vector(FILE* stream) {
 Vector io_read_file_as_vector(char* filename) {
 	// απλά ανοίγουμε το αρχείο και καλούμε την io_read_stream_as_vector
 	FILE* file = fopen(filename, "r");
-	if(file == NULL)
+	if (file == NULL)
 		return NULL;
 
 	Vector vec = io_read_stream_as_vector(file);
@@ -41,7 +41,7 @@ int io_write_vector_to_stream(FILE* stream, Vector vec) {
 	int size = vector_size(vec);
 
 	// διασχίζουμε το vector και τυπώνουμε κάθε γραμμή
-	for(int i = 0; i < size; i++) {
+	for (int i = 0; i < size; i++) {
 		char* line = vector_get_at(vec, i);
 		written += fprintf(stream, "%s\n", line);
 	}
@@ -52,7 +52,7 @@ int io_write_vector_to_stream(FILE* stream, Vector vec) {
 int io_write_vector_to_file(char* filename, Vector vec) {
 	// απλά ανοίγουμε το αρχείο και καλούμε την io_write_vector_to_stream
 	FILE* file = fopen(filename, "w");
-	if(file == NULL)
+	if (file == NULL)
 		return 0;
 
 	int written = io_write_vector_to_stream(file, vec);

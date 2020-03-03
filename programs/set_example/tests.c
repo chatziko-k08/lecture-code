@@ -67,19 +67,19 @@ void integers_loop() {
 
 	// Για να αποθηκεύσουμε 100 διαφορετικούς ακεραίους
 	// πρέπει κάθε φορά να δημιουργήσουμε έναν νέο ακέραιο.
-	for(int i = 0; i < 100; i++)
+	for (int i = 0; i < 100; i++)
 		set_insert(set, create_int(i));
 
 	// set_min and set_next
 	int i = 0;
-	for(SetNode node = set_first(set); node != SET_EOF; node = set_next(set, node)) {
+	for (SetNode node = set_first(set); node != SET_EOF; node = set_next(set, node)) {
 		int* value = set_node_value(set, node);
 		TEST_ASSERT(*value == i++);
 	}
 
 	// set_max and set_previous
 	i = 99;
-	for(SetNode node = set_last(set); node != SET_BOF; node = set_previous(set, node)) {
+	for (SetNode node = set_last(set); node != SET_BOF; node = set_previous(set, node)) {
 		int* value = set_node_value(set, node);
 		TEST_ASSERT(*value == i--);
 	}

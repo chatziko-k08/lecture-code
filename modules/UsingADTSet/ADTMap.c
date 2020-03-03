@@ -30,10 +30,10 @@ static int compare_map_nodes(MapNode a, MapNode b) {
 
 // Συνάρτηση που καταστρέφει ένα map node
 static void destroy_map_node(MapNode node) {
-	if(node->owner->destroy_key != NULL)
+	if (node->owner->destroy_key != NULL)
 		node->owner->destroy_key(node->key);
 
-	if(node->owner->destroy_value != NULL)
+	if (node->owner->destroy_value != NULL)
 		node->owner->destroy_value(node->value);
 
 	free(node);
@@ -65,11 +65,11 @@ void map_insert(Map map, Pointer key, Pointer value) {
 	struct map_node search_node = { .key = key, .owner = map };
 
 	MapNode node = set_find(map->set, &search_node);
-	if(node != NULL) {
-		if(key != node->key && map->destroy_key != NULL)
+	if (node != NULL) {
+		if (key != node->key && map->destroy_key != NULL)
 			map->destroy_key(node->key);
 
-		if(value != node->value && map->destroy_value != NULL)
+		if (value != node->value && map->destroy_value != NULL)
 			map->destroy_value(node->value);
 
 		node->key = key;
@@ -89,7 +89,7 @@ Pointer map_remove(Map map, Pointer key) {
 	struct map_node search_node = { .key = key, .owner = map };
 
 	MapNode node = set_find(map->set, &search_node);
-	if(node == NULL)
+	if (node == NULL)
 		return NULL;
 	Pointer value = node->value;		// πριν το remove, γιατί κάνει free!
 

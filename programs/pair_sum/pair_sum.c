@@ -15,11 +15,11 @@ bool pair_sum(int target, Vector numbers, int* res_a, int* res_b) {
 	bool result = false;
 
 	int size = vector_size(numbers);
-	for(int i = 0; i < size; i++) {
+	for (int i = 0; i < size; i++) {
 		int* a = vector_get_at(numbers, i);
 		int b = target - *a;
 
-		if(map_find(seen, &b) != NULL) {
+		if (map_find(seen, &b) != NULL) {
 			*res_a = *a;
 			*res_b = b;
 			result = true;

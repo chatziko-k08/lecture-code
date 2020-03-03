@@ -55,7 +55,7 @@ ListNode list_first(List list) {
 ListNode list_last(List list) {
 	// Προσοχή, αν η λίστα είναι κενή το last δείχνει στον dummy, εμείς όμως θέλουμε να επιστρέψουμε NULL, όχι τον dummy!
 	//
-	if(list->last == list->dummy)
+	if (list->last == list->dummy)
 		return LIST_EOF;		// κενή λίστα
 	else
 		return list->last;
@@ -74,7 +74,7 @@ Pointer list_node_value(List list, ListNode node) {
 void list_insert_next(List list, ListNode node, Pointer value) {
 	// Αν το node είναι NULL απλά εισάγουμε μετά τον dummy κόμβο!
 	// Αυτή ακριβώς είναι η αξία του dummy, δε χρειαζόμαστε ξεχωριστή υλοποίηση.
-	if(node == NULL)
+	if (node == NULL)
 		node = list->dummy;
 
 	// Δημιουργία του νέου κόμβου
@@ -87,14 +87,14 @@ void list_insert_next(List list, ListNode node, Pointer value) {
 
 	// Ενημέρωση των size & last
 	list->size++;
-	if(list->last == node)
+	if (list->last == node)
 		list->last = new;
 }
 
 Pointer list_remove_next(List list, ListNode node) {
 	// Αν το node είναι NULL απλά διαγράφουμε μετά τον dummy κόμβο!
 	// Αυτή ακριβώς είναι η αξία του dummy, δε χρειαζόμαστε ξεχωριστή υλοποίηση.
-	if(node == NULL)
+	if (node == NULL)
 		node = list->dummy;
 
 	// Ο κόμβος προς διαγραφή είναι ο επόμενος του node, ο οποίος πρέπει να υπάρχει
@@ -103,7 +103,7 @@ Pointer list_remove_next(List list, ListNode node) {
 
 	Pointer value = removed->value;
 
-	if(list->destroy_value != NULL)
+	if (list->destroy_value != NULL)
 		list->destroy_value(value);
 
 	// Σύνδεση του node με τον επόμενο του removed
@@ -113,7 +113,7 @@ Pointer list_remove_next(List list, ListNode node) {
 
 	// Ενημέρωση των size & last
 	list->size--;
-	if(list->last == removed)
+	if (list->last == removed)
 		list->last = node;
 
 	return value;
@@ -122,8 +122,8 @@ Pointer list_remove_next(List list, ListNode node) {
 ListNode list_find_node(List list, Pointer value, CompareFunc compare) {
 	// διάσχιση όλης της λίστας, καλούμε την compare μέχρι να επιστρέψει 0
 	//
-	for(ListNode node = list->dummy->next; node != NULL; node = node->next)
-		if(compare(value, node->value) == 0)
+	for (ListNode node = list->dummy->next; node != NULL; node = node->next)
+		if (compare(value, node->value) == 0)
 			return node;		// βρέθηκε
 
 	return NULL;	// δεν υπάρχει
@@ -145,11 +145,11 @@ void list_destroy(List list) {
 	// συμπεριλαμβανομένου και του dummy!
 	//
 	ListNode node = list->dummy;
-	while(node != NULL) {				// while αντί για for, γιατί θέλουμε να διαβάσουμε
+	while (node != NULL) {				// while αντί για for, γιατί θέλουμε να διαβάσουμε
 		ListNode next = node->next;		// το node->next _πριν_ κάνουμε free!
 
 		// Καλούμε τη destroy_value, αν υπάρχει (προσοχή, όχι στον dummy!)
-		if(node != list->dummy && list->destroy_value != NULL)
+		if (node != list->dummy && list->destroy_value != NULL)
 			list->destroy_value(node->value);
 
 		free(node);

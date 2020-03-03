@@ -25,14 +25,14 @@ void test_insert(void) {
 	int array[1000];					// Στο vector θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
 
 	// insert 1000 στοιχεία ώστε να συμβούν πολλαπλά resizes
-	for(int i = 0; i < 1000; i++) {
+	for (int i = 0; i < 1000; i++) {
 		vector_insert_last(vec, &array[i]);
 		TEST_CHECK(vector_size(vec) == i+1);		// Το size ενημερώθηκε;
 		TEST_CHECK(vector_get_at(vec, i) == &array[i]);	// Μπορούμε να κάνουμε at το στοιχείο που μόλις βάλαμε;
 	}
 
 	// Δοκιμή ότι μετά τα resizes τα στοιχεία είναι ακόμα προσπελάσιμα
-	for(int i = 0; i < 1000; i++)
+	for (int i = 0; i < 1000; i++)
 		TEST_CHECK(vector_get_at(vec, i) == &array[i]);
 
 	vector_destroy(vec);
@@ -43,11 +43,11 @@ void test_remove(void) {
 	int array[1000];
 
 	// replace για προσθήκη δεδομένων, χωρίς ελέγχους (έχουμε ξεχωριστό test για το replace)
-	for(int i = 0; i < 1000; i++)
+	for (int i = 0; i < 1000; i++)
 		vector_set_at(vec, i, &array[i]);
 
 	// Διαδοχικά remove ώστε να συμβούν και resizes
-	for(int i = 999; i >= 0; i--) {
+	for (int i = 999; i >= 0; i--) {
 		TEST_CHECK(vector_remove_last(vec) == &array[i]);
 		TEST_CHECK(vector_size(vec) == i);
 	}
@@ -63,10 +63,10 @@ void test_get_set_at(void) {
 	int array[1000];
 
 	// insert πολλαπλά NULL, θα τα αλλάξουμε μετά με replace
-	for(int i = 0; i < 1000; i++)
+	for (int i = 0; i < 1000; i++)
 		vector_insert_last(vec, NULL);
 
-	for(int i = 0; i < 1000; i++) {
+	for (int i = 0; i < 1000; i++) {
 		TEST_CHECK(vector_get_at(vec, i) == NULL);
 		vector_set_at(vec, i, &array[i]);
 		TEST_CHECK(vector_get_at(vec, i) == &array[i]);
@@ -83,13 +83,13 @@ void test_iterate(void) {
 	TEST_CHECK(vector_last(vec) == VECTOR_EOF);
 
 	// insert πολλαπλά NULL
-	for(int i = 0; i < 1000; i++)
+	for (int i = 0; i < 1000; i++)
 		vector_insert_last(vec, NULL);
 
-	for(VectorNode node = vector_first(vec); node != VECTOR_EOF; node = vector_next(vec, node))
+	for (VectorNode node = vector_first(vec); node != VECTOR_EOF; node = vector_next(vec, node))
 		TEST_CHECK(vector_node_value(vec, node) == NULL);
 
-	for(VectorNode node = vector_last(vec); node != VECTOR_BOF; node = vector_previous(vec, node))
+	for (VectorNode node = vector_last(vec); node != VECTOR_BOF; node = vector_previous(vec, node))
 		TEST_CHECK(vector_node_value(vec, node) == NULL);
 
 	vector_destroy(vec);
@@ -104,12 +104,12 @@ void test_find(void) {
 	int array[1000];
 
 	// replace για προσθήκη δεδομένων
-	for(int i = 0; i < 1000; i++) {
+	for (int i = 0; i < 1000; i++) {
 		array[i] = i;
 		vector_set_at(vec, i, &array[i]);
 	}
 
-	for(int i = 0; i < 1000; i++) {
+	for (int i = 0; i < 1000; i++) {
 		int* p = vector_find(vec, &i, compare_ints);
 		TEST_CHECK(*p == i);
 	}

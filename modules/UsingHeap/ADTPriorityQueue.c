@@ -33,13 +33,13 @@ static void node_swap(PriorityQueue pqueue, int node1, int node2) {
 
 static void heapify_up(PriorityQueue pqueue, int node) {
 	// Αν φτάσαμε στη ρίζα, σταματάμε
-	if(node == 1)
+	if (node == 1)
 		return;
 
 	int parent = node / 2;		// Ο πατέρας του κόμβου. Τα node ids είναι 1-based
 
 	// Αν ο πατέρας έχει μικρότερη τιμή από τον κόμβο, swap και συνεχίζουμε αναδρομικά προς τα πάνω
-	if(pqueue->compare(node_value(pqueue, parent), node_value(pqueue, node)) < 0) {
+	if (pqueue->compare(node_value(pqueue, parent), node_value(pqueue, node)) < 0) {
 		node_swap(pqueue, parent, node);
 		heapify_up(pqueue, parent);
 	}
@@ -51,16 +51,16 @@ static void heapify_down(PriorityQueue pqueue, int node) {
 	int right_child = left_child + 1;
 
 	int size = pqueue_size(pqueue);
-	if(left_child > size)
+	if (left_child > size)
 		return;
 
 	// βρίσκουμε το μέγιστο από τα 2 παιδιά
 	int max_child = left_child;
-	if(right_child <= size && pqueue->compare(node_value(pqueue, left_child), node_value(pqueue, right_child)) < 0)
+	if (right_child <= size && pqueue->compare(node_value(pqueue, left_child), node_value(pqueue, right_child)) < 0)
 			max_child = right_child;
 
 	// Αν ο κόμβος είναι μικρότερος από το μέγιστο παιδί, swap και συνεχίζουμε προς τα κάτω
-	if(pqueue->compare(node_value(pqueue, node), node_value(pqueue, max_child)) < 0) {
+	if (pqueue->compare(node_value(pqueue, node), node_value(pqueue, max_child)) < 0) {
 		node_swap(pqueue, node, max_child);
 		heapify_down(pqueue, max_child);
 	}
@@ -104,7 +104,7 @@ Pointer pqueue_remove_max(PriorityQueue pqueue) {
 
 	// Αποθήκευση πριν αφαιρεθεί, και destroy
 	Pointer top = pqueue_max(pqueue);
-	if(pqueue->destroy_value != NULL)
+	if (pqueue->destroy_value != NULL)
 		pqueue->destroy_value(top);
 
 	// Αντικαθιστούμε τον πρώτο κόμβο με τον τελευταίο και αφαιρούμε τον τελευταίο

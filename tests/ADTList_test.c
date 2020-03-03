@@ -33,7 +33,7 @@ void test_insert(void) {
 	int array[1000];					
 
 
-	for(int i = 0; i < 1000; i++) {
+	for (int i = 0; i < 1000; i++) {
 
 		// LIST_BOF για εισαγωγή στην αρχή
 		list_insert_next(list, LIST_BOF, &array[i]);
@@ -48,7 +48,7 @@ void test_insert(void) {
 	// Ελέγχουμε εάν τα στοιχεία έχουν μπει με την αντίστροφη σειρά
 	ListNode node = list_first(list);
 
-	for(int i = 999; i >= 0; i--) {
+	for (int i = 999; i >= 0; i--) {
 		TEST_CHECK(list_node_value(list, node) == &array[i]);
 		node = list_next(list, node);
 	}
@@ -69,7 +69,7 @@ void test_remove(void) {
 	int* array[1000];
 
 	// Χρησιμοποιούμε την insert για να γεμίσουμε την λίστα, αφού την έχουμε δοκιμάσει ήδη στην test_insert()
-	for(int i = 0; i < 1000; i++) {
+	for (int i = 0; i < 1000; i++) {
 		
 		// Δημιουργούμε δυναμικά δεσμευμένα αντικείμενα για να δοκιμάσουμε την destroy_function
 		array[i]  = malloc(sizeof(int));
@@ -78,7 +78,7 @@ void test_remove(void) {
 	}
 
 
-	for(int i = 999; i >= 0; i--) {
+	for (int i = 999; i >= 0; i--) {
 		// Διαγράφουμε απο την αρχή και ελέγχουμε εάν η τιμή του πρώτου κόμβου 
 		// ήταν η ίδια με αυτή που κάναμε insert παραπάνω
 		TEST_CHECK(list_remove_next(list, LIST_BOF) == array[i]);
@@ -88,7 +88,7 @@ void test_remove(void) {
 	}
 
 	// Ξαναγεμίζουμε την λίστα για να δοκιμάσουμε την διαγραφή απο ενδιάμεσο κόμβο
-	for(int i = 0; i < 1000; i++) {
+	for (int i = 0; i < 1000; i++) {
 		array[i]  = malloc(sizeof(int));
 		*array[i] = i;
 		list_insert_next(list, LIST_BOF, array[i]);
@@ -119,13 +119,13 @@ void test_find() {
 	int array[1000];
 
 	// Εισάγουμε δοκιμαστικές τιμές στον πίνακα , για να ελέγξουμε την test_find
-	for(int i = 0; i < 1000; i++) {
+	for (int i = 0; i < 1000; i++) {
 		array[i] = i;
 		list_insert_next(list, LIST_BOF, &array[i]);
 	}
 
 	// Εύρεση όλων των στοιχείων
-	for(int i = 0; i < 1000; i++) {
+	for (int i = 0; i < 1000; i++) {
 		int* value = list_find(list, &i, compare_ints); 
 		TEST_CHECK(value == &array[i]);
 	}
@@ -146,7 +146,7 @@ void test_find_node() {
 	int array[1000];
 
 	// Εισαγωγή τιμών στον πίνακα
-	for(int i = 0; i < 1000; i++) {
+	for (int i = 0; i < 1000; i++) {
 		array[i] = i;
 		list_insert_next(list, LIST_BOF, &array[i]);
 	}
@@ -154,7 +154,7 @@ void test_find_node() {
 	// Ξεκινάμε από την αρχή της λίστας
 	ListNode node = list_first(list);
 
-	for(int i = 999; i >= 0; i--) {
+	for (int i = 999; i >= 0; i--) {
 		// Ελέγχουμε ότι η list_find_node βρίσκει σωστά τον πρώτο κόμβο με value τον δείκτη &array[i].
 		// Σε αυτή την λίστα, δοκιμάζουμε ότι ο πρώτος κόμβος περιέχει τον δείκτη &array[999], 
 		// o δεύτερος τον &array[998] κοκ

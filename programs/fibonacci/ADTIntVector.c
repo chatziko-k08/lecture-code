@@ -18,7 +18,7 @@ IntVector int_vector_create(int size) {
 	Vector vec = vector_create(size, free);
 
 	// Ο πίνακας περιέχει size μη-αρχικοποιημένους ακεραίους, δεσμεύουμε μνήμη για αυτούς
-	for(int i = 0; i < size; i ++)
+	for (int i = 0; i < size; i ++)
 		vector_set_at(vec, i, malloc(sizeof(int)));
 
 	return (IntVector)vec;

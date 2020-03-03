@@ -12,7 +12,7 @@ int* create_int(int value) {
 
 void test_pair_sum() {
 	Vector numbers = vector_create(0, free);
-	for(int i = 0; i < 10; i++)
+	for (int i = 0; i < 10; i++)
 		vector_insert_last(numbers, create_int(i));
 
 	int a, b;

@@ -16,7 +16,7 @@ void process_file(char* filename) {
 		? io_read_stream_as_vector(stdin)
 		: io_read_file_as_vector(filename);
 
-	if(vec == NULL) {
+	if (vec == NULL) {
 		fprintf(stderr, "cat: %s: cannot read file\n", filename);
 		return;
 	}
@@ -26,10 +26,10 @@ void process_file(char* filename) {
 }
 
 int main(int argc, char* argv[]) {
-	for(int i = 1; i < argc; i++)
+	for (int i = 1; i < argc; i++)
 		process_file(argv[i]);
 
 	// χωρίς κανένα αρχείο διαβάζουμε από την είσοδο
-	if(argc == 1)
+	if (argc == 1)
 		process_file("-");
 }

@@ -25,7 +25,7 @@ void test_insert(void) {
 	int array[1000];					// Στο queue θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
 
 	// insert 1000 στοιχεία
-	for(int i = 0; i < 1000; i++) {
+	for (int i = 0; i < 1000; i++) {
 		queue_insert_back(queue, &array[i]);
 		TEST_CHECK(queue_size(queue) == i+1);			// Το size πρέπει να μεγαλώσει
 		TEST_CHECK(queue_front(queue) == &array[0]);	// Το μπροστινό στοιχείο στην κορυφή είναι πάντα το array[0]
@@ -40,11 +40,11 @@ void test_remove(void) {
 	int array[1000];
 
 	// insert για προσθήκη δεδομένων, χωρίς ελέγχους (έχουμε ξεχωριστό test για το insert)
-	for(int i = 0; i < 1000; i++)
+	for (int i = 0; i < 1000; i++)
 		queue_insert_back(queue, &array[i]);
 
 	// Διαδοχικά remove, πρέπει να βγουν με την ίδια σειρά που είναι στο array
-	for(int i = 0; i < 1000; i++) {
+	for (int i = 0; i < 1000; i++) {
 		TEST_CHECK(queue_remove_front(queue) == &array[i]);
 		TEST_CHECK(queue_size(queue) == 999-i);
 	}
