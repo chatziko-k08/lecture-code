@@ -138,6 +138,12 @@ Pointer vector_find(Vector vec, Pointer value, CompareFunc compare) {
 	return NULL;				// δεν υπάρχει
 }
 
+DestroyFunc vector_set_destroy_value(Vector vec, DestroyFunc destroy_value) {
+	DestroyFunc old = vec->destroy_value;
+	vec->destroy_value = destroy_value;
+	return old;
+}
+
 void vector_destroy(Vector vec) {
 	// Αν υπάρχει συνάρτηση destroy_value, την καλούμε για όλα τα στοιχεία
 	if(vec->destroy_value != NULL)
