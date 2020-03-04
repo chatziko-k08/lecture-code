@@ -8,7 +8,7 @@
 MAKE += --silent
 
 # Ολα τα directories μέσα στο programs directory
-PROGRAMS = $(shell ls programs/)
+PROGRAMS = $(subst programs/, , $(wildcard programs/*))
 
 # Compile: όλα, προγράμματα, βιβλιοθήκη και tests
 all: programs lib tests
