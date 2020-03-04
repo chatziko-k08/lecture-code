@@ -449,12 +449,14 @@ bool node_is_avl(SetNode node, CompareFunc compare) {
 	if (node == NULL)
 		return true;
 
-	// Ο κόμβος έχει την BST ιδιότητα
-	SetNode left_max = node_find_max(node->left);
-	SetNode right_min = node_find_min(node->right);
-	bool res =
-		(left_max  == NULL || compare(left_max->value,  node->value) < 0) &&
-		(right_min == NULL || compare(right_min->value, node->value) > 0);
+	// Ελέγχουμε την ιδιότητα:
+	// κάθε κόμβος είναι > αριστερό παιδί, > δεξιότερο κόμβο του αριστερού υποδέντρου, < δεξί παιδί, < αριστερότερο κόμβο του δεξιού υποδέντρου.
+	// Είναι ισοδύναμη με την BST ιδιότητα (κάθε κόμβος είναι > αριστερό υποδέντρο και < δεξί υποδέντρο) αλλά ευκολότερο να ελεγθεί.
+	bool res = true;
+	if(node->left != NULL)
+		res = res && compare(node->left->value, node->value) < 0 && compare(node_find_max(node->left)->value, node->value) < 0;
+	if(node->right != NULL)
+		res = res && compare(node->right->value, node->value) > 0 && compare(node_find_min(node->right)->value, node->value) > 0;
 
 	// Το ύψος είναι σωστό
 	res = res && node->height == 1 + int_max(node_height(node->left), node_height(node->right));

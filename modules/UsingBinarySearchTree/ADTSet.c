@@ -340,12 +340,16 @@ static bool node_is_bst(SetNode node, CompareFunc compare) {
 	if (node == NULL)
 		return true;
 
-	SetNode left_max = node_find_max(node->left);
-	SetNode right_min = node_find_min(node->right);
+	// Ελέγχουμε την ιδιότητα:
+	// κάθε κόμβος είναι > αριστερό παιδί, > δεξιότερο κόμβο του αριστερού υποδέντρου, < δεξί παιδί, < αριστερότερο κόμβο του δεξιού υποδέντρου.
+	// Είναι ισοδύναμη με την BST ιδιότητα (κάθε κόμβος είναι > αριστερό υποδέντρο και < δεξί υποδέντρο) αλλά ευκολότερο να ελεγθεί.
+	bool res = true;
+	if(node->left != NULL)
+		res = res && compare(node->left->value, node->value) < 0 && compare(node_find_max(node->left)->value, node->value) < 0;
+	if(node->right != NULL)
+		res = res && compare(node->right->value, node->value) > 0 && compare(node_find_min(node->right)->value, node->value) > 0;
 
-	return
-		(left_max  == NULL || compare(left_max->value,  node->value) < 0) &&
-		(right_min == NULL || compare(right_min->value, node->value) > 0) &&
+	return res &&
 		node_is_bst(node->left, compare) &&
 		node_is_bst(node->right, compare);
 }
