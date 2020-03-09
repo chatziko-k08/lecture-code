@@ -82,10 +82,8 @@ void test_remove(void) {
 		array[i] = create_int(i);
 	shuffle(array, N);
 
-	for (int i = 0; i < N; i++) {
-		printf("-- %d\n", *array[i]);
+	for (int i = 0; i < N; i++)
 		pqueue_insert(pqueue, array[i]);
-	}
 
 	// Διαδοχικά remove ώστε να συμβούν και resizes
 	for (int i = N-1; i >= 0; i--) {
