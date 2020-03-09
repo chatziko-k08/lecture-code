@@ -54,10 +54,8 @@ void queue_insert_back(Queue queue, Pointer value) {
 	list_insert_next(queue->list, list_last(queue->list), value);		// Προσθήκη στο _τέλος_
 }
 
-Pointer queue_remove_front(Queue queue) {
-	Pointer result = queue_front(queue);	// Αποθήκευση πριν κάνουμε remove
+void queue_remove_front(Queue queue) {
 	list_remove_next(queue->list, NULL);
-	return result;
 }
 
 DestroyFunc queue_set_destroy_value(Queue queue, DestroyFunc destroy_value) {

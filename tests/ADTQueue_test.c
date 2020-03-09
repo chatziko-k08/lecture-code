@@ -45,7 +45,8 @@ void test_remove(void) {
 
 	// Διαδοχικά remove, πρέπει να βγουν με την ίδια σειρά που είναι στο array
 	for (int i = 0; i < 1000; i++) {
-		TEST_CHECK(queue_remove_front(queue) == &array[i]);
+		TEST_CHECK(queue_front(queue) == &array[i]);
+		queue_remove_front(queue);
 		TEST_CHECK(queue_size(queue) == 999-i);
 	}
 
