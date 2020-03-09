@@ -336,6 +336,8 @@ SetNode set_find_node(Set set, Pointer value) {
 // Συναρτήσεις που δεν υπάρχουν στο public interface αλλά χρησιμοποιούνται στα tests.
 // Ελέγχουν ότι το δέντρο είναι ένα σωστό BST.
 
+// LCOV_EXCL_START (δε μας ενδιαφέρει το coverage των test εντολών, και επιπλέον μόνο τα true branches εκτελούνται σε ένα επιτυχημένο test)
+
 static bool node_is_bst(SetNode node, CompareFunc compare) {
 	if (node == NULL)
 		return true;
@@ -357,3 +359,5 @@ static bool node_is_bst(SetNode node, CompareFunc compare) {
 bool set_is_proper(Set node) {
 	return node_is_bst(node->root, node->compare);
 }
+
+// LCOV_EXCL_STOP
