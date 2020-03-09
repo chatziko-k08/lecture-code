@@ -275,7 +275,7 @@ void set_insert(Set set, Pointer value) {
 		set->destroy_value(old_value);
 }
 
-Pointer set_remove(Set set, Pointer value) {
+bool set_remove(Set set, Pointer value) {
 	bool removed;
 	Pointer old_value = NULL;
 	set->root = node_remove(set->root, set->compare, value, &removed, &old_value);
@@ -288,7 +288,7 @@ Pointer set_remove(Set set, Pointer value) {
 			set->destroy_value(old_value);
 	}
 
-	return old_value;
+	return old_value != NULL;
 }
 
 Pointer set_find(Set set, Pointer value) {

@@ -132,15 +132,12 @@ void test_remove() {
 	// Δοκιμάζουμε, πριν διαγράψουμε κανονικά τους κόμβους, ότι η map_remove διαχειρίζεται 
 	// σωστά ένα κλειδί που δεν υπάρχει στο Map και γυρνάει NULL 
 	int not_exists = 2000;
-	Pointer removed_value = set_remove(set, &not_exists);
-	TEST_CHECK(removed_value == NULL);
+	TEST_CHECK(!set_remove(set, &not_exists));
 
-	// Διαγράφουμε όλους τους κόμβους και ελέγχουμε εάν η τιμή που μας επιστρέφει η map_remove είναι σωστή
+	// Διαγράφουμε όλους τους κόμβους
 	for (int i = 0; i < N; i++) {
-
-		Pointer value = set_remove(set, value_array[i]);
+		TEST_CHECK(set_remove(set, value_array[i]));
 		TEST_CHECK(set_is_proper(set));
-		TEST_CHECK(value == value_array[i]);
 	}
 
 	set_destroy(set);
@@ -151,7 +148,7 @@ void test_remove() {
 	int local_value1 = 0;
 
 	insert_and_test(set2, &local_value1);
-	TEST_CHECK(set_remove(set2, &local_value1) == &local_value1);
+	TEST_CHECK(set_remove(set2, &local_value1));
 	TEST_CHECK(set_is_proper(set2));
 	TEST_CHECK(set_size(set2) == 0);
 	
