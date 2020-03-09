@@ -30,10 +30,11 @@ void test_insert(void) {
 	List list = list_create(NULL);
 	
 	// Θα προσθέτουμε, μέσω της insert, δείκτες ως προς τα στοιχεία του π΄ίνακα
-	int array[1000];					
+	int N = 1000;
+	int array[N];					
 
 
-	for (int i = 0; i < 1000; i++) {
+	for (int i = 0; i < N; i++) {
 
 		// LIST_BOF για εισαγωγή στην αρχή
 		list_insert_next(list, LIST_BOF, &array[i]);
@@ -48,7 +49,7 @@ void test_insert(void) {
 	// Ελέγχουμε εάν τα στοιχεία έχουν μπει με την αντίστροφη σειρά
 	ListNode node = list_first(list);
 
-	for (int i = 999; i >= 0; i--) {
+	for (int i = N - 1; i >= 0; i--) {
 		TEST_CHECK(list_node_value(list, node) == &array[i]);
 		node = list_next(list, node);
 	}
@@ -66,10 +67,11 @@ void test_remove(void) {
 	// Δημιουργία λίστας που καλεί αυτόματα τη free σε κάθε στοιχείο που αφαιρείται
 	List list = list_create(free);
 
-	int* array[1000];
+	int N = 1000;
+	int* array[N];
 
 	// Χρησιμοποιούμε την insert για να γεμίσουμε την λίστα, αφού την έχουμε δοκιμάσει ήδη στην test_insert()
-	for (int i = 0; i < 1000; i++) {
+	for (int i = 0; i < N; i++) {
 		
 		// Δημιουργούμε δυναμικά δεσμευμένα αντικείμενα για να δοκιμάσουμε την destroy_function
 		array[i]  = malloc(sizeof(int));
@@ -78,31 +80,26 @@ void test_remove(void) {
 	}
 
 
-	for (int i = 999; i >= 0; i--) {
+	for (int i = N - 1; i >= 0; i--) {
 		// Διαγράφουμε απο την αρχή και ελέγχουμε εάν η τιμή του πρώτου κόμβου 
 		// ήταν η ίδια με αυτή που κάναμε insert παραπάνω
-		TEST_CHECK(list_remove_next(list, LIST_BOF) == array[i]);
+		TEST_CHECK(list_node_value(list, list_first(list)) == array[i]);
+		list_remove_next(list, LIST_BOF);
 
 		// Ελέγχουμε ότι ενημερώνεται (μειώνεται) το size/μέγεθος της λίστας
 		TEST_CHECK(list_size(list) == i);
 	}
 
 	// Ξαναγεμίζουμε την λίστα για να δοκιμάσουμε την διαγραφή απο ενδιάμεσο κόμβο
-	for (int i = 0; i < 1000; i++) {
+	for (int i = 0; i < N; i++) {
 		array[i]  = malloc(sizeof(int));
 		*array[i] = i;
 		list_insert_next(list, LIST_BOF, array[i]);
 	}	
 
 	// Δοκιμάζουμε την διαγραφή κόμβων ενδιάμεσα της λίστας, και συγκεκριμένα του δεύτερου κόμβου απο την αρχή
-	ListNode first_node = list_first(list);
-
-	// Αποθηκεύουμε την τιμή του δεύτερου κόμβου και την συγκρίνουμε με αυτή 
-	// που θα μας γυρίσει η list_remove_next μετά την διαγραφή του
-	Pointer next_node_value = list_node_value(list, list_next(list, first_node));
-	Pointer removed_value = list_remove_next(list, first_node);
-
-	TEST_CHECK(next_node_value == removed_value);
+	list_remove_next(list, list_first(list));
+	TEST_CHECK(list_size(list) == N - 1);
 
 	list_destroy(list);
 }
@@ -116,16 +113,17 @@ int compare_ints(Pointer a, Pointer b) {
 
 void test_find() {
 	List list = list_create(NULL);
-	int array[1000];
+	int N = 1000;
+	int array[N];
 
 	// Εισάγουμε δοκιμαστικές τιμές στον πίνακα , για να ελέγξουμε την test_find
-	for (int i = 0; i < 1000; i++) {
+	for (int i = 0; i < N; i++) {
 		array[i] = i;
 		list_insert_next(list, LIST_BOF, &array[i]);
 	}
 
 	// Εύρεση όλων των στοιχείων
-	for (int i = 0; i < 1000; i++) {
+	for (int i = 0; i < N; i++) {
 		int* value = list_find(list, &i, compare_ints); 
 		TEST_CHECK(value == &array[i]);
 	}
@@ -143,10 +141,11 @@ void test_find_node() {
 
 	List list = list_create(NULL);
 
-	int array[1000];
+	int N = 1000;
+	int array[N];
 
 	// Εισαγωγή τιμών στον πίνακα
-	for (int i = 0; i < 1000; i++) {
+	for (int i = 0; i < N; i++) {
 		array[i] = i;
 		list_insert_next(list, LIST_BOF, &array[i]);
 	}
@@ -154,9 +153,9 @@ void test_find_node() {
 	// Ξεκινάμε από την αρχή της λίστας
 	ListNode node = list_first(list);
 
-	for (int i = 999; i >= 0; i--) {
+	for (int i = N - 1; i >= 0; i--) {
 		// Ελέγχουμε ότι η list_find_node βρίσκει σωστά τον πρώτο κόμβο με value τον δείκτη &array[i].
-		// Σε αυτή την λίστα, δοκιμάζουμε ότι ο πρώτος κόμβος περιέχει τον δείκτη &array[999], 
+		// Σε αυτή την λίστα, δοκιμάζουμε ότι ο πρώτος κόμβος περιέχει τον δείκτη &array[N - 1], 
 		// o δεύτερος τον &array[998] κοκ
 		ListNode found_node = list_find_node(list, &i, compare_ints); 
 		TEST_CHECK(found_node == node);
