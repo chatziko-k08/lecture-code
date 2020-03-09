@@ -48,12 +48,10 @@ void test_remove(void) {
 
 	// Διαδοχικά remove ώστε να συμβούν και resizes
 	for (int i = 999; i >= 0; i--) {
-		TEST_CHECK(vector_remove_last(vec) == &array[i]);
+		TEST_CHECK(vector_get_at(vec, i) == &array[i]);
+		vector_remove_last(vec);
 		TEST_CHECK(vector_size(vec) == i);
 	}
-
-	// remove σε κενό vector
-	TEST_CHECK(vector_remove_last(vec) == NULL);
 
 	vector_destroy(vec);
 }

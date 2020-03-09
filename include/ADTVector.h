@@ -39,11 +39,10 @@ int vector_size(Vector vec);
 
 void vector_insert_last(Vector vec, Pointer value);
 
-// Αφαιρεί και επιστρέφει  την τιμή της τελευταίας θέσης του vector.
-// Το μέγεθος του vector μικραίνει κατά 1.
-// Αν size == 0 επιστρέφει NULL.
+// Αφαιρεί το τελευταίο στοιχείο του vector. Το μέγεθος του vector μικραίνει κατά 1.
+// Αν το vector είναι κενό η συμπεριφορά είναι μη ορισμένη.
 
-Pointer vector_remove_last(Vector vec);
+void vector_remove_last(Vector vec);
 
 // Επιστρέφει την τιμή στη θέση pos του vector vec (μη ορισμένο αποτέλεσμα αν pos < 0 ή pos >= size)
 

@@ -90,12 +90,12 @@ void vector_insert_last(Vector vec, Pointer value) {
 	vec->size++;
 }
 
-Pointer vector_remove_last(Vector vec) {
-	if (vec->size == 0)
-		return NULL;
+void vector_remove_last(Vector vec) {
+	assert(vec->size != 0);		// LCOV_EXCL_LINE
 
-	// Προσοχή: αποθήκευση του στοιχείου για να μη χαθεί από το realloc!
-	Pointer value = vec->array[vec->size - 1];
+	// Αν υπάρχει συνάρτηση destroy_value, την καλούμε για το στοιχείο που αφαιρείται
+	if (vec->destroy_value != NULL)
+		vec->destroy_value(vec->array[vec->size - 1]);
 
 	// Αφαιρούμε στοιχείο οπότε ο πίνακας μικραίνει
 	vec->size--;
@@ -118,12 +118,6 @@ Pointer vector_remove_last(Vector vec) {
 		}
 		// LCOV_EXCL_STOP
 	}
-
-	// Αν υπάρχει συνάρτηση destroy_value, την καλούμε για το στοιχείο που αφαιρείται
-	if (vec->destroy_value != NULL)
-		vec->destroy_value(value);
-
-	return value;
 }
 
 Pointer vector_find(Vector vec, Pointer value, CompareFunc compare) {
