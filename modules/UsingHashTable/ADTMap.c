@@ -146,10 +146,10 @@ void map_insert(Map map, Pointer key, Pointer value) {
 }
 
 // Διαργραφή απο το Hash Table του κλειδιού με τιμή key
-Pointer map_remove(Map map, Pointer key) {
+bool map_remove(Map map, Pointer key) {
 	MapNode node = map_find_node(map, key);
 	if (node == MAP_EOF)
-		return NULL;
+		return false;
 
 	// destroy
 	if (map->destroy_key != NULL)
@@ -161,7 +161,7 @@ Pointer map_remove(Map map, Pointer key) {
 	node->state = DELETED;
 	map->size--;
 
-	return node->value;
+	return true;
 }
 
 // Αναζήτηση στο map, με σκοπό να επιστραφεί το value του κλειδιού που περνάμε σαν όρισμα.

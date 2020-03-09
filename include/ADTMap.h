@@ -35,9 +35,9 @@ int map_size(Map map);
 void map_insert(Map map, Pointer key, Pointer value);
 
 // Αφαιρεί το κλειδί που είναι ισοδύναμο με key από το map, αν υπάρχει.
-// Επιστρέφει την τιμή που είχε αντιστοιχιστεί στο κλειδί αυτό, ή NULL αν δε βρέθηκε το κλειδί.
+// Επιστρέφει true αν βρέθηκε τέτοιο κλειδί, διαφορετικά false.
 
-Pointer map_remove(Map map, Pointer key);
+bool map_remove(Map map, Pointer key);
 
 // Επιστρέφει την τιμή που έχει αντιστοιχιστεί στο συγκεκριμένο key, ή NULL αν το key δεν υπάρχει στο map.
 //

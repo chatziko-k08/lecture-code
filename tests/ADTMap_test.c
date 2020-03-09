@@ -121,27 +121,24 @@ void test_remove(void) {
 		map_insert(map, key_array[i], value_array[i]);
 		// Ανά τακτά χρονικά διαστήματα διαγράφουμε κάποιο κλειδί που μόλις βάλαμε
 		if (i % (N / 20) == 0) 
-			map_remove(map, key_array[i]);
+			TEST_CHECK(map_remove(map, key_array[i]));
 	}
 
 	// Δοκιμάζουμε, πριν διαγράψουμε κανονικά τους κόμβους, ότι η map_remove διαχειρίζεται 
 	// σωστά ένα κλειδί που δεν υπάρχει στο Map και γυρνάει NULL 
 	int not_exists = 2000;
-	Pointer removed_value = map_remove(map, &not_exists);
-	TEST_CHECK(removed_value == NULL);
+	TEST_CHECK(!map_remove(map, &not_exists));
 
 	// Διαγράφουμε όλους τους κόμβους και ελέγχουμε εάν η τιμή που μας επιστρέφει η map_remove είναι σωστή
 	for (int i = 0; i < N; i++) {
 		// (Αν δεν το έχουμε διαγράψει ήδη)
 		if (i % (N / 20) != 0) {
-			Pointer value = map_remove(map, key_array[i]);
-			TEST_CHECK(value == value_array[i]);
+			TEST_CHECK(map_remove(map, key_array[i]));
 		}
 	}
 	// Ελέγχουμε την συμπεριφορά της remove σε κάτι που έχει ήδη διαγραφεί.
 	int key1 = 100;
-	Pointer deleted =  map_remove(map, &key1);
-	TEST_CHECK(deleted == NULL); 
+	TEST_CHECK(!map_remove(map, &key1));
 	map_destroy(map);
 }
 
