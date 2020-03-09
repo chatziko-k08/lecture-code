@@ -48,13 +48,9 @@ void stack_insert_top(Stack stack, Pointer value) {
 	list_insert_next(list, NULL, value);
 }
 
-Pointer stack_remove_top(Stack stack) {
+void stack_remove_top(Stack stack) {
 	List list = (List)stack;
-
-	Pointer result = stack_top(stack);	// Αποθήκευση πριν κάνουμε remove
 	list_remove_next(list, NULL);
-
-	return result;
 }
 
 DestroyFunc stack_set_destroy_value(Stack stack, DestroyFunc destroy_value) {

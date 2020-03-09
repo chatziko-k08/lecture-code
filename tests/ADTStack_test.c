@@ -44,7 +44,8 @@ void test_remove(void) {
 
 	// Διαδοχικά remove
 	for (int i = 999; i >= 0; i--) {
-		TEST_CHECK(stack_remove_top(stack) == &array[i]);
+		TEST_CHECK(stack_top(stack) == &array[i]);
+		stack_remove_top(stack);
 		TEST_CHECK(stack_size(stack) == i);
 	}
 
