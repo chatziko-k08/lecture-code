@@ -10,6 +10,7 @@
 #pragma once // #include το πολύ μία φορά
 
 #include "common_types.h"
+#include "ADTVector.h"
 
 
 // Μία ουρά προτεραιότητας αναπαριστάται από τον τύπο PriorityQueue
@@ -17,11 +18,11 @@
 typedef struct priority_queue* PriorityQueue;
 
 
-// Δημιουργεί και επιστρέφει μια νέα ουρά προτεραιότητας, της οποίας τα
-// στοιχεία συγκρίνονται με βάση τη συνάρτηση compare.
+// Δημιουργεί και επιστρέφει μια νέα ουρά προτεραιότητας, της οποίας τα στοιχεία συγκρίνονται με βάση τη συνάρτηση compare.
 // Αν destroy_value != NULL, τότε καλείται destroy_value(value) κάθε φορά που αφαιρείται ένα στοιχείο.
+// Αν values != NULL, τότε η ουρά αρχικοποιείται με τα στοιχεία του Vector values.
 
-PriorityQueue pqueue_create(CompareFunc compare, DestroyFunc destroy_value);
+PriorityQueue pqueue_create(CompareFunc compare, DestroyFunc destroy_value, Vector values);
 
 // Επιστρέφει τον αριθμό στοιχείων που περιέχει η ουρά pqueue
 

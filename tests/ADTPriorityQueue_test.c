@@ -9,6 +9,16 @@
 
 #include "ADTPriorityQueue.h"
 
+// θέτει τα στοιχεία του πίνακα array  σε τυχαία σειρά
+void shuffle(int* array[], int size) {
+	for (int i = 0; i < size; i++) {
+		int new_pos = i + rand() / (RAND_MAX / (size - i) + 1);
+		int* temp = array[new_pos];
+		array[new_pos] = array[i];
+		array[i] = temp;
+	}
+}
+
 // Επιστρέφει έναν ακέραιο σε νέα μνήμη με τιμή value
 int* create_int(int value) {
 	int* p = malloc(sizeof(int));
@@ -21,17 +31,33 @@ int compare_ints(Pointer a, Pointer b) {
 }
 
 void test_create(void) {
-	PriorityQueue pqueue = pqueue_create(compare_ints, NULL);
+	PriorityQueue pqueue = pqueue_create(compare_ints, NULL, NULL);
 	pqueue_set_destroy_value(pqueue, NULL);
 
 	TEST_CHECK(pqueue != NULL);
 	TEST_CHECK(pqueue_size(pqueue) == 0);
 
 	pqueue_destroy(pqueue);
-}
+
+	// create με αρχικά στοιχεία
+	Vector values = vector_create(0, NULL);			// χωρίς destroy function, το destroy θα το κάνει η ουρά!
+	vector_insert_last(values, create_int(0));
+	vector_insert_last(values, create_int(1));
+
+	pqueue = pqueue_create(compare_ints, free, values);
+	TEST_CHECK(pqueue != NULL);
+	TEST_CHECK(pqueue_size(pqueue) == 2);
+
+	TEST_CHECK(*(int*)pqueue_max(pqueue) == 1);
+	TEST_CHECK(pqueue_remove_max(pqueue) != NULL);
+	TEST_CHECK(*(int*)pqueue_max(pqueue) == 0);
+
+	vector_destroy(values);
+	pqueue_destroy(pqueue);
+}	
 
 void test_insert(void) {
-	PriorityQueue pqueue = pqueue_create(compare_ints, NULL);
+	PriorityQueue pqueue = pqueue_create(compare_ints, NULL, NULL);
 	int N = 1000;
 	int array[N];					// Στο pqueue θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
 
@@ -47,12 +73,19 @@ void test_insert(void) {
 }
 
 void test_remove(void) {
-	PriorityQueue pqueue = pqueue_create(compare_ints, free);
+	PriorityQueue pqueue = pqueue_create(compare_ints, free, NULL);
 
-	// προσθήκη δεδομένων
-	int N = 1000;
+	// προσθήκη δεδομένων, τυχαία σειρά
+	int N = 10;
+	int* array[N];
 	for (int i = 0; i < N; i++)
-		pqueue_insert(pqueue, create_int(i));
+		array[i] = create_int(i);
+	shuffle(array, N);
+
+	for (int i = 0; i < N; i++) {
+		printf("-- %d\n", *array[i]);
+		pqueue_insert(pqueue, array[i]);
+	}
 
 	// Διαδοχικά remove ώστε να συμβούν και resizes
 	for (int i = N-1; i >= 0; i--) {
@@ -62,6 +95,12 @@ void test_remove(void) {
 		TEST_CHECK(pqueue_size(pqueue) == i);
 	}
 
+	pqueue_destroy(pqueue);
+
+	// remove από ουρά χωρίς συνάρτηση destroy
+	pqueue = pqueue_create(compare_ints, NULL, NULL);
+	pqueue_insert(pqueue, &N);
+	TEST_CHECK(pqueue_remove_max(pqueue) == &N);
 	pqueue_destroy(pqueue);
 }
 

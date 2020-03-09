@@ -69,8 +69,8 @@ static void heapify_down(PriorityQueue pqueue, int node) {
 
 // Συναρτήσεις του ADTPriorityQueue //////////////////////////////////////////////////
 
-PriorityQueue pqueue_create(CompareFunc compare, DestroyFunc destroy_value) {
-	assert(compare != NULL);	// LCOV_ΕΧCL_LINE
+PriorityQueue pqueue_create(CompareFunc compare, DestroyFunc destroy_value, Vector values) {
+	assert(compare != NULL);	// LCOV_EXCL_LINE
 
 	PriorityQueue pqueue = malloc(sizeof(*pqueue));
 	pqueue->compare = compare;
@@ -79,6 +79,14 @@ PriorityQueue pqueue_create(CompareFunc compare, DestroyFunc destroy_value) {
 	// Δημιουργία του vector που αποθηκεύει τα στοιχεία. ΔΕΝ περνάμε την destroy_value στο vector!
 	// Αν την περάσουμε θα καλείται όταν κάνουμε swap 2 στοιχεία, το οποίο δεν το επιθυμούμε.
 	pqueue->vector = vector_create(0, NULL);
+
+	// Αν values != NULL, προσθέτουμε τα στοιχεία του values στην ουρά.
+	// TODO: υπάρχει πιο αποδοτικός τρόπος να γίνει αυτό!
+	if (values != NULL) {
+		int size = vector_size(values);
+		for (int i = 0; i < size; i++)
+			pqueue_insert(pqueue, vector_get_at(values, i));
+	}
 
 	return pqueue;
 }
@@ -100,7 +108,7 @@ void pqueue_insert(PriorityQueue pqueue, Pointer value) {
 
 Pointer pqueue_remove_max(PriorityQueue pqueue) {
 	int last_node = pqueue_size(pqueue);
-	assert(last_node != 0);		// LCOV_ΕΧCL_LINE
+	assert(last_node != 0);		// LCOV_EXCL_LINE
 
 	// Αποθήκευση πριν αφαιρεθεί, και destroy
 	Pointer top = pqueue_max(pqueue);
