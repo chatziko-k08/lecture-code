@@ -2,7 +2,7 @@
 //
 // ADT Priority Queue
 //
-// Abstract ουρά προτεραιότητας. Σε κάθε remove επιστρέφεται το
+// Abstract ουρά προτεραιότητας. Σε κάθε remove αφαιρείται το
 // μεγαλύτερο στοιχείο (με βάση τη συνάρτηση compare).
 //
 ///////////////////////////////////////////////////////////////////
@@ -36,9 +36,9 @@ Pointer pqueue_max(PriorityQueue pqueue);
 
 void pqueue_insert(PriorityQueue pqueue, Pointer value);
 
-// Αφαιρεί και επιστρέφει  την μεγαλύτερη τιμή της ουράς (μη ορισμένο αποτέλεσμα αν η ουρά είναι κενή)
+// Αφαιρεί την μεγαλύτερη τιμή της ουράς (μη ορισμένο αποτέλεσμα αν η ουρά είναι κενή)
 
-Pointer pqueue_remove_max(PriorityQueue pqueue);
+void pqueue_remove_max(PriorityQueue pqueue);
 
 // Αλλάζει τη συνάρτηση που καλείται σε κάθε αφαίρεση/αντικατάσταση στοιχείου σε
 // destroy_value. Επιστρέφει την προηγούμενη τιμή της συνάρτησης.

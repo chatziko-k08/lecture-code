@@ -49,7 +49,7 @@ void test_create(void) {
 	TEST_CHECK(pqueue_size(pqueue) == 2);
 
 	TEST_CHECK(*(int*)pqueue_max(pqueue) == 1);
-	TEST_CHECK(pqueue_remove_max(pqueue) != NULL);
+	pqueue_remove_max(pqueue);
 	TEST_CHECK(*(int*)pqueue_max(pqueue) == 0);
 
 	vector_destroy(values);
@@ -91,7 +91,8 @@ void test_remove(void) {
 	for (int i = N-1; i >= 0; i--) {
 		int* value = pqueue_max(pqueue);
 		TEST_CHECK(*value == i);
-		TEST_CHECK(pqueue_remove_max(pqueue) == value);
+		TEST_CHECK(pqueue_max(pqueue) == value);
+		pqueue_remove_max(pqueue);
 		TEST_CHECK(pqueue_size(pqueue) == i);
 	}
 
@@ -100,7 +101,8 @@ void test_remove(void) {
 	// remove από ουρά χωρίς συνάρτηση destroy
 	pqueue = pqueue_create(compare_ints, NULL, NULL);
 	pqueue_insert(pqueue, &N);
-	TEST_CHECK(pqueue_remove_max(pqueue) == &N);
+	TEST_CHECK(pqueue_max(pqueue) == &N);
+	pqueue_remove_max(pqueue);
 	pqueue_destroy(pqueue);
 }
 

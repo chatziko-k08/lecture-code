@@ -106,14 +106,13 @@ void pqueue_insert(PriorityQueue pqueue, Pointer value) {
 	heapify_up(pqueue, pqueue_size(pqueue));
 }
 
-Pointer pqueue_remove_max(PriorityQueue pqueue) {
+void pqueue_remove_max(PriorityQueue pqueue) {
 	int last_node = pqueue_size(pqueue);
 	assert(last_node != 0);		// LCOV_EXCL_LINE
 
-	// Αποθήκευση πριν αφαιρεθεί, και destroy
-	Pointer top = pqueue_max(pqueue);
+	// destroy
 	if (pqueue->destroy_value != NULL)
-		pqueue->destroy_value(top);
+		pqueue->destroy_value(pqueue_max(pqueue));
 
 	// Αντικαθιστούμε τον πρώτο κόμβο με τον τελευταίο και αφαιρούμε τον τελευταίο
 	node_swap(pqueue, 1, last_node);
@@ -121,8 +120,6 @@ Pointer pqueue_remove_max(PriorityQueue pqueue) {
 
 	// Επισκευή του σωρού καλώντας τη heapify_down για τη ρίζα
 	heapify_down(pqueue, 1);
-
-	return top;
 }
 
 DestroyFunc pqueue_set_destroy_value(PriorityQueue pqueue, DestroyFunc destroy_value) {
