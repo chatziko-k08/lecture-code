@@ -28,7 +28,7 @@ int int_vector_size(IntVector vec);
 
 void int_vector_insert_last(IntVector vec, int value);
 
-int int_vector_remove_last(IntVector vec);
+void int_vector_remove_last(IntVector vec);
 
 void int_vector_set_at(IntVector vec, int pos, int value);
 

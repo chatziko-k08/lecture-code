@@ -45,12 +45,8 @@ void int_vector_insert_last(IntVector vec, int value) {
 	vector_insert_last((Vector)vec, p);		// προσθήκη του int pointer στο vector
 }
 
-int int_vector_remove_last(IntVector vec) {
-	// Η remove κάνει αυτόματα free, πρέπει να διαβάσουμε τα περιεχόμενα πριν!
-	int value = int_vector_get_at(vec, int_vector_size(vec) - 1);
-
+void int_vector_remove_last(IntVector vec) {
 	vector_remove_last((Vector)vec);
-	return value;
 }
 
 int compare(Pointer a, Pointer b) {

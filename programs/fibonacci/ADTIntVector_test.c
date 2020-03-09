@@ -44,7 +44,8 @@ void test_remove(void) {
 
 	// Διαδοχικά remove ώστε να συμβούν και resizes
 	for (int i = 999; i >= 0; i--) {
-		TEST_CHECK(int_vector_remove_last(vec) == i);
+		TEST_CHECK(int_vector_get_at(vec, i) == i);
+		int_vector_remove_last(vec);
 		TEST_CHECK(int_vector_size(vec) == i);
 	}
 
