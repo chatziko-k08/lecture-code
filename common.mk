@@ -145,7 +145,7 @@ valgrind: $(VAL_TARGETS)
 lcov:
 	@mkdir -p coverage
 	lcov --rc lcov_branch_coverage=1 --capture --directory=$(MY_PATH) --output-file coverage/lcov.info
-	lcov --rc lcov_branch_coverage=1 --remove coverage/lcov.info '*acutest.h' --output-file coverage/lcov.info
+	lcov --rc lcov_branch_coverage=1 --remove coverage/lcov.info '*.h' --output-file coverage/lcov.info
 	cd coverage && genhtml --rc lcov_branch_coverage=1 lcov.info
 	@echo "To see the report open the file below in your brower:"
 	@echo "$$PWD/coverage/index.html"
