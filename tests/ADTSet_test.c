@@ -41,9 +41,6 @@ void insert_and_test(Set set, Pointer value) {
 
 // Βοηθητική συνάρτηση για το ανακάτεμα του πίνακα τιμών
 void shuffle(int* array[], int n) {
-	if (n < 1)
-		return;
-
 	for (int i = 0; i < n; i++) {
 		int j = i + rand() / (RAND_MAX / (n - i) + 1);
 		int* t = array[j];
