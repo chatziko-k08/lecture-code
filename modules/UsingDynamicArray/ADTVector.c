@@ -187,3 +187,12 @@ Pointer vector_node_value(Vector vec, VectorNode node) {
 	Pointer* p = (Pointer*)node;
 	return *p;
 }
+
+VectorNode vector_find_node(Vector vec, Pointer value, CompareFunc compare) {
+	// Διάσχιση του vector
+	for (int i = 0; i < vec->size; i++)
+		if (compare(vec->array[i], value) == 0)
+			return (VectorNode)&vec->array[i];		// βρέθηκε
+
+	return VECTOR_EOF;				// δεν υπάρχει
+}

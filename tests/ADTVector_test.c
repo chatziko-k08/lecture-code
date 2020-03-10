@@ -110,10 +110,14 @@ void test_find(void) {
 	for (int i = 0; i < 1000; i++) {
 		int* p = vector_find(vec, &i, compare_ints);
 		TEST_CHECK(*p == i);
+
+		VectorNode node = vector_find_node(vec, &i, compare_ints);
+		TEST_CHECK(*(int*)vector_node_value(vec, node) == i);
 	}
 
 	int not_exists = -12;
 	TEST_CHECK(vector_find(vec, &not_exists, compare_ints) == NULL);
+	TEST_CHECK(vector_find_node(vec, &not_exists, compare_ints) == VECTOR_EOF);
 
 	vector_destroy(vec);
 }
