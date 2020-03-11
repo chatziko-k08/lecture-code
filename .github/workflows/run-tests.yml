@@ -20,6 +20,7 @@ jobs:
         make valgrind CFLAGS=-fPIC
 
     - name: Upload
+      if: startsWith(github.event.ref, 'refs/tags/v')
       uses: actions/upload-artifact@master
       with:
         name: compiled-${{ matrix.os }}
