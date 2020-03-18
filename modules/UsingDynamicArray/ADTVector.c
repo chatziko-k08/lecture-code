@@ -11,11 +11,16 @@
 
 
 // Το αρχικό μέγεθος που δεσμεύουμε
-#define VECTOR_MIN_CAPACITY 10	
+#define VECTOR_MIN_CAPACITY 10
+
+// Ένα VectorNode είναι pointer σε αυτό το struct. (το struct περιέχει μόνο ένα στοιχείο, οπότε θα μπροούσαμε και να το αποφύγουμε, αλλά κάνει τον κώδικα απλούστερο)
+struct vector_node {
+	Pointer value;				// Η τιμή του κόμβου.
+};
 
 // Ενα Vector είναι pointer σε αυτό το struct
 struct vector {
-	Pointer* array;				// Τα δεδομένα. Θέλουμε ένα πίνακα σε Pointer, οπότε Pointer*
+	VectorNode array;			// Τα δεδομένα, πίνακας από struct vector_node
 	int size;					// Πόσα στοιχεία έχουμε προσθέσει
 	int capacity;				// Πόσο χώρο έχουμε δεσμεύσει (το μέγεθος του array). Πάντα capacity >= size, αλλά μπορεί να έχουμε
 	DestroyFunc destroy_value;	// Συνάρτηση που καταστρέφει ένα στοιχείο του vector.
@@ -29,7 +34,7 @@ Vector vector_create(int size, DestroyFunc destroy_value) {
 
 	// Δέσμευση μνήμης, για το struct και το array.
 	Vector vec = malloc(sizeof(*vec));
-	Pointer* array = calloc(capacity, sizeof(*array));		// αρχικοποίηση σε 0 (NULL)
+	VectorNode array = calloc(capacity, sizeof(*array));		// αρχικοποίηση σε 0 (NULL)
 
 	// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία
 	// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
@@ -54,24 +59,24 @@ int vector_size(Vector vec) {
 
 Pointer vector_get_at(Vector vec, int pos) {
 	assert(pos >= 0 && pos < vec->size);	// LCOV_EXCL_LINE (αγνοούμε το branch από τα coverage reports, είναι δύσκολο να τεστάρουμε το false γιατί θα κρασάρει το test)
-	return vec->array[pos];
+	return vec->array[pos].value;
 }
 
 void vector_set_at(Vector vec, int pos, Pointer value) {
 	assert(pos >= 0 && pos < vec->size);	// LCOV_EXCL_LINE
 
 	// Αν υπάρχει συνάρτηση destroy_value, την καλούμε για το στοιχείο που αντικαθίσταται
-	if (value != vec->array[pos] && vec->destroy_value != NULL)
-		vec->destroy_value(vec->array[pos]);
+	if (value != vec->array[pos].value && vec->destroy_value != NULL)
+		vec->destroy_value(vec->array[pos].value);
 
-	vec->array[pos] = value;
+	vec->array[pos].value = value;
 }
 
 void vector_insert_last(Vector vec, Pointer value) {
 	// Μεγαλώνουμε τον πίνακα (αν χρειαστεί), ώστε να χωράει τουλάχιστον size στοιχεία
 	// Διπλασιάζουμε κάθε φορά το capacity (σημαντικό για την πολυπλοκότητα!)
 	if (vec->capacity == vec->size) {
-		Pointer new_array = realloc(vec->array, 2 * vec->capacity * sizeof(Pointer));
+		VectorNode new_array = realloc(vec->array, 2 * vec->capacity * sizeof(*new_array));
 
 		// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία
 		// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
@@ -86,7 +91,7 @@ void vector_insert_last(Vector vec, Pointer value) {
 	}
 
 	// Μεγαλώνουμε τον πίνακα και προσθέτουμε το στοιχείο
-	vec->array[vec->size] = value;
+	vec->array[vec->size].value = value;
 	vec->size++;
 }
 
@@ -95,7 +100,7 @@ void vector_remove_last(Vector vec) {
 
 	// Αν υπάρχει συνάρτηση destroy_value, την καλούμε για το στοιχείο που αφαιρείται
 	if (vec->destroy_value != NULL)
-		vec->destroy_value(vec->array[vec->size - 1]);
+		vec->destroy_value(vec->array[vec->size - 1].value);
 
 	// Αφαιρούμε στοιχείο οπότε ο πίνακας μικραίνει
 	vec->size--;
@@ -105,7 +110,7 @@ void vector_remove_last(Vector vec) {
 	// αν το capacity είναι τετραπλάσιο του size (δηλαδή το 75% του πίνακα είναι άδειος)
 	//
 	if (vec->capacity > vec->size * 4 && vec->capacity > 2*VECTOR_MIN_CAPACITY) {
-		Pointer new_array = realloc(vec->array, vec->capacity/2 * sizeof(Pointer));
+		VectorNode new_array = realloc(vec->array, vec->capacity/2 * sizeof(*new_array));
 
 		// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία,
 		// η realloc μπορεί να αποτύχει ακόμα και όταν μικραίνουμε τη μνήμη! Ακόμα όμως και αν αποτύχει η μείωση μνήμης,
@@ -123,8 +128,8 @@ void vector_remove_last(Vector vec) {
 Pointer vector_find(Vector vec, Pointer value, CompareFunc compare) {
 	// Διάσχιση του vector
 	for (int i = 0; i < vec->size; i++)
-		if (compare(vec->array[i], value) == 0)
-			return vec->array[i];		// βρέθηκε
+		if (compare(vec->array[i].value, value) == 0)
+			return vec->array[i].value;		// βρέθηκε
 
 	return NULL;				// δεν υπάρχει
 }
@@ -139,7 +144,7 @@ void vector_destroy(Vector vec) {
 	// Αν υπάρχει συνάρτηση destroy_value, την καλούμε για όλα τα στοιχεία
 	if (vec->destroy_value != NULL)
 		for (int i = 0; i < vec->size; i++)
-			vec->destroy_value(vec->array[i]);
+			vec->destroy_value(vec->array[i].value);
 
 	// Πρέπει να κάνουμε free τόσο τον πίνακα όσο και το struct!
 	free(vec->array);
@@ -152,47 +157,40 @@ void vector_destroy(Vector vec) {
 VectorNode vector_first(Vector vec) {
 	if (vec->size == 0)
 		return VECTOR_BOF;
-		
-	Pointer* p = &vec->array[0];
-	return (VectorNode)p;
+	else	
+		return &vec->array[0];
 }
 
 VectorNode vector_last(Vector vec) {
 	if (vec->size == 0)
 		return VECTOR_EOF;
-
-	Pointer* p = &vec->array[vec->size-1];
-	return (VectorNode)p;
+	else
+		return &vec->array[vec->size-1];
 }
 
 VectorNode vector_next(Vector vec, VectorNode node) {
-	Pointer* p = (Pointer*)node;
-
-	if (p == &vec->array[vec->size-1])
+	if (node == &vec->array[vec->size-1])
 		return VECTOR_EOF;
 	else
-		return (VectorNode)(p + 1);
+		return node + 1;
 }
 
 VectorNode vector_previous(Vector vec, VectorNode node) {
-	Pointer* p = (Pointer*)node;
-
-	if (p == &vec->array[0])
+	if (node == &vec->array[0])
 		return VECTOR_EOF;
 	else
-		return (VectorNode)(p - 1);
+		return node - 1;
 }
 
 Pointer vector_node_value(Vector vec, VectorNode node) {
-	Pointer* p = (Pointer*)node;
-	return *p;
+	return node->value;
 }
 
 VectorNode vector_find_node(Vector vec, Pointer value, CompareFunc compare) {
 	// Διάσχιση του vector
 	for (int i = 0; i < vec->size; i++)
-		if (compare(vec->array[i], value) == 0)
-			return (VectorNode)&vec->array[i];		// βρέθηκε
+		if (compare(vec->array[i].value, value) == 0)
+			return &vec->array[i];		// βρέθηκε
 
 	return VECTOR_EOF;				// δεν υπάρχει
 }
