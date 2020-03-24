@@ -62,7 +62,7 @@ void test_insert(void) {
 	list_destroy(list);
 }
 
-void test_remove(void) {
+void test_remove_next(void) {
 
 	// Δημιουργία λίστας που καλεί αυτόματα τη free σε κάθε στοιχείο που αφαιρείται
 	List list = list_create(free);
@@ -180,7 +180,7 @@ void test_find_node() {
 TEST_LIST = {
 	{ "list_create", test_create },
 	{ "list_insert_next", test_insert },
-	{ "list_remove_next", test_remove },
+	{ "list_remove_next", test_remove_next },
 	{ "list_find", test_find },
 	{ "list_find_node", test_find_node },
 	{ NULL, NULL } // τερματίζουμε τη λίστα με NULL
