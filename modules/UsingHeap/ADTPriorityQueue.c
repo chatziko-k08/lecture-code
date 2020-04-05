@@ -90,7 +90,7 @@ static void bubble_down(PriorityQueue pqueue, int node) {
 
 // Αρχικοποιεί το σωρό από τα στοιχεία του vector values.
 
-static void heapify(PriorityQueue pqueue, Vector values) {
+static void naive_heapify(PriorityQueue pqueue, Vector values) {
 	// Απλά κάνουμε insert τα στοιχεία ένα ένα.
 	// TODO: υπάρχει πιο αποδοτικός τρόπος να γίνει αυτό!
 	int size = vector_size(values);
@@ -115,7 +115,7 @@ PriorityQueue pqueue_create(CompareFunc compare, DestroyFunc destroy_value, Vect
 
 	// Αν values != NULL, αρχικοποιούμε το σωρό.
 	if (values != NULL)
-		heapify(pqueue, values);
+		naive_heapify(pqueue, values);
 
 	return pqueue;
 }
