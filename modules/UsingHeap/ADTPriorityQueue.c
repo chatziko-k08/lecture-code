@@ -48,7 +48,7 @@ static void node_swap(PriorityQueue pqueue, int node1, int node2) {
 //                 τον node που μπορεί να είναι _μεγαλύτερος_ από τον πατέρα του.
 // Post-condition: όλοι οι κόμβοι ικανοποιούν την ιδιότητα του σωρού.
 
-static void heapify_up(PriorityQueue pqueue, int node) {
+static void bubble_up(PriorityQueue pqueue, int node) {
 	// Αν φτάσαμε στη ρίζα, σταματάμε
 	if (node == 1)
 		return;
@@ -58,7 +58,7 @@ static void heapify_up(PriorityQueue pqueue, int node) {
 	// Αν ο πατέρας έχει μικρότερη τιμή από τον κόμβο, swap και συνεχίζουμε αναδρομικά προς τα πάνω
 	if (pqueue->compare(node_value(pqueue, parent), node_value(pqueue, node)) < 0) {
 		node_swap(pqueue, parent, node);
-		heapify_up(pqueue, parent);
+		bubble_up(pqueue, parent);
 	}
 }
 
@@ -67,7 +67,7 @@ static void heapify_up(PriorityQueue pqueue, int node) {
 //                 node που μπορεί να είναι _μικρότερος_ από κάποιο από τα παιδιά του.
 // Post-condition: όλοι οι κόμβοι ικανοποιούν την ιδιότητα του σωρού.
 
-static void heapify_down(PriorityQueue pqueue, int node) {
+static void bubble_down(PriorityQueue pqueue, int node) {
 	// βρίσκουμε τα παιδιά του κόμβου (αν δεν υπάρχουν σταματάμε)
 	int left_child = 2 * node;
 	int right_child = left_child + 1;
@@ -84,13 +84,13 @@ static void heapify_down(PriorityQueue pqueue, int node) {
 	// Αν ο κόμβος είναι μικρότερος από το μέγιστο παιδί, swap και συνεχίζουμε προς τα κάτω
 	if (pqueue->compare(node_value(pqueue, node), node_value(pqueue, max_child)) < 0) {
 		node_swap(pqueue, node, max_child);
-		heapify_down(pqueue, max_child);
+		bubble_down(pqueue, max_child);
 	}
 }
 
 // Αρχικοποιεί το σωρό από τα στοιχεία του vector values.
 
-static void build_heap(PriorityQueue pqueue, Vector values) {
+static void heapify(PriorityQueue pqueue, Vector values) {
 	// Απλά κάνουμε insert τα στοιχεία ένα ένα.
 	// TODO: υπάρχει πιο αποδοτικός τρόπος να γίνει αυτό!
 	int size = vector_size(values);
@@ -115,7 +115,7 @@ PriorityQueue pqueue_create(CompareFunc compare, DestroyFunc destroy_value, Vect
 
 	// Αν values != NULL, αρχικοποιούμε το σωρό.
 	if (values != NULL)
-		build_heap(pqueue, values);
+		heapify(pqueue, values);
 
 	return pqueue;
 }
@@ -134,8 +134,8 @@ void pqueue_insert(PriorityQueue pqueue, Pointer value) {
 
  	// Ολοι οι κόμβοι ικανοποιούν την ιδιότητα του σωρού εκτός από τον τελευταίο, που μπορεί να είναι
 	// μεγαλύτερος από τον πατέρα του. Αρα μπορούμε να επαναφέρουμε την ιδιότητα του σωρού καλώντας
-	// τη heapify_up γα τον τελευταίο κόμβο (του οποίου το 1-based id ισούται με το νέο μέγεθος του σωρού).
-	heapify_up(pqueue, pqueue_size(pqueue));
+	// τη bubble_up γα τον τελευταίο κόμβο (του οποίου το 1-based id ισούται με το νέο μέγεθος του σωρού).
+	bubble_up(pqueue, pqueue_size(pqueue));
 }
 
 void pqueue_remove_max(PriorityQueue pqueue) {
@@ -152,8 +152,8 @@ void pqueue_remove_max(PriorityQueue pqueue) {
 
  	// Ολοι οι κόμβοι ικανοποιούν την ιδιότητα του σωρού εκτός από τη νέα ρίζα
  	// που μπορεί να είναι μικρότερη από κάποιο παιδί της. Αρα μπορούμε να
- 	// επαναφέρουμε την ιδιότητα του σωρού καλώντας τη heapify_down για τη ρίζα.
-	heapify_down(pqueue, 1);
+ 	// επαναφέρουμε την ιδιότητα του σωρού καλώντας τη bubble_down για τη ρίζα.
+	bubble_down(pqueue, 1);
 }
 
 DestroyFunc pqueue_set_destroy_value(PriorityQueue pqueue, DestroyFunc destroy_value) {
