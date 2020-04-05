@@ -13,15 +13,27 @@
 // Ενα PriorityQueue είναι pointer σε αυτό το struct
 struct priority_queue {
 	Vector vector;				// Τα δεδομένα, σε Vector ώστε να έχουμε μεταβλητό μέγεθος χωρίς κόπο
-	CompareFunc compare;		// η διάταξη
+	CompareFunc compare;		// Η διάταξη
 	DestroyFunc destroy_value;	// Συνάρτηση που καταστρέφει ένα στοιχείο του vector.
 };
 
+
+// Βοηθητικές συναρτήσεις ////////////////////////////////////////////////////////////////////////////
+
+// Προσοχή: στην αναπαράσταση ενός complete binary tree με πίνακα, είναι βολικό τα ids των κόμβων να
+// ξεκινάνε από το 1 (ρίζα), το οποίο απλοποιεί τις φόρμουλες για εύρεση πατέρα/παιδιών. Οι θέσεις
+// ενός vector όμως ξεκινάνε από το 0. Θα μπορούσαμε απλά να αφήσουμε μία θέση κενή, αλλά δεν είναι ανάγκη,
+// μπορούμε απλά να αφαιρούμε 1 όταν διαβάζουμε/γράφουμε στο vector. Για απλοποίηση του κώδικα, η
+// πρόσβαση στα στοιχεία του vector γίνεται από τις παρακάτω 2 βοηθητικές συναρτήσεις.
+
+// Επιστρέφει την τιμή του κόμβου node
 
 static Pointer node_value(PriorityQueue pqueue, int node) {
 	// τα node ids είναι 1-based, το node αποθηκεύεται στη θέση node - 1
 	return vector_get_at(pqueue->vector, node - 1);
 }
+
+// Ανταλλάσει τις τιμές των κόμβων node1 και node2
 
 static void node_swap(PriorityQueue pqueue, int node1, int node2) {
 	// τα node ids είναι 1-based, το node αποθηκεύεται στη θέση node - 1
@@ -30,6 +42,11 @@ static void node_swap(PriorityQueue pqueue, int node1, int node2) {
 	vector_set_at(pqueue->vector, node1 - 1, value2);
 	vector_set_at(pqueue->vector, node2 - 1, value1);
 }
+
+// Αποκαθιστά την ιδιότητα του σωρού.
+// Precondition:   όλοι οι κόμβοι ικανοποιούν την ιδιότητα του σωρού, εκτός από
+//                 τον node που μπορεί να είναι _μεγαλύτερος_ από τον πατέρα του.
+// Post-condition: όλοι οι κόμβοι ικανοποιούν την ιδιότητα του σωρού.
 
 static void heapify_up(PriorityQueue pqueue, int node) {
 	// Αν φτάσαμε στη ρίζα, σταματάμε
@@ -44,6 +61,11 @@ static void heapify_up(PriorityQueue pqueue, int node) {
 		heapify_up(pqueue, parent);
 	}
 }
+
+// Αποκαθιστά την ιδιότητα του σωρού.
+// Precondition:   όλοι οι κόμβοι ικανοποιούν την ιδιότητα του σωρού, εκτός από τον
+//                 node που μπορεί να είναι _μικρότερος_ από κάποιο από τα παιδιά του.
+// Post-condition: όλοι οι κόμβοι ικανοποιούν την ιδιότητα του σωρού.
 
 static void heapify_down(PriorityQueue pqueue, int node) {
 	// βρίσκουμε τα παιδιά του κόμβου (αν δεν υπάρχουν σταματάμε)
@@ -66,6 +88,16 @@ static void heapify_down(PriorityQueue pqueue, int node) {
 	}
 }
 
+// Αρχικοποιεί το σωρό από τα στοιχεία του vector values.
+
+static void build_heap(PriorityQueue pqueue, Vector values) {
+	// Απλά κάνουμε insert τα στοιχεία ένα ένα.
+	// TODO: υπάρχει πιο αποδοτικός τρόπος να γίνει αυτό!
+	int size = vector_size(values);
+	for (int i = 0; i < size; i++)
+		pqueue_insert(pqueue, vector_get_at(values, i));
+}
+
 
 // Συναρτήσεις του ADTPriorityQueue //////////////////////////////////////////////////
 
@@ -76,17 +108,14 @@ PriorityQueue pqueue_create(CompareFunc compare, DestroyFunc destroy_value, Vect
 	pqueue->compare = compare;
 	pqueue->destroy_value = destroy_value;
 
-	// Δημιουργία του vector που αποθηκεύει τα στοιχεία. ΔΕΝ περνάμε την destroy_value στο vector!
+	// Δημιουργία του vector που αποθηκεύει τα στοιχεία.
+	// ΠΡΟΣΟΧΗ: ΔΕΝ περνάμε την destroy_value στο vector!
 	// Αν την περάσουμε θα καλείται όταν κάνουμε swap 2 στοιχεία, το οποίο δεν το επιθυμούμε.
 	pqueue->vector = vector_create(0, NULL);
 
-	// Αν values != NULL, προσθέτουμε τα στοιχεία του values στην ουρά.
-	// TODO: υπάρχει πιο αποδοτικός τρόπος να γίνει αυτό!
-	if (values != NULL) {
-		int size = vector_size(values);
-		for (int i = 0; i < size; i++)
-			pqueue_insert(pqueue, vector_get_at(values, i));
-	}
+	// Αν values != NULL, αρχικοποιούμε το σωρό.
+	if (values != NULL)
+		build_heap(pqueue, values);
 
 	return pqueue;
 }
@@ -100,9 +129,12 @@ Pointer pqueue_max(PriorityQueue pqueue) {
 }
 
 void pqueue_insert(PriorityQueue pqueue, Pointer value) {
-	// Προσθέτουμε την τιμή στο τέλος και καλούμε την heapify_up για να επισκευάσει
-	// το σωρό, με όρισμα τον τελευταίο κόμβο (το 1-based id του είναι όσο το νέο μέγεθος του σωρού)
+	// Προσθέτουμε την τιμή στο τέλος το σωρού
 	vector_insert_last(pqueue->vector, value);
+
+ 	// Ολοι οι κόμβοι ικανοποιούν την ιδιότητα του σωρού εκτός από τον τελευταίο, που μπορεί να είναι
+	// μεγαλύτερος από τον πατέρα του. Αρα μπορούμε να επαναφέρουμε την ιδιότητα του σωρού καλώντας
+	// τη heapify_up γα τον τελευταίο κόμβο (του οποίου το 1-based id ισούται με το νέο μέγεθος του σωρού).
 	heapify_up(pqueue, pqueue_size(pqueue));
 }
 
@@ -110,7 +142,7 @@ void pqueue_remove_max(PriorityQueue pqueue) {
 	int last_node = pqueue_size(pqueue);
 	assert(last_node != 0);		// LCOV_EXCL_LINE
 
-	// destroy
+	// Destroy την τιμή που αφαιρείται
 	if (pqueue->destroy_value != NULL)
 		pqueue->destroy_value(pqueue_max(pqueue));
 
@@ -118,7 +150,9 @@ void pqueue_remove_max(PriorityQueue pqueue) {
 	node_swap(pqueue, 1, last_node);
 	vector_remove_last(pqueue->vector);
 
-	// Επισκευή του σωρού καλώντας τη heapify_down για τη ρίζα
+ 	// Ολοι οι κόμβοι ικανοποιούν την ιδιότητα του σωρού εκτός από τη νέα ρίζα
+ 	// που μπορεί να είναι μικρότερη από κάποιο παιδί της. Αρα μπορούμε να
+ 	// επαναφέρουμε την ιδιότητα του σωρού καλώντας τη heapify_down για τη ρίζα.
 	heapify_down(pqueue, 1);
 }
 
@@ -129,7 +163,10 @@ DestroyFunc pqueue_set_destroy_value(PriorityQueue pqueue, DestroyFunc destroy_v
 }
 
 void pqueue_destroy(PriorityQueue pqueue) {
-	vector_set_destroy_value(pqueue->vector, pqueue->destroy_value);	// ώστε να κληθεί η destroy_value για όλα τα στοιχεία
+	// Αντί να κάνουμε εμείς destroy τα στοιχεία, είναι απλούστερο να
+	// προσθέσουμε τη destroy_value στο vector ώστε να κληθεί κατά το vector_destroy.
+	vector_set_destroy_value(pqueue->vector, pqueue->destroy_value);
 	vector_destroy(pqueue->vector);
+
 	free(pqueue);
 }
