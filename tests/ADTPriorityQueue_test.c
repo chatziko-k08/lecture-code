@@ -34,8 +34,8 @@ void test_create(void) {
 	PriorityQueue pqueue = pqueue_create(compare_ints, NULL, NULL);
 	pqueue_set_destroy_value(pqueue, NULL);
 
-	TEST_CHECK(pqueue != NULL);
-	TEST_CHECK(pqueue_size(pqueue) == 0);
+	TEST_ASSERT(pqueue != NULL);
+	TEST_ASSERT(pqueue_size(pqueue) == 0);
 
 	pqueue_destroy(pqueue);
 
@@ -45,12 +45,12 @@ void test_create(void) {
 	vector_insert_last(values, create_int(1));
 
 	pqueue = pqueue_create(compare_ints, free, values);
-	TEST_CHECK(pqueue != NULL);
-	TEST_CHECK(pqueue_size(pqueue) == 2);
+	TEST_ASSERT(pqueue != NULL);
+	TEST_ASSERT(pqueue_size(pqueue) == 2);
 
-	TEST_CHECK(*(int*)pqueue_max(pqueue) == 1);
+	TEST_ASSERT(*(int*)pqueue_max(pqueue) == 1);
 	pqueue_remove_max(pqueue);
-	TEST_CHECK(*(int*)pqueue_max(pqueue) == 0);
+	TEST_ASSERT(*(int*)pqueue_max(pqueue) == 0);
 
 	vector_destroy(values);
 	pqueue_destroy(pqueue);
@@ -65,8 +65,8 @@ void test_insert(void) {
 	for (int i = 0; i < N; i++) {
 		array[i] = i;
 		pqueue_insert(pqueue, &array[i]);
-		TEST_CHECK(pqueue_size(pqueue) == i+1);			// Το size ενημερώθηκε;
-		TEST_CHECK(pqueue_max(pqueue) == &array[i]);	// Εισαγωγή σε αύξουσα σειρά, το στοιχείο που μόλις βάλαμε πρέπει να είναι στην κορυφή
+		TEST_ASSERT(pqueue_size(pqueue) == i+1);			// Το size ενημερώθηκε;
+		TEST_ASSERT(pqueue_max(pqueue) == &array[i]);	// Εισαγωγή σε αύξουσα σειρά, το στοιχείο που μόλις βάλαμε πρέπει να είναι στην κορυφή
 	}
 
 	pqueue_destroy(pqueue);
@@ -88,10 +88,10 @@ void test_remove(void) {
 	// Διαδοχικά remove ώστε να συμβούν και resizes
 	for (int i = N-1; i >= 0; i--) {
 		int* value = pqueue_max(pqueue);
-		TEST_CHECK(*value == i);
-		TEST_CHECK(pqueue_max(pqueue) == value);
+		TEST_ASSERT(*value == i);
+		TEST_ASSERT(pqueue_max(pqueue) == value);
 		pqueue_remove_max(pqueue);
-		TEST_CHECK(pqueue_size(pqueue) == i);
+		TEST_ASSERT(pqueue_size(pqueue) == i);
 	}
 
 	pqueue_destroy(pqueue);
@@ -99,7 +99,7 @@ void test_remove(void) {
 	// remove από ουρά χωρίς συνάρτηση destroy
 	pqueue = pqueue_create(compare_ints, NULL, NULL);
 	pqueue_insert(pqueue, &N);
-	TEST_CHECK(pqueue_max(pqueue) == &N);
+	TEST_ASSERT(pqueue_max(pqueue) == &N);
 	pqueue_remove_max(pqueue);
 	pqueue_destroy(pqueue);
 }

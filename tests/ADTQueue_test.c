@@ -14,8 +14,8 @@ void test_create(void) {
 	Queue queue = queue_create(NULL);
 	queue_set_destroy_value(queue, NULL);
 
-	TEST_CHECK(queue != NULL);
-	TEST_CHECK(queue_size(queue) == 0);
+	TEST_ASSERT(queue != NULL);
+	TEST_ASSERT(queue_size(queue) == 0);
 
 	queue_destroy(queue);
 }
@@ -27,9 +27,9 @@ void test_insert(void) {
 	// insert 1000 στοιχεία
 	for (int i = 0; i < 1000; i++) {
 		queue_insert_back(queue, &array[i]);
-		TEST_CHECK(queue_size(queue) == i+1);			// Το size πρέπει να μεγαλώσει
-		TEST_CHECK(queue_front(queue) == &array[0]);	// Το μπροστινό στοιχείο στην κορυφή είναι πάντα το array[0]
-		TEST_CHECK(queue_back(queue) == &array[i]);		// Το πίσω στοιχείο είναι αυτό που μόλις βάλαμε
+		TEST_ASSERT(queue_size(queue) == i+1);			// Το size πρέπει να μεγαλώσει
+		TEST_ASSERT(queue_front(queue) == &array[0]);	// Το μπροστινό στοιχείο στην κορυφή είναι πάντα το array[0]
+		TEST_ASSERT(queue_back(queue) == &array[i]);		// Το πίσω στοιχείο είναι αυτό που μόλις βάλαμε
 	}
 
 	queue_destroy(queue);
@@ -45,9 +45,9 @@ void test_remove(void) {
 
 	// Διαδοχικά remove, πρέπει να βγουν με την ίδια σειρά που είναι στο array
 	for (int i = 0; i < 1000; i++) {
-		TEST_CHECK(queue_front(queue) == &array[i]);
+		TEST_ASSERT(queue_front(queue) == &array[i]);
 		queue_remove_front(queue);
-		TEST_CHECK(queue_size(queue) == 999-i);
+		TEST_ASSERT(queue_size(queue) == 999-i);
 	}
 
 	queue_destroy(queue);

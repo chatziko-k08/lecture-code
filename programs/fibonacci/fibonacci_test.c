@@ -60,46 +60,46 @@ int syllables_no(char* s) {
 
 void test_fibonacci(void) {
 	// genius
-	TEST_CHECK(syllables_no(lateralus[ 0]) == fibonacci(1));
-	TEST_CHECK(syllables_no(lateralus[ 1]) == fibonacci(2));
-	TEST_CHECK(syllables_no(lateralus[ 2]) == fibonacci(3));
-	TEST_CHECK(syllables_no(lateralus[ 3]) == fibonacci(4));
-	TEST_CHECK(syllables_no(lateralus[ 4]) == fibonacci(5));
-	TEST_CHECK(syllables_no(lateralus[ 5]) == fibonacci(6));
-	TEST_CHECK(syllables_no(lateralus[ 6]) == fibonacci(5));
-	TEST_CHECK(syllables_no(lateralus[ 7]) == fibonacci(4));
+	TEST_ASSERT(syllables_no(lateralus[ 0]) == fibonacci(1));
+	TEST_ASSERT(syllables_no(lateralus[ 1]) == fibonacci(2));
+	TEST_ASSERT(syllables_no(lateralus[ 2]) == fibonacci(3));
+	TEST_ASSERT(syllables_no(lateralus[ 3]) == fibonacci(4));
+	TEST_ASSERT(syllables_no(lateralus[ 4]) == fibonacci(5));
+	TEST_ASSERT(syllables_no(lateralus[ 5]) == fibonacci(6));
+	TEST_ASSERT(syllables_no(lateralus[ 6]) == fibonacci(5));
+	TEST_ASSERT(syllables_no(lateralus[ 7]) == fibonacci(4));
 
-	TEST_CHECK(syllables_no(lateralus[ 8]) == fibonacci(7));
-	TEST_CHECK(syllables_no(lateralus[ 9]) == fibonacci(6));
-	TEST_CHECK(syllables_no(lateralus[10]) == fibonacci(5));
-	TEST_CHECK(syllables_no(lateralus[11]) == fibonacci(4));
+	TEST_ASSERT(syllables_no(lateralus[ 8]) == fibonacci(7));
+	TEST_ASSERT(syllables_no(lateralus[ 9]) == fibonacci(6));
+	TEST_ASSERT(syllables_no(lateralus[10]) == fibonacci(5));
+	TEST_ASSERT(syllables_no(lateralus[11]) == fibonacci(4));
 
-	TEST_CHECK(syllables_no(lateralus[12]) == fibonacci(1));
-	TEST_CHECK(syllables_no(lateralus[13]) == fibonacci(2));
-	TEST_CHECK(syllables_no(lateralus[14]) == fibonacci(3));
-	TEST_CHECK(syllables_no(lateralus[15]) == fibonacci(4));
-	TEST_CHECK(syllables_no(lateralus[16]) == fibonacci(5));
-	TEST_CHECK(syllables_no(lateralus[17]) == fibonacci(6));
-	TEST_CHECK(syllables_no(lateralus[18]) == fibonacci(5));
-	TEST_CHECK(syllables_no(lateralus[19]) == fibonacci(4));
-	TEST_CHECK(syllables_no(lateralus[20]) == fibonacci(3));
-	TEST_CHECK(syllables_no(lateralus[21]) == fibonacci(2));
+	TEST_ASSERT(syllables_no(lateralus[12]) == fibonacci(1));
+	TEST_ASSERT(syllables_no(lateralus[13]) == fibonacci(2));
+	TEST_ASSERT(syllables_no(lateralus[14]) == fibonacci(3));
+	TEST_ASSERT(syllables_no(lateralus[15]) == fibonacci(4));
+	TEST_ASSERT(syllables_no(lateralus[16]) == fibonacci(5));
+	TEST_ASSERT(syllables_no(lateralus[17]) == fibonacci(6));
+	TEST_ASSERT(syllables_no(lateralus[18]) == fibonacci(5));
+	TEST_ASSERT(syllables_no(lateralus[19]) == fibonacci(4));
+	TEST_ASSERT(syllables_no(lateralus[20]) == fibonacci(3));
+	TEST_ASSERT(syllables_no(lateralus[21]) == fibonacci(2));
 
-	TEST_CHECK(syllables_no(lateralus[22]) == fibonacci(2));
-	TEST_CHECK(syllables_no(lateralus[23]) == fibonacci(3));
-	TEST_CHECK(syllables_no(lateralus[24]) == fibonacci(4));
-	TEST_CHECK(syllables_no(lateralus[25]) == fibonacci(5));
-	TEST_CHECK(syllables_no(lateralus[26]) == fibonacci(6));
+	TEST_ASSERT(syllables_no(lateralus[22]) == fibonacci(2));
+	TEST_ASSERT(syllables_no(lateralus[23]) == fibonacci(3));
+	TEST_ASSERT(syllables_no(lateralus[24]) == fibonacci(4));
+	TEST_ASSERT(syllables_no(lateralus[25]) == fibonacci(5));
+	TEST_ASSERT(syllables_no(lateralus[26]) == fibonacci(6));
 
-	TEST_CHECK(syllables_no(lateralus[27]) == fibonacci(7));
-	TEST_CHECK(syllables_no(lateralus[28]) == fibonacci(6));
-	TEST_CHECK(syllables_no(lateralus[29]) == fibonacci(5));
-	TEST_CHECK(syllables_no(lateralus[30]) == fibonacci(4));
+	TEST_ASSERT(syllables_no(lateralus[27]) == fibonacci(7));
+	TEST_ASSERT(syllables_no(lateralus[28]) == fibonacci(6));
+	TEST_ASSERT(syllables_no(lateralus[29]) == fibonacci(5));
+	TEST_ASSERT(syllables_no(lateralus[30]) == fibonacci(4));
 
 	// Και κάποια μεγάλα
-	TEST_CHECK(fibonacci(20) == 6765);
-	TEST_CHECK(fibonacci(30) == 832040);
-	TEST_CHECK(fibonacci(45) == 1134903170);
+	TEST_ASSERT(fibonacci(20) == 6765);
+	TEST_ASSERT(fibonacci(30) == 832040);
+	TEST_ASSERT(fibonacci(45) == 1134903170);
 
 	fibonacci_destroy();
 }

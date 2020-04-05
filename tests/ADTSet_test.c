@@ -35,8 +35,8 @@ int compare_ints(Pointer a, Pointer b) {
 void insert_and_test(Set set, Pointer value) {
 
 	set_insert(set, value);
-	TEST_CHECK(set_is_proper(set));
-	TEST_CHECK(set_find(set, value) == value);
+	TEST_ASSERT(set_is_proper(set));
+	TEST_ASSERT(set_find(set, value) == value);
 }
 
 // Βοηθητική συνάρτηση για το ανακάτεμα του πίνακα τιμών
@@ -59,8 +59,8 @@ void test_create() {
 	Set set = set_create(compare_ints, NULL);
 	set_set_destroy_value(set, NULL);
 
-	TEST_CHECK(set != NULL);
-	TEST_CHECK(set_size(set) == 0);
+	TEST_ASSERT(set != NULL);
+	TEST_ASSERT(set_size(set) == 0);
 
 	set_destroy(set);
 }
@@ -80,7 +80,7 @@ void test_insert() {
 
 		insert_and_test(set, value_array[i]);
 
-		TEST_CHECK(set_size(set) == (i + 1));
+		TEST_ASSERT(set_size(set) == (i + 1));
 
 	}
 
@@ -89,7 +89,7 @@ void test_insert() {
 	int* new_value = create_int(0);
 	insert_and_test(set, new_value);
 
-	TEST_CHECK(set_size(set) == N);
+	TEST_ASSERT(set_size(set) == N);
 
 	set_destroy(set);
 
@@ -132,12 +132,12 @@ void test_remove() {
 	// Δοκιμάζουμε, πριν διαγράψουμε κανονικά τους κόμβους, ότι η map_remove διαχειρίζεται 
 	// σωστά ένα κλειδί που δεν υπάρχει στο Map και γυρνάει NULL 
 	int not_exists = 2000;
-	TEST_CHECK(!set_remove(set, &not_exists));
+	TEST_ASSERT(!set_remove(set, &not_exists));
 
 	// Διαγράφουμε όλους τους κόμβους
 	for (int i = 0; i < N; i++) {
-		TEST_CHECK(set_remove(set, value_array[i]));
-		TEST_CHECK(set_is_proper(set));
+		TEST_ASSERT(set_remove(set, value_array[i]));
+		TEST_ASSERT(set_is_proper(set));
 	}
 
 	set_destroy(set);
@@ -148,9 +148,9 @@ void test_remove() {
 	int local_value1 = 0;
 
 	insert_and_test(set2, &local_value1);
-	TEST_CHECK(set_remove(set2, &local_value1));
-	TEST_CHECK(set_is_proper(set2));
-	TEST_CHECK(set_size(set2) == 0);
+	TEST_ASSERT(set_remove(set2, &local_value1));
+	TEST_ASSERT(set_is_proper(set2));
+	TEST_ASSERT(set_size(set2) == 0);
 	
 	set_destroy(set2);
 }
@@ -179,15 +179,15 @@ void test_find() {
 		SetNode found_node 	= set_find_node(set, value_array[i]);
 		Pointer found_value = set_node_value(set, found_node);
 
-		TEST_CHECK(found_node != SET_EOF);
-		TEST_CHECK(found_value == value_array[i]);
+		TEST_ASSERT(found_node != SET_EOF);
+		TEST_ASSERT(found_value == value_array[i]);
 
 	}
 
 	// Αναζήτηση στοιχείου που δεν υπάρχει στο set
 	int not_exists = 2000;
-	TEST_CHECK(set_find_node(set, &not_exists) == SET_EOF);
-	TEST_CHECK(set_find(set, &not_exists) == NULL);
+	TEST_ASSERT(set_find_node(set, &not_exists) == SET_EOF);
+	TEST_ASSERT(set_find(set, &not_exists) == NULL);
 
 	// Αναζήτηση μέγιστων/ελάχιστων στοιχείων
 	// Συγκρίνουμε τις τιμές των δεικτών και όχι τους ίδιους τους δείκτες, καθώς
@@ -195,19 +195,19 @@ void test_find() {
 	// ποιές τιμές υπάρχουν στο Set. Στη συγκεκριμένη περίπτωση, γνωρίζουμε ότι Set = {0, 1, ..., N-1}
 	SetNode first_node = set_first(set);
 	Pointer first_value = set_node_value(set, first_node);
-	TEST_CHECK((*(int *)first_value) == 0);
+	TEST_ASSERT((*(int *)first_value) == 0);
 
 	SetNode next = set_next(set, first_node);
 	Pointer next_value = set_node_value(set, next);
-	TEST_CHECK((*(int *)next_value) == 1);
+	TEST_ASSERT((*(int *)next_value) == 1);
 
 	SetNode last_node = set_last(set);
 	Pointer last_node_value = set_node_value(set, last_node);
-	TEST_CHECK((*(int *)last_node_value) == N-1);
+	TEST_ASSERT((*(int *)last_node_value) == N-1);
 
 	SetNode prev = set_previous(set, last_node);
 	Pointer prev_value = set_node_value(set, prev);
-	TEST_CHECK((*(int *)prev_value) == N-2);
+	TEST_ASSERT((*(int *)prev_value) == N-2);
 
 	// Ελέγχουμε και ότι βρίσκουμε σωστά τις τιμές από ενδιάμεσους κόμβους
 	SetNode middle_node = set_find_node(set, value_array[N/2]);
@@ -216,7 +216,7 @@ void test_find() {
 	Pointer middle_node_value = set_node_value(set, middle_node);
 	Pointer middle_node_value_prev = set_node_value(set, middle_node_prev);
 	
-	TEST_CHECK(*(int *)middle_node_value == *(int *)middle_node_value_prev + 1);
+	TEST_ASSERT(*(int *)middle_node_value == *(int *)middle_node_value_prev + 1);
 
 
 	set_destroy(set);

@@ -14,8 +14,8 @@ void test_create(void) {
 	Stack stack = stack_create(NULL);
 	stack_set_destroy_value(stack, NULL);
 
-	TEST_CHECK(stack != NULL);
-	TEST_CHECK(stack_size(stack) == 0);
+	TEST_ASSERT(stack != NULL);
+	TEST_ASSERT(stack_size(stack) == 0);
 
 	stack_destroy(stack);
 }
@@ -27,8 +27,8 @@ void test_insert(void) {
 	// insert 1000 στοιχεία
 	for (int i = 0; i < 1000; i++) {
 		stack_insert_top(stack, &array[i]);
-		TEST_CHECK(stack_size(stack) == i+1);		// Το μέγεθος πρέπει να μεγαλώσει
-		TEST_CHECK(stack_top(stack) == &array[i]);	// Στην κορυφή είναι πάντα το στοιχείο που μόλις βάλαμε!
+		TEST_ASSERT(stack_size(stack) == i+1);		// Το μέγεθος πρέπει να μεγαλώσει
+		TEST_ASSERT(stack_top(stack) == &array[i]);	// Στην κορυφή είναι πάντα το στοιχείο που μόλις βάλαμε!
 	}
 
 	stack_destroy(stack);
@@ -44,9 +44,9 @@ void test_remove(void) {
 
 	// Διαδοχικά remove
 	for (int i = 999; i >= 0; i--) {
-		TEST_CHECK(stack_top(stack) == &array[i]);
+		TEST_ASSERT(stack_top(stack) == &array[i]);
 		stack_remove_top(stack);
-		TEST_CHECK(stack_size(stack) == i);
+		TEST_ASSERT(stack_size(stack) == i);
 	}
 
 	stack_destroy(stack);

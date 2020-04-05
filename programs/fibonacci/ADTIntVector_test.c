@@ -13,7 +13,7 @@
 void test_create(void) {
 	IntVector vec = int_vector_create(0);
 
-	TEST_CHECK(int_vector_size(vec) == 0);
+	TEST_ASSERT(int_vector_size(vec) == 0);
 
 	int_vector_destroy(vec);
 }
@@ -24,13 +24,13 @@ void test_insert(void) {
 	// insert 1000 στοιχεία ώστε να συμβούν πολλαπλά resizes
 	for (int i = 0; i < 1000; i++) {
 		int_vector_insert_last(vec, i);
-		TEST_CHECK(int_vector_size(vec) == i+1);	// Το size ενημερώθηκε;
-		TEST_CHECK(int_vector_get_at(vec, i) == i);	// Μπορούμε να κάνουμε at το στοιχείο που μόλις βάλαμε;
+		TEST_ASSERT(int_vector_size(vec) == i+1);	// Το size ενημερώθηκε;
+		TEST_ASSERT(int_vector_get_at(vec, i) == i);	// Μπορούμε να κάνουμε at το στοιχείο που μόλις βάλαμε;
 	}
 
 	// Δοκιμή ότι μετά τα resizes τα στοιχεία είναι ακόμα προσπελάσιμα
 	for (int i = 0; i < 1000; i++)
-		TEST_CHECK(int_vector_get_at(vec, i) == i);
+		TEST_ASSERT(int_vector_get_at(vec, i) == i);
 
 	int_vector_destroy(vec);
 }
@@ -44,9 +44,9 @@ void test_remove(void) {
 
 	// Διαδοχικά remove ώστε να συμβούν και resizes
 	for (int i = 999; i >= 0; i--) {
-		TEST_CHECK(int_vector_get_at(vec, i) == i);
+		TEST_ASSERT(int_vector_get_at(vec, i) == i);
 		int_vector_remove_last(vec);
-		TEST_CHECK(int_vector_size(vec) == i);
+		TEST_ASSERT(int_vector_size(vec) == i);
 	}
 
 	int_vector_destroy(vec);
@@ -60,9 +60,9 @@ void test_get_set_at(void) {
 		int_vector_insert_last(vec, 0);
 
 	for (int i = 0; i < 1000; i++) {
-		TEST_CHECK(int_vector_get_at(vec, i) == 0);
+		TEST_ASSERT(int_vector_get_at(vec, i) == 0);
 		int_vector_set_at(vec, i, i);
-		TEST_CHECK(int_vector_get_at(vec, i) == i);
+		TEST_ASSERT(int_vector_get_at(vec, i) == i);
 	}
 
 	int_vector_destroy(vec);
@@ -77,10 +77,10 @@ void test_find(void) {
 
 	for (int i = 0; i < 1000; i++) {
 		int p = int_vector_find(vec, i);
-		TEST_CHECK(p == i);
+		TEST_ASSERT(p == i);
 	}
 
-	TEST_CHECK(int_vector_find(vec, -12) == INT_MIN);
+	TEST_ASSERT(int_vector_find(vec, -12) == INT_MIN);
 
 	int_vector_destroy(vec);
 }

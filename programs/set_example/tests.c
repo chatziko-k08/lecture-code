@@ -15,7 +15,7 @@ void strings() {
 	set_insert(set, s1);
 	set_insert(set, s2);
 
-	TEST_CHECK(set_size(set) == 2);
+	TEST_ASSERT(set_size(set) == 2);
 
 	char* value1 = set_find(set, "FOO");
 	char* value2 = set_find(set, "BAR");
@@ -41,7 +41,7 @@ void integers() {
 	set_insert(set, &a1);
 	set_insert(set, &a2);
 
-	TEST_CHECK(set_size(set) == 2);
+	TEST_ASSERT(set_size(set) == 2);
 
 	int b1 = 5;
 	int b2 = 42;

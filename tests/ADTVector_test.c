@@ -14,8 +14,8 @@ void test_create(void) {
 	Vector vec = vector_create(0, NULL);
 	vector_set_destroy_value(vec, NULL);
 
-	TEST_CHECK(vec != VECTOR_FAIL);
-	TEST_CHECK(vector_size(vec) == 0);
+	TEST_ASSERT(vec != VECTOR_FAIL);
+	TEST_ASSERT(vector_size(vec) == 0);
 
 	vector_destroy(vec);
 }
@@ -27,13 +27,13 @@ void test_insert(void) {
 	// insert 1000 στοιχεία ώστε να συμβούν πολλαπλά resizes
 	for (int i = 0; i < 1000; i++) {
 		vector_insert_last(vec, &array[i]);
-		TEST_CHECK(vector_size(vec) == i+1);		// Το size ενημερώθηκε;
-		TEST_CHECK(vector_get_at(vec, i) == &array[i]);	// Μπορούμε να κάνουμε at το στοιχείο που μόλις βάλαμε;
+		TEST_ASSERT(vector_size(vec) == i+1);		// Το size ενημερώθηκε;
+		TEST_ASSERT(vector_get_at(vec, i) == &array[i]);	// Μπορούμε να κάνουμε at το στοιχείο που μόλις βάλαμε;
 	}
 
 	// Δοκιμή ότι μετά τα resizes τα στοιχεία είναι ακόμα προσπελάσιμα
 	for (int i = 0; i < 1000; i++)
-		TEST_CHECK(vector_get_at(vec, i) == &array[i]);
+		TEST_ASSERT(vector_get_at(vec, i) == &array[i]);
 
 	vector_destroy(vec);
 }
@@ -48,9 +48,9 @@ void test_remove(void) {
 
 	// Διαδοχικά remove ώστε να συμβούν και resizes
 	for (int i = 999; i >= 0; i--) {
-		TEST_CHECK(vector_get_at(vec, i) == &array[i]);
+		TEST_ASSERT(vector_get_at(vec, i) == &array[i]);
 		vector_remove_last(vec);
-		TEST_CHECK(vector_size(vec) == i);
+		TEST_ASSERT(vector_size(vec) == i);
 	}
 
 	vector_destroy(vec);
@@ -65,9 +65,9 @@ void test_get_set_at(void) {
 		vector_insert_last(vec, NULL);
 
 	for (int i = 0; i < 1000; i++) {
-		TEST_CHECK(vector_get_at(vec, i) == NULL);
+		TEST_ASSERT(vector_get_at(vec, i) == NULL);
 		vector_set_at(vec, i, &array[i]);
-		TEST_CHECK(vector_get_at(vec, i) == &array[i]);
+		TEST_ASSERT(vector_get_at(vec, i) == &array[i]);
 	}
 
 	vector_destroy(vec);
@@ -77,18 +77,18 @@ void test_iterate(void) {
 	Vector vec = vector_create(0, NULL);
 
 	// first/last σε κενό vector
-	TEST_CHECK(vector_first(vec) == VECTOR_BOF);
-	TEST_CHECK(vector_last(vec) == VECTOR_EOF);
+	TEST_ASSERT(vector_first(vec) == VECTOR_BOF);
+	TEST_ASSERT(vector_last(vec) == VECTOR_EOF);
 
 	// insert πολλαπλά NULL
 	for (int i = 0; i < 1000; i++)
 		vector_insert_last(vec, NULL);
 
 	for (VectorNode node = vector_first(vec); node != VECTOR_EOF; node = vector_next(vec, node))
-		TEST_CHECK(vector_node_value(vec, node) == NULL);
+		TEST_ASSERT(vector_node_value(vec, node) == NULL);
 
 	for (VectorNode node = vector_last(vec); node != VECTOR_BOF; node = vector_previous(vec, node))
-		TEST_CHECK(vector_node_value(vec, node) == NULL);
+		TEST_ASSERT(vector_node_value(vec, node) == NULL);
 
 	vector_destroy(vec);
 }
@@ -109,15 +109,15 @@ void test_find(void) {
 
 	for (int i = 0; i < 1000; i++) {
 		int* p = vector_find(vec, &i, compare_ints);
-		TEST_CHECK(*p == i);
+		TEST_ASSERT(*p == i);
 
 		VectorNode node = vector_find_node(vec, &i, compare_ints);
-		TEST_CHECK(*(int*)vector_node_value(vec, node) == i);
+		TEST_ASSERT(*(int*)vector_node_value(vec, node) == i);
 	}
 
 	int not_exists = -12;
-	TEST_CHECK(vector_find(vec, &not_exists, compare_ints) == NULL);
-	TEST_CHECK(vector_find_node(vec, &not_exists, compare_ints) == VECTOR_EOF);
+	TEST_ASSERT(vector_find(vec, &not_exists, compare_ints) == NULL);
+	TEST_ASSERT(vector_find_node(vec, &not_exists, compare_ints) == VECTOR_EOF);
 
 	vector_destroy(vec);
 }

@@ -18,8 +18,8 @@ void test_create(void) {
 
 	// Ελέγχουμε ότι δεν απέτυχε η malloc στην λίστα, και ότι
 	// αρχικοποιείται με μέγεθος 0 (δηλαδή χωρίς κόμβους)
-	TEST_CHECK(list != NULL);
-	TEST_CHECK(list_size(list) == 0);
+	TEST_ASSERT(list != NULL);
+	TEST_ASSERT(list_size(list) == 0);
 
 	list_destroy(list);
 }
@@ -40,24 +40,24 @@ void test_insert(void) {
 		list_insert_next(list, LIST_BOF, &array[i]);
 		
 		// Ελέγχουμε εάν ενημερώθηκε (αυξήθηκε) το μέγεθος της λίστας.
-		TEST_CHECK(list_size(list) == (i + 1));	
+		TEST_ASSERT(list_size(list) == (i + 1));	
 
 		// Ελέγχουμε εάν ο πρώτος κόμβος περιέχει σαν τιμή τον δείκτη που μόλις κάναμε insert								
-		TEST_CHECK(list_node_value(list, list_first(list)) == &array[i]);	
+		TEST_ASSERT(list_node_value(list, list_first(list)) == &array[i]);	
 	}
 
 	// Ελέγχουμε εάν τα στοιχεία έχουν μπει με την αντίστροφη σειρά
 	ListNode node = list_first(list);
 
 	for (int i = N - 1; i >= 0; i--) {
-		TEST_CHECK(list_node_value(list, node) == &array[i]);
+		TEST_ASSERT(list_node_value(list, node) == &array[i]);
 		node = list_next(list, node);
 	}
 
 	// Εισαγωγή σε ενδιάμεσο κόμβο: προσθέτουμε το NULL σαν δεύτερο κόμβο
 	ListNode first_node = list_first(list);
 	list_insert_next(list, first_node, NULL);
-	TEST_CHECK(list_node_value(list, list_next(list, first_node)) == NULL);
+	TEST_ASSERT(list_node_value(list, list_next(list, first_node)) == NULL);
 
 	list_destroy(list);
 }
@@ -83,11 +83,11 @@ void test_remove_next(void) {
 	for (int i = N - 1; i >= 0; i--) {
 		// Διαγράφουμε απο την αρχή και ελέγχουμε εάν η τιμή του πρώτου κόμβου 
 		// ήταν η ίδια με αυτή που κάναμε insert παραπάνω
-		TEST_CHECK(list_node_value(list, list_first(list)) == array[i]);
+		TEST_ASSERT(list_node_value(list, list_first(list)) == array[i]);
 		list_remove_next(list, LIST_BOF);
 
 		// Ελέγχουμε ότι ενημερώνεται (μειώνεται) το size/μέγεθος της λίστας
-		TEST_CHECK(list_size(list) == i);
+		TEST_ASSERT(list_size(list) == i);
 	}
 
 	// Ξαναγεμίζουμε την λίστα για να δοκιμάσουμε την διαγραφή απο ενδιάμεσο κόμβο
@@ -99,7 +99,7 @@ void test_remove_next(void) {
 
 	// Δοκιμάζουμε την διαγραφή κόμβων ενδιάμεσα της λίστας, και συγκεκριμένα του δεύτερου κόμβου απο την αρχή
 	list_remove_next(list, list_first(list));
-	TEST_CHECK(list_size(list) == N - 1);
+	TEST_ASSERT(list_size(list) == N - 1);
 
 	list_destroy(list);
 }
@@ -125,13 +125,13 @@ void test_find() {
 	// Εύρεση όλων των στοιχείων
 	for (int i = 0; i < N; i++) {
 		int* value = list_find(list, &i, compare_ints); 
-		TEST_CHECK(value == &array[i]);
+		TEST_ASSERT(value == &array[i]);
 	}
 
 	// Δοκιμάζουμε, για μια τυχαία τιμή που δεν μπορεί πιθανώς να υπάρχει στην λίστα,
 	// αν η list_find γυρνάει σωστά NULL pointer
 	int not_exists = -1;
-	TEST_CHECK(list_find(list, &not_exists, compare_ints) == NULL);
+	TEST_ASSERT(list_find(list, &not_exists, compare_ints) == NULL);
 
 	list_destroy(list);
 }
@@ -158,8 +158,8 @@ void test_find_node() {
 		// Σε αυτή την λίστα, δοκιμάζουμε ότι ο πρώτος κόμβος περιέχει τον δείκτη &array[N - 1], 
 		// o δεύτερος τον &array[998] κοκ
 		ListNode found_node = list_find_node(list, &i, compare_ints); 
-		TEST_CHECK(found_node == node);
-		TEST_CHECK(list_node_value(list, found_node) == &array[i]);
+		TEST_ASSERT(found_node == node);
+		TEST_ASSERT(list_node_value(list, found_node) == &array[i]);
 
 		// Προχωράμε στον επόμενο κόμβο για να προσπελάσουμε όλη την λίστα
 		node = list_next(list, node);
