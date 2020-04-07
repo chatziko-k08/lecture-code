@@ -112,22 +112,17 @@ void test_remove() {
 	Set set = set_create(compare_ints, free);
 
 	int N = 1000;
-
 	int* value_array[N];
-
-	for (int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++)
 		value_array[i] = create_int(i);
-	}
 
 	// Ανακατεύουμε το value_array ώστε να υπάρχει ομοιόμορφη εισαγωγή τιμών
 	// Πχ εάν εισάγουμε δείκτες με αύξουσα σειρά τιμών, τότε εάν το Set υλοποιείται με BST,
 	// οι κόμβοι θα προστίθενται μόνο δεξιά της ρίζας, άρα και η set_remove δεν θα δοκιμάζεται πλήρως
 	shuffle(value_array, N);
 
-	for (int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++)
 		set_insert(set, value_array[i]);
-	}
-	
 
 	// Δοκιμάζουμε, πριν διαγράψουμε κανονικά τους κόμβους, ότι η map_remove διαχειρίζεται 
 	// σωστά ένα κλειδί που δεν υπάρχει στο Map και γυρνάει NULL 
@@ -161,19 +156,15 @@ void test_find() {
 	Set set = set_create(compare_ints, free);
 
 	int N = 1000;
-
 	int* value_array[N];
-
-	for (int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++)
 		value_array[i] = create_int(i);
-	}
 
 	// Παρόμοια με την set_remove, εάν το δέντρο δεν είναι σωστά ισορροπημένο, οι συναρτήσεις εύρεσης
 	// στοιχείων δεν θα ελέγχονται πλήρως
 	shuffle(value_array, N);
 
 	for (int i = 0; i < N; i++) {
-
 		set_insert(set, value_array[i]);
 
 		SetNode found_node 	= set_find_node(set, value_array[i]);
@@ -181,7 +172,6 @@ void test_find() {
 
 		TEST_ASSERT(found_node != SET_EOF);
 		TEST_ASSERT(found_value == value_array[i]);
-
 	}
 
 	// Αναζήτηση στοιχείου που δεν υπάρχει στο set
@@ -222,6 +212,44 @@ void test_find() {
 	set_destroy(set);
 }
 
+void test_iterate() {
+	Set set = set_create(compare_ints, free);
+
+	int N = 1000;
+	int* value_array[N];
+	for (int i = 0; i < N; i++)
+		value_array[i] = create_int(i);
+
+	// εισαγωγή τιμών σε τυχαία σειρά
+	shuffle(value_array, N);
+
+	for (int i = 0; i < N; i++)
+		set_insert(set, value_array[i]);
+
+	// iterate, τα στοιχεία πρέπει να τα βρούμε στη σειρά διάταξης
+	int i = 0;
+	for (SetNode node = set_first(set); node != SET_EOF; node = set_next(set, node)) {
+		TEST_ASSERT(*(int*)set_node_value(set, node) == i++);
+	}
+
+	// Κάποια removes
+	i = N - 1;
+	set_remove(set, &i);
+	i = 40;
+	set_remove(set, &i);
+
+	// iterate, αντίστροφη σειρά, τα στοιχεία πρέπει να τα βρούμε στη σειρά διάταξης
+	i = N - 2;
+	for (SetNode node = set_last(set); node != SET_EOF; node = set_previous(set, node)) {
+		if(i == 40)
+			i--;					// το 40 το έχουμε αφαιρέσει
+
+		TEST_ASSERT(*(int*)set_node_value(set, node) == i--);
+	}
+
+	set_destroy(set);
+}
+
 
 // Λίστα με όλα τα tests προς εκτέλεση
 TEST_LIST = {
@@ -229,5 +257,6 @@ TEST_LIST = {
 	{ "set_insert", test_insert },
 	{ "set_remove", test_remove },
 	{ "set_find", 	test_find 	},
+	{ "set_iterate",test_iterate 	},
 	{ NULL, NULL } // τερματίζουμε τη λίστα με NULL
 };
