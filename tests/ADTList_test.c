@@ -11,7 +11,6 @@
 
 
 void test_create(void) {
-
 	// Δημιουργούμε μια κενή λίστα με NULL δείκτη συνάρτησης delete_value
 	List list = list_create(NULL);
 	list_set_destroy_value(list, NULL);
@@ -26,16 +25,13 @@ void test_create(void) {
 
 
 void test_insert(void) {
-
 	List list = list_create(NULL);
 	
 	// Θα προσθέτουμε, μέσω της insert, δείκτες ως προς τα στοιχεία του π΄ίνακα
 	int N = 1000;
 	int array[N];					
 
-
 	for (int i = 0; i < N; i++) {
-
 		// LIST_BOF για εισαγωγή στην αρχή
 		list_insert_next(list, LIST_BOF, &array[i]);
 		
@@ -63,7 +59,6 @@ void test_insert(void) {
 }
 
 void test_remove_next(void) {
-
 	// Δημιουργία λίστας που καλεί αυτόματα τη free σε κάθε στοιχείο που αφαιρείται
 	List list = list_create(free);
 
@@ -116,7 +111,7 @@ void test_find() {
 	int N = 1000;
 	int array[N];
 
-	// Εισάγουμε δοκιμαστικές τιμές στον πίνακα , για να ελέγξουμε την test_find
+	// Εισάγουμε δοκιμαστικές τιμές στον πίνακα, για να ελέγξουμε την test_find
 	for (int i = 0; i < N; i++) {
 		array[i] = i;
 		list_insert_next(list, LIST_BOF, &array[i]);
@@ -138,13 +133,12 @@ void test_find() {
 
 
 void test_find_node() {
-
 	List list = list_create(NULL);
 
+	// Εισαγωγή τιμών στον πίνακα
 	int N = 1000;
 	int array[N];
 
-	// Εισαγωγή τιμών στον πίνακα
 	for (int i = 0; i < N; i++) {
 		array[i] = i;
 		list_insert_next(list, LIST_BOF, &array[i]);
