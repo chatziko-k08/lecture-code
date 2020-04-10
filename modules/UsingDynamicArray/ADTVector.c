@@ -28,19 +28,18 @@ struct vector {
 
 
 Vector vector_create(int size, DestroyFunc destroy_value) {
-	// Αρχικά το vector περιέχει size μη-αρχικοποιημένα στοιχεία, αλλά εμείς
-	// δεσμεύουμε xώρο για τουλάχιστον VECTOR_MIN_CAPACITY για να αποφύγουμε τα
-	// πολλαπλά resizes.
-
-	int capacity = size < VECTOR_MIN_CAPACITY ? VECTOR_MIN_CAPACITY : size;
-
-	// Δέσμευση μνήμης, για το struct και το array.
+	// Δημιουργία του struct
 	Vector vec = malloc(sizeof(*vec));
 
 	vec->size = size;
-	vec->capacity = capacity;
-	vec->array = calloc(capacity, sizeof(*vec->array));		// αρχικοποίηση σε 0 (NULL)
 	vec->destroy_value = destroy_value;
+
+	// Δέσμευση μνήμης για τον πίνακα. Αρχικά το vector περιέχει size
+	// μη-αρχικοποιημένα στοιχεία, αλλά εμείς δεσμεύουμε xώρο για τουλάχιστον
+	// VECTOR_MIN_CAPACITY για να αποφύγουμε τα πολλαπλά resizes.
+	//
+	vec->capacity = size < VECTOR_MIN_CAPACITY ? VECTOR_MIN_CAPACITY : size;
+	vec->array = calloc(vec->capacity, sizeof(*vec->array));		// αρχικοποίηση σε 0 (NULL)
 
 	return vec;
 }
