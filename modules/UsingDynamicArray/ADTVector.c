@@ -28,26 +28,18 @@ struct vector {
 
 
 Vector vector_create(int size, DestroyFunc destroy_value) {
-	// Αρχικά το vector περιέχει size μη-αρχικοποιημένα στοιχεία, αλλά εμείς δεσμεύουμε xώρο για
-	// τουλάχιστον VECTOR_MIN_CAPACITY για να αποφύγουμε τα πολλαπλά resizes
+	// Αρχικά το vector περιέχει size μη-αρχικοποιημένα στοιχεία, αλλά εμείς
+	// δεσμεύουμε xώρο για τουλάχιστον VECTOR_MIN_CAPACITY για να αποφύγουμε τα
+	// πολλαπλά resizes.
+
 	int capacity = size < VECTOR_MIN_CAPACITY ? VECTOR_MIN_CAPACITY : size;
 
 	// Δέσμευση μνήμης, για το struct και το array.
 	Vector vec = malloc(sizeof(*vec));
-	VectorNode array = calloc(capacity, sizeof(*array));		// αρχικοποίηση σε 0 (NULL)
-
-	// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία
-	// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
-	if (vec == NULL || array == NULL) {
-		free(vec);		// free αν καταφέραμε να δεσμεύσουμε κάποιο από τα δύο.
-		free(array);	// Αν όχι το free(NULL) απλά δεν κάνει τίποτα.
-		return VECTOR_FAIL;
-	}
-	// LCOV_EXCL_STOP
 
 	vec->size = size;
 	vec->capacity = capacity;
-	vec->array = array;
+	vec->array = calloc(capacity, sizeof(*vec->array));		// αρχικοποίηση σε 0 (NULL)
 	vec->destroy_value = destroy_value;
 
 	return vec;
@@ -59,6 +51,7 @@ int vector_size(Vector vec) {
 
 Pointer vector_get_at(Vector vec, int pos) {
 	assert(pos >= 0 && pos < vec->size);	// LCOV_EXCL_LINE (αγνοούμε το branch από τα coverage reports, είναι δύσκολο να τεστάρουμε το false γιατί θα κρασάρει το test)
+
 	return vec->array[pos].value;
 }
 
@@ -76,18 +69,9 @@ void vector_insert_last(Vector vec, Pointer value) {
 	// Μεγαλώνουμε τον πίνακα (αν χρειαστεί), ώστε να χωράει τουλάχιστον size στοιχεία
 	// Διπλασιάζουμε κάθε φορά το capacity (σημαντικό για την πολυπλοκότητα!)
 	if (vec->capacity == vec->size) {
-		VectorNode new_array = realloc(vec->array, 2 * vec->capacity * sizeof(*new_array));
-
-		// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία
-		// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
-		if (new_array == NULL)
-			return;			// αποτυχία, επιστρέφουμε χωρίς καμία τροποποίηση στο υπάρχον vector
-		// LCOV_EXCL_STOP
-
-		// Έχουμε πλέον μεγαλύτερη μνήμη που περιέχει τα προηγούμενα περιεχόμενα.
-		// Προσοχή: δε πρέπει να κάνουμε free τον παλιό pointer, το κάνει η realloc
+		// Προσοχή: δεν πρέπει να κάνουμε free τον παλιό pointer, το κάνει η realloc
 		vec->capacity *= 2;
-		vec->array = new_array;
+		vec->array = realloc(vec->array, vec->capacity * sizeof(*vec->array));
 	}
 
 	// Μεγαλώνουμε τον πίνακα και προσθέτουμε το στοιχείο
@@ -107,21 +91,11 @@ void vector_remove_last(Vector vec) {
 
 	// Μικραίνουμε τον πίνακα αν χρειαστεί, ώστε να μην υπάρχει υπερβολική σπατάλη χώρου.
 	// Για την πολυπλοκότητα είναι σημαντικό να μειώνουμε το μέγεθος στο μισό, και μόνο
-	// αν το capacity είναι τετραπλάσιο του size (δηλαδή το 75% του πίνακα είναι άδειος)
+	// αν το capacity είναι τετραπλάσιο του size (δηλαδή το 75% του πίνακα είναι άδειος).
 	//
 	if (vec->capacity > vec->size * 4 && vec->capacity > 2*VECTOR_MIN_CAPACITY) {
-		VectorNode new_array = realloc(vec->array, vec->capacity/2 * sizeof(*new_array));
-
-		// Είναι γενικά καλή πρακτική (ειδικά σε modules γενικής χρήσης), να ελέγχουμε αν η μνήμη δεσμεύτηκε με επιτυχία,
-		// η realloc μπορεί να αποτύχει ακόμα και όταν μικραίνουμε τη μνήμη! Ακόμα όμως και αν αποτύχει η μείωση μνήμης,
-		// μπορούμε να εκτελέσομυε κανονικά το remove, απλά θα συνεχίσουμε να δεσμεύουμε παραπάνω μνήμη (στο επόμενο remove θα ξαναπροσπαθήσουμε).
-		//
-		// LCOV_EXCL_START (αγνοούμε από το coverage report, είναι δύσκολο να τεστάρουμε αποτυχίες της malloc)
-		if (new_array != NULL) {
-			vec->capacity /= 2;
-			vec->array = new_array;
-		}
-		// LCOV_EXCL_STOP
+		vec->capacity /= 2;
+		vec->array = realloc(vec->array, vec->capacity * sizeof(*vec->array));
 	}
 }
 
