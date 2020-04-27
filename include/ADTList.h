@@ -41,6 +41,7 @@ int list_size(List list);
 void list_insert_next(List list, ListNode node, Pointer value);
 
 // Αφαιρεί τον __επόμενο__ κόμβο από τον node, ή τον πρώτο κόμβο αν node == LIST_BOF.
+// Αν ο node δεν έχει επόμενο η συμπεριφορά είναι μη ορισμένη.
 
 void list_remove_next(List list, ListNode node);
 

@@ -95,8 +95,8 @@ static SetNode node_find_previous(SetNode node, CompareFunc compare, SetNode tar
 		return node_find_previous(node->left, compare, target);
 
 	} else {
-		// Ο target είναι στο δεξί υποδέντρο, ο προηγούμενός του μπορεί να είναι επίσης εκεί, διαφορετικά
-		// ο προηγούμενός του είναι ο ίδιος ο node.
+		// Ο target είναι στο δεξί υποδέντρο, ο προηγούμενός του μπορεί να είναι επίσης εκεί,
+		// αν όχι ο προηγούμενός του είναι ο ίδιος ο node.
 		SetNode res = node_find_previous(node->right, compare, target);
 		return res != NULL ? res : node;
 	}
@@ -108,18 +108,18 @@ static SetNode node_find_previous(SetNode node, CompareFunc compare, SetNode tar
 
 static SetNode node_find_next(SetNode node, CompareFunc compare, SetNode target) {
 	if (node == target) {
-		// Ο target είναι η ρίζα του υποδέντρου, o προηγούμενός του είναι ο μεγαλύτερος του αριστερού υποδέντρου.
-		// (Aν δεν υπάρχει αριστερό παιδί, τότε ο κόμβος με τιμή value είναι ο μικρότερος του υποδέντρου, οπότε
-		// η node_find_max θα επιστρέψει NULL όπως θέλουμε.)
+		// Ο target είναι η ρίζα του υποδέντρου, o επόμενός του είναι ο μικρότερος του δεξιού υποδέντρου.
+		// (Aν δεν υπάρχει δεξί παιδί, τότε ο κόμβος με τιμή value είναι ο μεγαλύτερος του υποδέντρου, οπότε
+		// η node_find_min θα επιστρέψει NULL όπως θέλουμε.)
 		return node_find_min(node->right);
 
 	} else if (compare(target->value, node->value) > 0) {
-		// Ο target είναι στο αριστερό υποδέντρο, οπότε και ο προηγούμενός του είναι εκεί.
+		// Ο target είναι στο δεξί υποδέντρο, οπότε και ο επόμενός του είναι εκεί.
 		return node_find_next(node->right, compare, target);
 
 	} else {
-		// Ο target είναι στο δεξί υποδέντρο, ο προηγούμενός του μπορεί να είναι επίσης εκεί, διαφορετικά
-		// ο προηγούμενός του είναι ο ίδιος ο node.
+		// Ο target είναι στο αριστερό υποδέντρο, ο επόμενός του μπορεί να είναι επίσης εκεί,
+		// αν όχι ο επόμενός του είναι ο ίδιος ο node.
 		SetNode res = node_find_next(node->left, compare, target);
 		return res != NULL ? res : node;
 	}
