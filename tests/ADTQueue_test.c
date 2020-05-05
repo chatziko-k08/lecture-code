@@ -22,7 +22,8 @@ void test_create(void) {
 
 void test_insert(void) {
 	Queue queue = queue_create(NULL);
-	int array[1000];					// Στο queue θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
+	int N = 1000;
+	int* array = malloc(N * sizeof(*array));					// Στο queue θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
 
 	// insert 1000 στοιχεία
 	for (int i = 0; i < 1000; i++) {
@@ -33,11 +34,13 @@ void test_insert(void) {
 	}
 
 	queue_destroy(queue);
+	free(array);
 }
 
 void test_remove(void) {
 	Queue queue = queue_create(NULL);
-	int array[1000];
+	int N = 1000;
+	int* array = malloc(N * sizeof(*array));
 
 	// insert για προσθήκη δεδομένων, χωρίς ελέγχους (έχουμε ξεχωριστό test για το insert)
 	for (int i = 0; i < 1000; i++)
@@ -51,6 +54,7 @@ void test_remove(void) {
 	}
 
 	queue_destroy(queue);
+	free(array);
 }
 
 // destroy

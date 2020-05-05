@@ -29,7 +29,7 @@ void test_insert(void) {
 	
 	// Θα προσθέτουμε, μέσω της insert, δείκτες ως προς τα στοιχεία του π΄ίνακα
 	int N = 1000;
-	int array[N];					
+	int* array = malloc(N * sizeof(*array));					
 
 	for (int i = 0; i < N; i++) {
 		// LIST_BOF για εισαγωγή στην αρχή
@@ -56,6 +56,7 @@ void test_insert(void) {
 	TEST_ASSERT(list_node_value(list, list_next(list, first_node)) == NULL);
 
 	list_destroy(list);
+	free(array);
 }
 
 void test_remove_next(void) {
@@ -63,7 +64,7 @@ void test_remove_next(void) {
 	List list = list_create(free);
 
 	int N = 1000;
-	int* array[N];
+	int** array = malloc(N * sizeof(*array));					
 
 	// Χρησιμοποιούμε την insert για να γεμίσουμε την λίστα, αφού την έχουμε δοκιμάσει ήδη στην test_insert()
 	for (int i = 0; i < N; i++) {
@@ -97,6 +98,7 @@ void test_remove_next(void) {
 	TEST_ASSERT(list_size(list) == N - 1);
 
 	list_destroy(list);
+	free(array);
 }
 
 
@@ -109,7 +111,7 @@ int compare_ints(Pointer a, Pointer b) {
 void test_find() {
 	List list = list_create(NULL);
 	int N = 1000;
-	int array[N];
+	int* array = malloc(N * sizeof(*array));					
 
 	// Εισάγουμε δοκιμαστικές τιμές στον πίνακα, για να ελέγξουμε την test_find
 	for (int i = 0; i < N; i++) {
@@ -129,6 +131,7 @@ void test_find() {
 	TEST_ASSERT(list_find(list, &not_exists, compare_ints) == NULL);
 
 	list_destroy(list);
+	free(array);
 }
 
 
@@ -137,7 +140,7 @@ void test_find_node() {
 
 	// Εισαγωγή τιμών στον πίνακα
 	int N = 1000;
-	int array[N];
+	int* array = malloc(N * sizeof(*array));					
 
 	for (int i = 0; i < N; i++) {
 		array[i] = i;
@@ -160,6 +163,7 @@ void test_find_node() {
 	}
 
 	list_destroy(list);
+	free(array);
 }
 
 

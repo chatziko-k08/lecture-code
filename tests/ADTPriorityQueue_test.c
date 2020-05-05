@@ -59,7 +59,7 @@ void test_create(void) {
 void test_insert(void) {
 	PriorityQueue pqueue = pqueue_create(compare_ints, NULL, NULL);
 	int N = 1000;
-	int array[N];					// Στο pqueue θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
+	int* array = malloc(N * sizeof(*array));					// Στο pqueue θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
 
 	// insert N στοιχεία
 	for (int i = 0; i < N; i++) {
@@ -70,6 +70,7 @@ void test_insert(void) {
 	}
 
 	pqueue_destroy(pqueue);
+	free(array);
 }
 
 void test_remove(void) {
@@ -77,7 +78,7 @@ void test_remove(void) {
 
 	// προσθήκη δεδομένων, τυχαία σειρά
 	int N = 10;
-	int* array[N];
+	int** array = malloc(N * sizeof(*array));
 	for (int i = 0; i < N; i++)
 		array[i] = create_int(i);
 	shuffle(array, N);
@@ -102,6 +103,7 @@ void test_remove(void) {
 	TEST_ASSERT(pqueue_max(pqueue) == &N);
 	pqueue_remove_max(pqueue);
 	pqueue_destroy(pqueue);
+	free(array);
 }
 
 

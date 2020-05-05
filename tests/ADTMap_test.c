@@ -61,8 +61,8 @@ void test_insert(void) {
 	map_set_hash_function(map, hash_int);
 
 	int N = 1000;
-	int* key_array[N];
-	int* value_array[N];
+	int** key_array = malloc(N * sizeof(*key_array));
+	int** value_array = malloc(N * sizeof(*value_array));
 
 	for (int i = 0; i < N; i++) {
 		key_array[i] = create_int(i);
@@ -102,6 +102,8 @@ void test_insert(void) {
 	insert_and_test(map2, &key2, &value2);
 
 	map_destroy(map2);
+	free(key_array);
+	free(value_array);
 }
 
 
@@ -111,8 +113,8 @@ void test_remove(void) {
 	map_set_hash_function(map, hash_int);
 
 	int N = 1000;
-	int* key_array[N];
-	int* value_array[N];
+	int** key_array = malloc(N * sizeof(*key_array));
+	int** value_array = malloc(N * sizeof(*value_array));
 
 	for (int i = 0; i < N; i++) {
 		key_array[i] = create_int(i);
@@ -140,6 +142,8 @@ void test_remove(void) {
 	int key1 = 100;
 	TEST_ASSERT(!map_remove(map, &key1));
 	map_destroy(map);
+	free(key_array);
+	free(value_array);
 }
 
 
@@ -149,8 +153,8 @@ void test_find() {
 	map_set_hash_function(map, hash_int);
 
 	int N = 1000;
-	int* key_array[N];
-	int* value_array[N];
+	int** key_array = malloc(N * sizeof(*key_array));
+	int** value_array = malloc(N * sizeof(*value_array));
 
 	for (int i = 0; i < N; i++) {
 		key_array[i] = create_int(i);
@@ -173,7 +177,8 @@ void test_find() {
 	TEST_ASSERT(map_find(map, &not_exists) == NULL);
 
 	map_destroy(map);
-
+	free(key_array);
+	free(value_array);
 }
 
 void test_iterate() {

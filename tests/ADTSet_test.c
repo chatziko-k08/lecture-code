@@ -40,7 +40,7 @@ void insert_and_test(Set set, Pointer value) {
 }
 
 // Βοηθητική συνάρτηση για το ανακάτεμα του πίνακα τιμών
-void shuffle(int* array[], int n) {
+void shuffle(int** array, int n) {
 	for (int i = 0; i < n; i++) {
 		int j = i + rand() / (RAND_MAX / (n - i) + 1);
 		int* t = array[j];
@@ -71,7 +71,7 @@ void test_insert() {
 
 	int N = 1000;
 
-	int* value_array[N];
+	int** value_array = malloc(N * sizeof(*value_array));
 
 	// Δοκιμάζουμε την insert με νέες τιμές κάθε φορά και με αυτόματο free
 	for (int i = 0; i < N; i++) {
@@ -103,6 +103,7 @@ void test_insert() {
 	insert_and_test(set2, &local_value3);		// ισοδύναμη τιμή => replace
 	
 	set_destroy(set2);
+	free(value_array);
 
 }
 
@@ -112,7 +113,9 @@ void test_remove() {
 	Set set = set_create(compare_ints, free);
 
 	int N = 1000;
-	int* value_array[N];
+
+	int** value_array = malloc(N * sizeof(*value_array));
+
 	for (int i = 0; i < N; i++)
 		value_array[i] = create_int(i);
 
@@ -148,6 +151,7 @@ void test_remove() {
 	TEST_ASSERT(set_size(set2) == 0);
 	
 	set_destroy(set2);
+	free(value_array);
 }
 
 
@@ -156,7 +160,9 @@ void test_find() {
 	Set set = set_create(compare_ints, free);
 
 	int N = 1000;
-	int* value_array[N];
+
+	int** value_array = malloc(N * sizeof(*value_array));
+
 	for (int i = 0; i < N; i++)
 		value_array[i] = create_int(i);
 
@@ -210,13 +216,15 @@ void test_find() {
 
 
 	set_destroy(set);
+	free(value_array);
 }
 
 void test_iterate() {
 	Set set = set_create(compare_ints, free);
 
 	int N = 1000;
-	int* value_array[N];
+	int** value_array = malloc(N * sizeof(*value_array));
+
 	for (int i = 0; i < N; i++)
 		value_array[i] = create_int(i);
 
@@ -248,6 +256,7 @@ void test_iterate() {
 	}
 
 	set_destroy(set);
+	free(value_array);
 }
 
 

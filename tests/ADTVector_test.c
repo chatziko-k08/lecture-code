@@ -22,7 +22,8 @@ void test_create(void) {
 
 void test_insert(void) {
 	Vector vec = vector_create(0, NULL);
-	int array[1000];					// Στο vector θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
+	int N = 1000;
+	int* array = malloc(N * sizeof(*array));		// Στο vector θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
 
 	// insert 1000 στοιχεία ώστε να συμβούν πολλαπλά resizes
 	for (int i = 0; i < 1000; i++) {
@@ -36,11 +37,13 @@ void test_insert(void) {
 		TEST_ASSERT(vector_get_at(vec, i) == &array[i]);
 
 	vector_destroy(vec);
+	free(array);
 }
 
 void test_remove(void) {
 	Vector vec = vector_create(1000, NULL);
-	int array[1000];
+	int N = 1000;
+	int* array = malloc(N * sizeof(*array));
 
 	// replace για προσθήκη δεδομένων, χωρίς ελέγχους (έχουμε ξεχωριστό test για το replace)
 	for (int i = 0; i < 1000; i++)
@@ -54,11 +57,13 @@ void test_remove(void) {
 	}
 
 	vector_destroy(vec);
+	free(array);
 }
 
 void test_get_set_at(void) {
 	Vector vec = vector_create(0, NULL);
-	int array[1000];
+	int N = 1000;
+	int* array = malloc(N * sizeof(*array));
 
 	// insert πολλαπλά NULL, θα τα αλλάξουμε μετά με replace
 	for (int i = 0; i < 1000; i++)
@@ -71,6 +76,7 @@ void test_get_set_at(void) {
 	}
 
 	vector_destroy(vec);
+	free(array);
 }
 
 void test_iterate(void) {
@@ -99,7 +105,8 @@ int compare_ints(Pointer a, Pointer b) {
 
 void test_find(void) {
 	Vector vec = vector_create(1000, NULL);
-	int array[1000];
+	int N = 1000;
+	int* array = malloc(N * sizeof(*array));
 
 	// replace για προσθήκη δεδομένων
 	for (int i = 0; i < 1000; i++) {
@@ -120,6 +127,7 @@ void test_find(void) {
 	TEST_ASSERT(vector_find_node(vec, &not_exists, compare_ints) == VECTOR_EOF);
 
 	vector_destroy(vec);
+	free(array);
 }
 
 void test_destroy() {

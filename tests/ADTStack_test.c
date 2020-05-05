@@ -22,7 +22,8 @@ void test_create(void) {
 
 void test_insert(void) {
 	Stack stack = stack_create(NULL);
-	int array[1000];					// Στο stack θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
+	int N = 1000;
+	int* array = malloc(N * sizeof(*array));					// Στο stack θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
 
 	// insert 1000 στοιχεία
 	for (int i = 0; i < 1000; i++) {
@@ -32,11 +33,13 @@ void test_insert(void) {
 	}
 
 	stack_destroy(stack);
+	free(array);
 }
 
 void test_remove(void) {
 	Stack stack = stack_create(NULL);
-	int array[1000];
+	int N = 1000;
+	int* array = malloc(N * sizeof(*array));
 
 	// insert για προσθήκη δεδομένων, χωρίς ελέγχους (έχουμε ξεχωριστό test για το insert)
 	for (int i = 0; i < 1000; i++)
@@ -50,6 +53,7 @@ void test_remove(void) {
 	}
 
 	stack_destroy(stack);
+	free(array);
 }
 
 // destroy
