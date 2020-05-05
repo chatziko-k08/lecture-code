@@ -259,13 +259,50 @@ void test_iterate() {
 	free(value_array);
 }
 
+void test_node_value() {
+	// Η συνάρτηση αυτή ελέγχει ότι ένας κόμβος περιέχει πάντα την αρχική του τιμή,
+	// χωρίς να επηρρεάζεται από άλλους κόμβους που προστίθενται ή διαγράφονται.
+
+	Set set = set_create(compare_ints, free);
+
+	int N = 1000;
+	int** value_array = malloc(N * sizeof(*value_array));
+
+	for (int i = 0; i < N; i++)
+		value_array[i] = create_int(i);
+
+	shuffle(value_array, N);
+
+	// Εισάγουμε έναν αριθμό και αποθηκεύουμε το node
+	set_insert(set, value_array[0]);
+	SetNode node = set_first(set);
+	TEST_ASSERT(set_node_value(set, node) == value_array[0]);
+
+	// Προσθήκη τιμών, και έλεγχος μετά από κάθε προσθήκη
+	for (int i = 1; i < N; i++) {
+		set_insert(set, value_array[i]);
+
+		TEST_ASSERT(set_node_value(set, node) == value_array[0]);
+	}
+
+	// Διαγραφή τιμών, και έλεγχος μετά από κάθε διαγραφή
+	for (int i = 1; i < N; i++) {
+		set_remove(set, value_array[i]);
+
+		TEST_ASSERT(set_node_value(set, node) == value_array[0]);
+	}
+
+	set_destroy(set);
+	free(value_array);
+}
 
 // Λίστα με όλα τα tests προς εκτέλεση
 TEST_LIST = {
-	{ "set_create", test_create },
-	{ "set_insert", test_insert },
-	{ "set_remove", test_remove },
-	{ "set_find", 	test_find 	},
-	{ "set_iterate",test_iterate 	},
+	{ "set_create", 	test_create 	},
+	{ "set_insert", 	test_insert 	},
+	{ "set_remove", 	test_remove 	},
+	{ "set_find", 		test_find 		},
+	{ "set_iterate",	test_iterate 	},
+	{ "set_node_value",	test_node_value },
 	{ NULL, NULL } // τερματίζουμε τη λίστα με NULL
 };
