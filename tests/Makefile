@@ -28,6 +28,10 @@ UsingBinarySearchTree_ADTSet_test_OBJS  = ADTSet_test.o $(MODULES)/UsingBinarySe
 #
 UsingAVL_ADTSet_test_OBJS  = ADTSet_test.o $(MODULES)/UsingAVL/ADTSet.o
 
+# Υλοποιήσεις μέσω B Tree: ADTSet
+#
+UsingBTree_ADTSet_test_OBJS  = ADTSet_test.o $(MODULES)/UsingBTree/ADTSet.o
+
 # Υλοποιήσεις μέσω HashTable: ADTMap
 #
 UsingHashTable_ADTMap_test_OBJS	= ADTMap_test.o $(MODULES)/UsingHashTable/ADTMap.o
@@ -38,6 +42,7 @@ UsingHashTable_ADTMap_test_OBJS	= ADTMap_test.o $(MODULES)/UsingHashTable/ADTMap
 #
 UsingADTSet_ADTMap_test1_OBJS          = ADTMap_test.o   $(MODULES)/UsingADTSet/ADTMap.o    $(MODULES)/UsingBinarySearchTree/ADTSet.o
 UsingADTSet_ADTMap_test2_OBJS          = ADTMap_test.o   $(MODULES)/UsingADTSet/ADTMap.o    $(MODULES)/UsingAVL/ADTSet.o
+UsingADTSet_ADTMap_test3_OBJS          = ADTMap_test.o   $(MODULES)/UsingADTSet/ADTMap.o    $(MODULES)/UsingBTree/ADTSet.o
 
 # Ο βασικός κορμός του Makefile
 include ../common.mk
