@@ -38,14 +38,17 @@ struct btree_node {
 	int count;              // Αριθμός αποθηκευμένων δεδομένων στον κόμβο.
 	BTreeNode parent;       
 	BTreeNode children[MAX_CHILDREN + 1];    	// Πίνακας με παιδιά.
-	struct set_node set_nodes[MAX_VALUES + 1];  // Πίνακας set κόμβων (που περιέχουν τα δεδομένα).
+	SetNode set_nodes[MAX_VALUES + 1];  		// Πίνακας set κόμβων (που περιέχουν τα δεδομένα).
 };
 
-static BTreeNode new_root; // Καθολική μεταβλητή για την αποθήκευση της νέας ρίζας, λόγω set_insert ή λόγω set_remove.
-
 // Βοηθητικές συναρτήσεις
-static BTreeNode node_create(Pointer value);
-static BTreeNode node_find_equal(BTreeNode node, CompareFunc compare, Pointer value, int* index);
+static BTreeNode node_create();
+static SetNode set_node_create(Pointer value);
+
+static void node_add_value(BTreeNode node, SetNode set_node, int index);
+static void node_add_child(BTreeNode node, BTreeNode child, int index);
+
+static BTreeNode node_find(BTreeNode node, CompareFunc compare, Pointer value, int* index);
 
 static SetNode node_find_min(BTreeNode node);
 static SetNode node_find_max(BTreeNode node);
@@ -55,18 +58,15 @@ static SetNode node_find_next(SetNode node, CompareFunc compare);
 static void btree_destroy(BTreeNode node, DestroyFunc destroy_value);
 
 static bool is_leaf(BTreeNode node) {
-	return (node->children[0] == NULL);
+	return node->children[0] == NULL;
 }
 
 /* ======================================= set_remove ====================================== */
 
 // Βοηθητικές συναρτήσεις για την set_remove
-static Pointer max_btree_value(BTreeNode node, BTreeNode* mod_node);
-
-static void rotate_right(BTreeNode node, BTreeNode sibling);
-static void rotate_left(BTreeNode node, BTreeNode sibling);
-static void rebalance(BTreeNode node);
-static void node_remove(BTreeNode root, CompareFunc compare, Pointer value, bool* removed, Pointer* old_value);
+static void tranfer_right(BTreeNode node, BTreeNode sibling);
+static void transfer_left(BTreeNode node, BTreeNode sibling);
+static void repair_underflow(BTreeNode node);
 static void merge(BTreeNode left, BTreeNode right);
 
 static BTreeNode get_right_sibling(BTreeNode node);
@@ -94,22 +94,23 @@ static BTreeNode get_left_sibling(BTreeNode node) {
 	return NULL;
 }
 
-// Αναδιαμόρφωσε το υποδέντρο ώστε να ικανοποιεί τις συνθήκες ενός Β-δέντρου.
-static void rebalance(BTreeNode node) {
+// Επιδιόρθωση underflowed κόμβου ώστε να ικανοποιεί τις συνθήκες ενός Β-δέντρου.
+
+static void repair_underflow(BTreeNode node) {
 	// Εαν δοθεί κενός ή μη-ελλιπής κόμβος ή η ρίζα, το δέντρο δε χρειάζεται αναδιαμόρφωση.
 	if (node == NULL || node->count >= MIN_VALUES || node->parent == NULL)
 		return;
 
-	BTreeNode right_sibling = get_right_sibling(node);
 	BTreeNode left_sibling  = get_left_sibling(node);
+	BTreeNode right_sibling = get_right_sibling(node);
 
 	// Εαν υπάρχει ο δεξιός αδερφός & έχει περισσότερα δεδομένα από τα ελάχιστα δυνατά, κάνε αριστερή περιστροφή.
 	if (right_sibling != NULL && right_sibling->count > MIN_VALUES)
-		rotate_left(node, right_sibling);  
+		transfer_left(node, right_sibling);
 	
 	// Εαν υπάρχει ο αριστερός αδερφός & έχει περισσότερα δεδομένα από τα ελάχιστα δυνατά, κάνε δεξιά περιστροφή.
 	else if (left_sibling != NULL && left_sibling->count > MIN_VALUES)
-		rotate_right(node, left_sibling);
+		tranfer_right(node, left_sibling);
 
 	// Εαν υπάρχει ο αριστερός αδερφός, συγχώνευσέ τον με τον ελλιπή κόμβο, παίρνοντας μια διαχωριστική τιμή από τον πατέρα.
 	else if (left_sibling != NULL) 
@@ -120,170 +121,161 @@ static void rebalance(BTreeNode node) {
 }
 
 
-// Δεξιά περιστροφή μεταξύ ελλιπούς κόμβου, αριστερού αδερφού & πατέρα.
-static void rotate_right(BTreeNode node, BTreeNode left) {
+// Μεταφορά τιμής σε underflowed κόμβο από τον αριστερό αδερφό, μέσω του πατέρα.
+static void tranfer_right(BTreeNode node, BTreeNode left) {
 	BTreeNode parent = node->parent;
 
 	int sep_index = 0;     // Βρες τη θέση της διαχωριστικής τιμής στον πατέρα.
-	while (parent->children[sep_index+1] != node && ++sep_index);
-
-	// Ολίσθησε τα τις τιμές & τα παιδιά του ελλιπούς κόμβου μία θέση δεξιά.
-	for (int i = node->count; i > 0; --i) {
-		node->set_nodes[i].value = node->set_nodes[i-1].value;
-		node->children[i+1] = node->children[i];
-	}
-	node->children[1] = node->children[0];
+	while (parent->children[sep_index+1] != node && ++sep_index)
+		;
 
 	// Αντίγραψε τη διαχωριστική τιμή από τον πατέρα στον ελλιπή κόμβο.
-	node->set_nodes[0].value = parent->set_nodes[sep_index].value;
-
-	++node->count;
+	node_add_value(node, parent->set_nodes[sep_index], 0);
 
 	// Μετακίνησε το μεγαλύτερο στοιχείο του αριστερού αδερφού στον πατέρα, στη θέση της διαχωριστικής τιμής που μετακινήσαμε.
-	parent->set_nodes[sep_index].value = left->set_nodes[left->count-1].value;
+	parent->set_nodes[sep_index] = left->set_nodes[left->count-1];
+	parent->set_nodes[sep_index]->owner = parent;
 
-	node->children[0] = left->children[left->count];  // Μετακίνησε το μεγαλύτερο παιδί του αριστερού αδερφού στον ελλιπή κόμβο.
+	// Μετακίνησε το μεγαλύτερο παιδί του αριστερού αδερφού στον ελλιπή κόμβο.
 	if (!is_leaf(node))
-		node->children[0]->parent = node;
+		node_add_child(node, left->children[left->count], 0);
 
 	// Αφαίρεσε το στοιχείο που μετακινήθηκε από τον αριστερό αδερφό στον πατέρα.
-	--left->count;
+	left->count--;
 }
 
 
-// Αριστερή περιστροφή μεταξύ ελλιπούς κόμβου, δεξιού αδερφού & πατέρα.
-static void rotate_left(BTreeNode node, BTreeNode right) {
+// Μεταφορά τιμής σε underflowed κόμβο από τον δεξιό αδερφό, μέσω του πατέρα.
+static void transfer_left(BTreeNode node, BTreeNode right) {
 	BTreeNode parent = node->parent;
 
 	int sep_index = 0;     // Βρες τη θέση της διαχωριστικής τιμής στον πατέρα.
-	while (parent->children[sep_index] != node && ++sep_index);
+	while (parent->children[sep_index] != node && ++sep_index)
+		;
 
 	// Αντίγραψε τη διαχωριστική τιμή από τον πατέρα στον ελλιπή κόμβο.
-	node->set_nodes[node->count++].value = parent->set_nodes[sep_index].value;
+	node_add_value(node, parent->set_nodes[sep_index], node->count);
 
 	// Μετακίνησε το μικρότερο στοιχείο του δεξιού αδερφού στον πατέρα, στη θέση της διαχωριστικής τιμής που μετακινήσαμε.
-	parent->set_nodes[sep_index].value = right->set_nodes[0].value;
+	parent->set_nodes[sep_index] = right->set_nodes[0];
+	parent->set_nodes[sep_index]->owner = parent;
 
-	node->children[node->count] = right->children[0];  // Μετακίνησε το μεγαλύτερο παιδί του δεξιού αδερφού στον ελλιπή κόμβο.
-	if (node->children[node->count] != NULL)
-		node->children[node->count]->parent = node;
+	// Μετακίνησε το μεγαλύτερο παιδί του δεξιού αδερφού στον ελλιπή κόμβο
+	if (!is_leaf(node))
+		node_add_child(node, right->children[0], node->count);
 
 	// Ολίσθησε τα δεδομένα του δεξιού αδερφού μία θέση αριστερά.
-	for (int i = 0; i < right->count-1; i++) {
-		right->set_nodes[i].value = right->set_nodes[i+1].value;
+	for (int i = 0; i < right->count-1; i++)
+		right->set_nodes[i] = right->set_nodes[i+1];
+
+	for (int i = 0; i < right->count; i++)
 		right->children[i] = right->children[i+1];
-	}
-	right->children[right->count-1] = right->children[right->count];
 
 	// Αφαίρεσε το στοιχείο που μετακινήθηκε από τον δεξιό αδερφό στον πατέρα.
-	--right->count;
+	right->count--;
 }
 
 // Συγχωνεύει τον δεξιό κόμβο στον αριστερό, παίρνοντας τη διαχωριστική τιμή από τον πατέρα.
 // Ο δεξιός κόμβος διαγράφεται.
+// Αν το merge δημιουργήσει νέα ρίζα, επιστρέφεται. Αλλιώς επιστρέφει NULL.
+
 static void merge(BTreeNode left, BTreeNode right) {
 
 	BTreeNode parent = left->parent;
 
 	int sep_index = 0;    // Βρες τη θέση της διαχωριστικής τιμής στον πατέρα.
-	while (parent->children[sep_index] != left && ++sep_index);
+	while (parent->children[sep_index] != left && ++sep_index)
+		;
 
 	// Αντίγραψε τη διαχωριστική τιμή από τον πατέρα στον ελλιπή κόμβο.
-	left->set_nodes[left->count].value = parent->set_nodes[sep_index].value;
-	++left->count;
+	node_add_value(left, parent->set_nodes[sep_index], left->count);
 
-	// Εαν ο δεξιός κόμβος δεν είναι φύλλο, ενημέρωσε τον πατέρα όλων των παιδιών του.
+	// Εαν ο δεξιός κόμβος δεν είναι φύλλο, μεταφορά των παιδιών
 	if (!is_leaf(right))
 		for (int i = 0; i <= right->count; i++)
-			right->children[i]->parent = left;
+			node_add_child(left, right->children[i], left->count+i);
 
-	// Αντίγραψε όλα τα δεδομένα & τα παιδιά του δεξιού κόμβου στον ελλιπή κόμβο.
-	for (int i = 0; i < right->count; i++) {
-		left->set_nodes[left->count].value = right->set_nodes[i].value;
-		left->children[left->count++] = right->children[i];
-	}
-	left->children[left->count] = right->children[right->count];
+	// Αντίγραψε όλα τα δεδομένα του δεξιού κόμβου στον ελλιπή κόμβο.
+	for (int i = 0; i < right->count; i++)
+		node_add_value(left, right->set_nodes[i], left->count);
 
 	// Ολίσθησε προς τα αριστερά όλες τις τιμές και τα παιδιά του πατέρα
 	// αρχίζοντας από την θέση της διαχωριστικής τιμής που αφαιρέθηκε.
 	for (int i = sep_index; i < parent->count-1; i++) {
-		parent->set_nodes[i].value = parent->set_nodes[i+1].value;
+		parent->set_nodes[i] = parent->set_nodes[i+1];
 		parent->children[i+1] = parent->children[i+2];
 	}
 
-	--parent->count;  // Η διαχωριστική τιμή αφαιρέθηκε.
+	parent->count--;  // Η διαχωριστική τιμή αφαιρέθηκε.
 	free(right);  	  // Διάγραψε τον κόμβο που συγχωνεύτηκε.
 
-	if (parent->count == 0) { // Εαν μετά τη διαγραφή η ρίζα έμεινε κενή.
-		
-		free(parent); 	  // Διάγραψε τον κόμβο ρίζας.
-		left->parent = NULL;
-		new_root = left;  // Ανανέωσε τη στατική μεταβλητή με τη νέα ρίζα.
-	}
-	else
-		rebalance(parent); // Ο πατέρας μπορεί να είναι πλέον ελλιπής. Ισορρόπησε το υποδέντρο του.
+	// Ο πατέρας μπορεί να είναι πλέον ελλιπής. Ισορρόπησε το υποδέντρο του.
+	repair_underflow(parent);
 }
 
 
 // Διαγράφει το κόμβο με τιμή ισοδύναμη της value, αν υπάρχει.
 // Θέτει το *removed σε true αν έγινε πραγματικά διαγραφή & επιστρέφει την τιμή που διαγράφηκε στο *old_value.
-static void node_remove(BTreeNode root, CompareFunc compare, Pointer value, bool* removed, Pointer* old_value) {
+// Επιστρέφει τη νέα ρίζα του δέντρου.
+
+static BTreeNode node_remove(BTreeNode root, CompareFunc compare, Pointer value, bool* removed, Pointer* old_value) {
 	if (root == NULL) {
 		*removed = false;   // Κενό δέντρο, δεν υπάρχει η τιμή.
-		return;
+		return root;
 	}
 
 	int index;    // Βρες τον κόμβο που περιέχει την τιμή.
-	BTreeNode node = node_find_equal(root, compare, value, &index);
+	BTreeNode node = node_find(root, compare, value, &index);
 
-	if (node == NULL) {
+	if (index == -1) {
 		*removed = false;   // Η τιμή που θέλουμε να διαγράψουμε *δεν υπάρχει* στο δέντρο.
-		return;
+		return root;
 	}
 
 	// Βρέθηκε ισοδύναμη τιμή στον node, οπότε τον διαγράφουμε. Το πώς θα γίνει αυτό εξαρτάται από το αν έχει παιδιά.
 	*removed = true;
-	*old_value = node->set_nodes[index].value;
+	*old_value = node->set_nodes[index]->value;
+
+	free(node->set_nodes[index]);
 
 	if (is_leaf(node)) {
 		// Άν ο κόμβος είναι φύλλο, διάγραψε την τιμή, αναδιάταξε τα δεδομένα, και αναδιαμόρφωσε το δέντρο.
 
 		for (int i = index; i < node->count-1; i++)  // Ολίσθησε όλα τα δεδομένα 1 θέση αριστερά.
-			node->set_nodes[i].value = node->set_nodes[i + 1].value;
+			node->set_nodes[i] = node->set_nodes[i + 1];
  
-		--node->count;    // Αφαίρεσε το δεδομένο.
+		node->count--;    // Αφαίρεσε το δεδομένο.
 
-		rebalance(node);  // Αναδιαμόρφωσε το δένδρο.
+		repair_underflow(node);  // Αναδιαμόρφωσε το δένδρο.
 
-	} else {  
+	} else {
 		// Άν είναι εσωτερικός κόμβος τότε η τιμή που θέλουμε να διαγράψουμε λειτουργεί ως διαχωριστική τιμή.
 		// Βρες το μεγαλύτερο στοιχείο του υποδέντρου που ορίζεται ακριβώς πριν τη διαχωριστική τιμή
 		// και αντικατέστησε με αυτό τη διαχωριστική τιμή, ώστε να διατηρηθεί η διάταξη στον κόμβο.
 		// Η μεγαλύτερη τιμή βρίσκεται σε φύλλο. Αφού διαγράφουμε από φύλλο, είναι πολύ πιθανό να γίνει ελλιπές.
 		// Οπότε αναδιαμόρφωσε το δέντρο ξεκινώντας από το φύλλο στο οποίο έγινε η διαγραφή.
 		
-		BTreeNode mod_node; // Αποθήκευσε το φύλλο στο οποίο έγινε η διαγραφή.
+		SetNode max = node_find_max(node->children[index]);
 
-		node->set_nodes[index].value = max_btree_value(node->children[index], &mod_node); // Αντικατέστησε τη διαχωριστική τιμή.
+		BTreeNode max_node = max->owner;
+		max_node->count--;    // Αφαίρεσε το δεδομένο.
 
-		--mod_node->count;    // Αφαίρεσε το δεδομένο.
+		node->set_nodes[index] = max;
+		max->owner = node;
 
-		rebalance(mod_node);   // Αναδιαμόρφωσε το δέντρο.
+		repair_underflow(max_node);   // Αναδιαμόρφωσε το δέντρο.
 	}
-}
 
+	// Αν η ρίζα αδειάσει, free, και ρίζα γίνεται το (μοναδικό, αν έχει) παιδί της
+	if (root->count == 0) {
+		BTreeNode first_child = root->children[0];
+		if (first_child != NULL)
+			first_child->parent = NULL;
 
-// Βρες και επίστρεψε τη μεγαλύτερη τιμή στο υποδέντρο που ορίζεται από τον κόμβο node.
-// Επίστρεψε τον κόμβο-φύλλο στο οποίο βρίσκεται μέσω της mod_node.
-static Pointer max_btree_value(BTreeNode node, BTreeNode* mod_node) {
-
-	if (!is_leaf(node))  // Ο node είναι εσωτερικός κόμβος, οπότε ψάξε στο δεξιότερο παιδί του.
-		return max_btree_value(node->children[node->count], mod_node);
-
-	Pointer max = node->set_nodes[node->count-1].value;  // Αποθήκευσε τη μέγιστη τιμή.
-
-	*mod_node = node; // Αποθήκευσε τον κόμβο-φύλλο.
-	return max;
+		free(root);
+		root = first_child;
+	}
+	return root;
 }
 
 /* ================================= set_remove_end ======================================== */
@@ -291,121 +283,91 @@ static Pointer max_btree_value(BTreeNode node, BTreeNode* mod_node) {
 /* =================================== set_insert ========================================== */
 
 // Βοηθητικές συναρτήσεις για την set_insert
-static void node_insert(BTreeNode node, CompareFunc compare, Pointer value, bool* inserted, Pointer* old_value); // TODO : Comments
 static void split(BTreeNode node, CompareFunc compare);
-static void insert_at_parent(BTreeNode node, BTreeNode right, Pointer median, CompareFunc compare);
-
-static BTreeNode split_in_half(BTreeNode node);
 
 
-// Αν υπάρχει κόμβος με τιμή ισοδύναμη της value, αλλάζει την τιμή του σε value, διαφορετικά προσθέτει νέο κόμβο με τιμή value.
-// Θέτει το *inserted σε true αν έγινε προσθήκη, ή false αν έγινε ενημέρωση.
-// Θέτει την μεταβλητή new_root, εαν άλλαξε η ρίζα του δέντρου μετά την προσθήκη.
-static void node_insert(BTreeNode node, CompareFunc compare, Pointer value, bool* inserted, Pointer* old_value) {
+// Αν υπάρχει κόμβος με τιμή ισοδύναμη της value στο δέντρο με ρίζα root, αλλάζει την τιμή του σε value, διαφορετικά
+// προσθέτει νέο κόμβο με τιμή value. Θέτει το *inserted σε true αν έγινε προσθήκη, ή false αν έγινε ενημέρωση.
+// Επιστρέφει τη νέα ρίζα του δέντρου.
 
-	if (node == NULL) {    // Αν το υποδέντρο είναι κενό, δημιούργησε νέο κόμβο ο οποίος γίνεται ρίζα του υποδέντρου
-		*inserted = true;   // Έγινε η προσθήκη
-		new_root = node_create(value);
-		return;
+static BTreeNode node_insert(BTreeNode root, CompareFunc compare, Pointer value, bool* inserted, Pointer* old_value) {
+	// Αν το δέντρο είναι κενό, δημιούργησε νέο κόμβο ο οποίος γίνεται ρίζα
+	if (root == NULL) {
+		*inserted = true;		// Έγινε η προσθήκη
+		root = node_create();
+		node_add_value(root, set_node_create(value), 0);
+		return root;
 	}
 
+	// Εύρεση του κόμβου στον οποίο πρέπει να γίνει insert
 	int index;
-	for (index = 0; index < node->count; index++) {
-		int compare_res = compare(value, node->set_nodes[index].value);
-
-		if (compare_res == 0) { // Η ίδια τιμή υπάρχει ήδη στο δέντρο.
-			*inserted = false;    
-			*old_value = node->set_nodes[index].value;
-			node->set_nodes[index].value = value;
-			return;
-		}
-
-		if (compare_res < 0)  // Βρέθηκε κάποια τιμή που θα μπορούσε να είναι η διαχωριστική.
-			break;
+	BTreeNode node = node_find(root, compare, value, &index);
+	if (index != -1) {
+		// Υπάρχει ήδη η τιμή
+		*inserted = false;    
+		*old_value = node->set_nodes[index]->value;
+		node->set_nodes[index]->value = value;
+		return root;
 	}
 
-	if (!is_leaf(node)) // Εαν ο κόμβος είναι εσωτερικός, ψάξε στο αριστερό παιδί που ορίζει η διαχωριστική τιμή.
-		node_insert(node->children[index], compare, value, inserted, old_value);
-	else {
-		// Φτάσαμε σε φύλλο, επομένως μπορούμε να κάνουμε την προσθήκη.
-		for (int i = node->count-1; i >= index; --i)
-			node->set_nodes[i+1].value = node->set_nodes[i].value;  // Ολίσθησε προς τα δεξιά όλα τα στοιχεία του φύλλου αρχίζοντας από τη θέση όπου θα γίνει η προσθήκη.
-	
-		node->set_nodes[index].value = value;  // Κάνε την προσθήκη.
-		*inserted = true;
-		++node->count;
+	// Εύρεση της θέσης που πρέπει να μπει το value
+	for (index = 0; index < node->count && compare(value, node->set_nodes[index]->value) > 0; index++)
+		;
 
-		if (node->count > MAX_VALUES) // Το φύλλο έχει περισσότερες από τις επιτρεπτές τιμές, οπότε κάνε split.
-			split(node, compare);
-	}
+	node_add_value(node, set_node_create(value), index);
+
+	if (node->count > MAX_VALUES) // Το φύλλο έχει περισσότερες από τις επιτρεπτές τιμές, οπότε χρειάζεται split
+		split(node, compare);
+
+	// Μπορεί να έχει δημιουργηθεί νέα ρίζα
+	*inserted = true;
+	return root->parent != NULL ? root->parent : root;
 }
 
-// Εαν ο κόμβος node έχει υπερχειλήσει, τον χωρίζει σε 2 κόμβους.
+// Καλείται όταν ο κόμβος node έχει υπερχειλήσει, τον χωρίζει σε 2 κόμβους.
 // Στέλνει τη μεσαία από τις τιμές του κόμβου node στον πατέρα του.
-static void split(BTreeNode node, CompareFunc compare) {
-	// Εαν ο κόμβος έχει ξεπεράσει το μέγιστο όριο τιμών.
-	if (node->count > MAX_VALUES) {
-		Pointer median = node->set_nodes[MAX_CHILDREN/2].value;  // Αποθήκευσε τη μέση τιμή.
-		BTreeNode right = split_in_half(node);          // Χώρισε τον κόμβο στα 2.
-		insert_at_parent(node, right, median, compare); // Μεταβίβασε τη μέση τιμή στον πατέρα.
-	}
-}
 
-// Χωρίζει τον κόμβο node σε 2 κόμβους, με τον καθένα να έχει από MAX_CHILDREN/2 (=2) τιμές.
-// Επιστρέφει τον δεξιό κόμβο που δημιούργησε.
-static BTreeNode split_in_half(BTreeNode node) {
-	
-	BTreeNode right = node_create(NULL);
+static void split(BTreeNode node, CompareFunc compare) {
+	assert(node->count > MAX_VALUES);	// ο κόμβος έχει ξεπεράσει το μέγιστο όριο τιμών.
+
+	// Χωρίζουμε τον κόμβο node σε 2 κόμβους, με τον καθένα να έχει από MAX_CHILDREN/2 (=2) τιμές.
+	BTreeNode right = node_create();
 	right->parent = node->parent;     // Οι 2 κόμβοι έχουν τον ίδιο πατέρα.
 
-	for (int i = 0; i < MAX_CHILDREN/2; i++) {
-		// Μετακίνησε MAX_CHILDREN/2 τιμές και παιδιά από τον αριστερό κόμβο στον δεξιό.
-		right->set_nodes[i].value = node->set_nodes[i + MAX_CHILDREN/2 + 1].value;
-		right->children[i] = node->children[i + MAX_CHILDREN/2 + 1];
+	// Μετακίνησε τις μισές τιμές και παιδιά από τον αριστερό κόμβο στον δεξιό.
+	int half = node->count/2;
+	if (!is_leaf(node))
+		for (int i = 0; i <= half; i++)
+			node_add_child(right, node->children[i + half + 1], i);
 
-		if (right->children[i] != NULL)               // Εαν ο κόμβος έχει παιδιά
-			right->children[i]->parent = right; // ανανέωσε τον πατέρα τους.
-
-		++right->count; // Έγινε προσθήκη τιμής στον δεξιό κόμβο.
-		--node->count;  // Και αφαίρεση στον αριστερό.
+	for (int i = 0; i < half; i++) {
+		node_add_value(right, node->set_nodes[i + half + 1], i);
+		node->count--;
 	}
 
-	// Μετακίνησε και το τελευταίο παιδί του αριστερού κόμβου στον δεξιό.
-	right->children[MAX_CHILDREN/2] = node->children[MAX_CHILDREN];
-	if (right->children[MAX_CHILDREN/2] != NULL)
-		right->children[MAX_CHILDREN/2]->parent = right;
+	// Αφαίρεση μεσαίας τιμής
+	SetNode median = node->set_nodes[node->count-1];
+	node->count--;
 
-	return right;
-}
-
-// Πραγματοποιεί την προσθήκη της τιμής median στον πατέρα του κόμβου node.
-// Εαν ο κόμβος node είναι η ρίζα, τότε δημιουργεί και θέτει την καινούργια ρίζα στη μεταβλητή new_root.
-static void insert_at_parent(BTreeNode node, BTreeNode right, Pointer median, CompareFunc compare) {
+	// Προσθέρουμε το median στον πατέρα του κόμβου node.
 	BTreeNode parent = node->parent;
+	if (parent == NULL) {						// Ο node είναι η ρίζα
+		BTreeNode new_root = node_create();		// Δημιούργησε καινούργια ρίζα η οποία θα έχει για παιδιά τους node, right.
 
-	--node->count;  // Αφαιρέσαμε την τιμή από τον node.
+		node_add_value(new_root, median, 0);
 
-	if (parent == NULL){    // O node είναι η ρίζα
-		new_root = node_create(median);     // Δημιούργησε καινούργια ρίζα η οποία θα έχει για παιδιά τους node, right.
 		right->parent = node->parent = new_root;
 		new_root->children[0] = node;
 		new_root->children[1] = right;
-	}
-	else {
+
+	} else {
 		int index;  // Βρες τη θέση εισαγωγής της τιμής στον πατέρα.
 		for (index = 0; index < parent->count; index++)
-			if (compare(median, parent->set_nodes[index].value) < 0)
+			if (compare(median->value, parent->set_nodes[index]->value) < 0)
 				break;
-			
-		// Ολίσθησε προς τα δεξιά όλες τις τιμές και τα παιδιά του πατέρα αρχίζοντας από τη θέση όπου θα γίνει η προσθήκη.
-		for (int i = parent->count-1; i >= index; --i) {
-			parent->set_nodes[i+1].value = parent->set_nodes[i].value;
-			parent->children[i+2] = parent->children[i+1];
-		}
-				
-		++parent->count;        // Κάνε την προσθήκη.
-		parent->set_nodes[index].value = median;
-		parent->children[index+1] = right; // Πρόσθεσε τον δεξιό κόμβο που δημιουργήθηκε ως δεξιό παιδί της (νέας) διαχωριστικής τιμής.
+
+		node_add_child(parent, right, index+1);		// Πρόσθεσε τον δεξιό κόμβο που δημιουργήθηκε ως δεξιό παιδί της (νέας) διαχωριστικής τιμής
+		node_add_value(parent, median, index);
 
 		if (parent->count > MAX_VALUES)  // Έλεγξε εαν υπερχείλησε ο πατέρας λόγω της προσθήκης.
 			split(parent, compare);
@@ -415,45 +377,74 @@ static void insert_at_parent(BTreeNode node, BTreeNode right, Pointer median, Co
 /* ================================= set_insert_end ======================================== */
 
 // Δημιουργεί και επιστρέφει έναν κόμβο χωρίς παιδιά ή πατέρα (όλα τα πεδία είναι NULL).
-// Εαν το value *δεν* είναι NULL τότε αρχικοποιεί το values[0] του κόμβου με το value.
-static BTreeNode node_create(Pointer value) {
-
+static BTreeNode node_create() {
 	struct btree_node* node = calloc(1, sizeof(struct btree_node));
-
-	if (value != NULL) {
-		node->set_nodes[0].value = value;
-		node->count = 1;
-	}
-
-	// Ορίζουμε τον owner σε όλα τα set_nodes που περιέχει αυτό το btree_node
-	for (int i = 0; i < MAX_VALUES+1; i++)
-		node->set_nodes[i].owner = node;
-
-	return node;  // Το BTreeNode είναι struct btree_node * .
+	return node;
 }
 
-// Επιστρέφει τον κόμβο με τιμή ίση με value στο υποδέντρο με ρίζα node, διαφορετικά NULL.
-// Αν δωθεί NULL ως index, δεν το χρησιμοποιούμε.
-static BTreeNode node_find_equal(BTreeNode node, CompareFunc compare, Pointer value, int* index) {
-	if (node == NULL || node->count == 0)
-		return NULL;  // Κενός κόμβος, η τιμή δεν υπάρχει.
+static SetNode set_node_create(Pointer value) {
+	SetNode set_node = malloc(sizeof(*set_node));
+	set_node->value = value;
+	return set_node;
+}
+
+// Προσθέτει μια τιμή set_node (οι τιμές αποθηκεύονται μέσα σε set nodes) στη θέση index του κόμβου node
+// (κάνοντας shift υπάρχοντα set_nodes). Αυξάνει το node->count
+
+static void node_add_value(BTreeNode node, SetNode set_node, int index) {
+	set_node->owner = node;
+
+	// Ολίσθησε προς τα δεξιά όλα τα στοιχεία του φύλλου αρχίζοντας από τη θέση όπου θα γίνει η προσθήκη.
+	for (int i = node->count-1; i >= index; i--)
+		node->set_nodes[i+1] = node->set_nodes[i];
+	
+	node->set_nodes[index] = set_node;
+	node->count++;
+}
+
+// Προσθέτει τον κόμβο child ως παιδί σε θέση index του κόμβου node (κάνοντας shift υπάρχοντα παιδιά)
+// ΔΕΝ αυξάνει το node->count
+
+static void node_add_child(BTreeNode node, BTreeNode child, int index) {
+	child->parent = node;
+
+	// Ολίσθησε προς τα δεξιά όλα τα παιδιά του φύλλου αρχίζοντας από τη θέση όπου θα γίνει η προσθήκη.
+	for (int i = node->count; i >= index; i--)
+		node->children[i+1] = node->children[i];
+	
+	node->children[index] = child;
+}
+
+// Επιστρέφει τον κόμβο στον οποίο είτε υπάρχει ήδη είτε μπορεί να προστεθεί η τιμή value στο υποδέντρο με ρίζα node.
+// Αν υπάρχει ήδη τιμή ίση με value επιστρέφεται η θέση του στο *index, αλλιώς *index = -1.
+// Αν node == NULL επιστρέφεται NULL.
+
+static BTreeNode node_find(BTreeNode node, CompareFunc compare, Pointer value, int* index) {
+	if (node == NULL)
+		return NULL;
 
 	int i;  // Ορίζει τη διαχωριστική τιμή σε σχέση με την οποιά αναζητούμε την τιμή.
 	for (i = 0; i < node->count; i++) {
-		int compare_res = compare(value, node->set_nodes[i].value); // Aποθήκευση για να μην καλέσουμε την compare 2 φορές.
+		int compare_res = compare(value, node->set_nodes[i]->value); // Aποθήκευση για να μην καλέσουμε την compare 2 φορές.
 
 		if (compare_res == 0) {
-			if (index != NULL)
-				*index = i;
-
+			*index = i;
 			return node;  // Η τιμή βρέθηκε στον τρέχοντα κόμβο.
-		}
 
-		if (compare_res < 0)                                 // Αφού η τιμή που αναζητούμε είναι μικρότερη της διαχωριστικής τιμής
-			return node_find_equal(node->children[i], compare, value, index);  // τότε βρίσκεται στο αριστερό παιδί που ορίζει η διαχωριστική τιμή.
+		} else if (compare_res < 0) {
+			// Αφού η τιμή που αναζητούμε είναι μικρότερη της διαχωριστικής τιμής
+			// τότε βρίσκεται στο αριστερό παιδί που ορίζει η διαχωριστική τιμή (παιδί i)
+			break;
+		}
 	}
-	// Η τιμή βρίσκεται στο δεξιότερο παιδί, αφού είναι μεγαλύτερη από όλες τις τιμές του κόμβου.
-	return node_find_equal(node->children[node->count], compare, value, index);  
+
+	// Αν είμαστε σε φύλλο, η τιμή δεν βρέθηκε αλλά μπορεί να προστεθεί εδώ. Αλλιώς συνεχίζουμε στο παιδί i
+	if (is_leaf(node)) {
+		*index = -1;
+		return node;
+	} else {
+		return node_find(node->children[i], compare, value, index);  
+	}
 }
 
 // Επιστρέφει τον μικρότερο set κόμβο του υποδέντρου με ρίζα node.
@@ -463,7 +454,7 @@ static SetNode node_find_min(BTreeNode node) {
 
 	return node->children[0] != NULL
 		? node_find_min(node->children[0])		// Υπάρχει το πιο αριστερό υποδέντρο, η μικρότερη τιμή βρίσκεται εκεί.
-		: &node->set_nodes[0];					// Αλλιώς ο μικρότερος set κόμβος είναι ο πρώτος σε αυτόν τον btree κόμβο
+		: node->set_nodes[0];					// Αλλιώς ο μικρότερος set κόμβος είναι ο πρώτος σε αυτόν τον btree κόμβο
 }
 
 // Επιστρέφει τον μεγαλύτερο κόμβο του υποδέντρου με ρίζα node.
@@ -473,7 +464,7 @@ static SetNode node_find_max(BTreeNode node) {
 
 	return node->children[node->count] != NULL
 		? node_find_max(node->children[node->count] )	// Υπάρχει το πιο δεξί υποδέντρο, η μεγαλύτερη τιμή βρίσκεται εκεί.
-		: &node->set_nodes[node->count-1];				// Αλλιώς ο μεγαλύτερος set κόμβος είναι ο τελευταίος σε αυτόν τον btree κόμβο
+		: node->set_nodes[node->count-1];				// Αλλιώς ο μεγαλύτερος set κόμβος είναι ο τελευταίος σε αυτόν τον btree κόμβο
 }
 
 // Καταστρέφει όλο το υποδέντρο με ρίζα node.
@@ -485,9 +476,11 @@ static void btree_destroy(BTreeNode node, DestroyFunc destroy_value) {
 	for (int i = 0; i <= node->count; i++)
 		btree_destroy(node->children[i], destroy_value);
 
-	if (destroy_value != NULL) {
-		for (int i = 0; i < node->count; i++)
-			destroy_value(node->set_nodes[i].value);  // Κατάστρεψε τις τιμές.
+	for (int i = 0; i < node->count; i++) {
+		if (destroy_value != NULL)
+			destroy_value(node->set_nodes[i]->value);	// Κατάστρεψε τις τιμές.
+
+		free(node->set_nodes[i]);						// και free το set_node
 	}
 
 	free(node);  // Αποδέσμευσε το node.
@@ -500,7 +493,7 @@ static SetNode node_find_previous(SetNode set_node, CompareFunc compare) {
 	// Βρίσκουμε σε ποιον btree_node ανήκει ο set_node, και το index του μέσα σε αυτόν
 	BTreeNode btree_node = set_node->owner;
 	int index;
-	for (index = 0; index < MAX_VALUES && &btree_node->set_nodes[index] != set_node; index++)
+	for (index = 0; index < MAX_VALUES && btree_node->set_nodes[index] != set_node; index++)
 		;
 	assert(index < MAX_VALUES);		// βρέθηκε
 
@@ -511,19 +504,19 @@ static SetNode node_find_previous(SetNode set_node, CompareFunc compare) {
 
 	if (index == 0) {    			// Ο set_node είναι πρώτος μέσα στο btree node
 		// Ψάξε για κάποιον πρόγονο του κόμβου που να έχει τουλάχιστον 1 τιμή μικρότερη από την set_node.
-		while (btree_node->parent != NULL && compare(set_node->value, btree_node->parent->set_nodes[0].value) < 0)
+		while (btree_node->parent != NULL && compare(set_node->value, btree_node->parent->set_nodes[0]->value) < 0)
 			btree_node = btree_node->parent;
 
 		if (btree_node->parent == NULL)  // Φτάσαμε στη ρίζα, οπότε ο set_node είναι η μικρότερη τιμή του δέντρου.
 			return NULL;
 
-		for (int i = btree_node->parent->count-1; i >= 0 ; --i)
-			if (compare(set_node->value, btree_node->parent->set_nodes[i].value) > 0)
-				return &btree_node->parent->set_nodes[i]; 		// Βρες & επέστρεψε τον set node του προγόνου, που είναι αμέσως μικρότερος από το set_node.
+		for (int i = btree_node->parent->count-1; i >= 0 ; i--)
+			if (compare(set_node->value, btree_node->parent->set_nodes[i]->value) > 0)
+				return btree_node->parent->set_nodes[i]; 		// Βρες & επέστρεψε τον set node του προγόνου, που είναι αμέσως μικρότερος από το set_node.
 	}
 
 	// Επέστρεψε τον αμέσως προηγούμενο set_node του φύλλου.
-	return &btree_node->set_nodes[index-1];
+	return btree_node->set_nodes[index-1];
 }
 
 // Επιστρέφει τον επόμενο (στη σειρά διάταξης) του κόμβου set_node,
@@ -532,7 +525,7 @@ static SetNode node_find_next(SetNode set_node, CompareFunc compare) {
 	// Βρίσκουμε σε ποιον btree_node ανήκει ο set_node, και το index του μέσα σε αυτόν
 	BTreeNode btree_node = set_node->owner;
 	int index;
-	for (index = 0; index < MAX_VALUES && &btree_node->set_nodes[index] != set_node; index++)
+	for (index = 0; index < MAX_VALUES && btree_node->set_nodes[index] != set_node; index++)
 		;
 	assert(index < MAX_VALUES);		// βρέθηκε
 
@@ -543,19 +536,19 @@ static SetNode node_find_next(SetNode set_node, CompareFunc compare) {
 
 	if (index == btree_node->count-1) {			// Ο set_node είναι τελευταίος μέσα στο btree node
 		// Ψάξε για κάποιον πρόγονο του κόμβου που να έχει τουλάχιστον 1 τιμή μεγαλύτερη από την node.
-		while (btree_node->parent != NULL && compare(set_node->value, btree_node->parent->set_nodes[btree_node->parent->count-1].value) > 0)
+		while (btree_node->parent != NULL && compare(set_node->value, btree_node->parent->set_nodes[btree_node->parent->count-1]->value) > 0)
 			btree_node = btree_node->parent;
 
 		if (btree_node->parent == NULL)			// Φτάσαμε στη ρίζα, οπότε ο set_node είναι η μεγαλύτερη τιμή του δέντρου.
 			return NULL;
 
 		for (int i = 0; i < btree_node->parent->count; i++)
-			if (compare(set_node->value, btree_node->parent->set_nodes[i].value) < 0)
-				return &btree_node->parent->set_nodes[i];		// Βρες & επέστρεψε την τιμή του προγόνου, που είναι αμέσως μεγαλύτερη από την set_node.
+			if (compare(set_node->value, btree_node->parent->set_nodes[i]->value) < 0)
+				return btree_node->parent->set_nodes[i];		// Βρες & επέστρεψε την τιμή του προγόνου, που είναι αμέσως μεγαλύτερη από την set_node.
 	}
 	
 	// Επέστρεψε τον αμέσως προηγούμενο set_node του φύλλου.
-	return &btree_node->set_nodes[index+1];
+	return btree_node->set_nodes[index+1];
 }
 
 
@@ -587,19 +580,10 @@ bool set_remove(Set set, Pointer value) {
 	bool removed;
 	Pointer old_value = NULL;
 	
-	new_root = NULL;
-	node_remove(set->root, set->compare, value, &removed, &old_value);
+	set->root = node_remove(set->root, set->compare, value, &removed, &old_value);
 
 	if (removed) {
-		--set->size;    // Το size αλλάζει μόνο αν πραγματικά αφαιρεθεί ένας κόμβος.
-
-		if (new_root != NULL)   // Εαν προέκυψε νέα ρίζα λόγω της διαγραφής.
-			set->root = new_root;   // Ανανέωσε τη ρίζα του δέντρου.
-
-		else if (set_size(set) == 0) {   // Εαν διαγράφηκε και το τελευταίο στοιχείο της ρίζας.
-			free(set->root);   	// Αποδέσμευσε τη μνήμη του κόμβου της πρώην ρίζας.
-			set->root = NULL;   // Κενό δέντρο.
-		}
+		set->size--;    // Το size αλλάζει μόνο αν πραγματικά αφαιρεθεί ένας κόμβος.
 
 		if (set->destroy_value != NULL)
 			set->destroy_value(old_value);
@@ -623,9 +607,9 @@ void set_destroy(Set set) {
 
 SetNode set_find_node(Set set, Pointer value) {
 	int index;
-	BTreeNode node = node_find_equal(set->root, set->compare, value, &index);
+	BTreeNode node = node_find(set->root, set->compare, value, &index);
 
-	return node ? &node->set_nodes[index] : NULL;
+	return node && index != -1 ? node->set_nodes[index] : NULL;
 }
 
 
@@ -633,17 +617,11 @@ void set_insert(Set set, Pointer value) {
 	bool inserted;
 	Pointer old_value;
 
-	new_root = NULL; // Θέσε τον δείκτη της νέας ρίζας σε NULL, ώστε εαν αλλάξει, αυτό σημαίνει ότι έχουμε νέα ρίζα.
-	node_insert(set->root, set->compare, value, &inserted, &old_value);
+	set->root = node_insert(set->root, set->compare, value, &inserted, &old_value);
 
 	// Το size αλλάζει μόνο αν μπει νέος κόμβος. Στα updates κάνουμε destroy την παλιά τιμή
-	if (inserted) {
-		++set->size;
-
-		if (new_root != NULL)  // Η ρίζα άλλαξε
-			set->root = new_root;
-	}
-
+	if (inserted)
+		set->size++;
 	else if (set->destroy_value != NULL)
 		set->destroy_value(old_value);
 }
@@ -665,6 +643,8 @@ DestroyFunc set_set_destroy_value(Set set, DestroyFunc destroy_value) {
 	set->destroy_value = destroy_value;
 	return old;
 }
+
+
 
 // Συναρτήσεις που δεν υπάρχουν στο public interface αλλά χρησιμοποιούνται στα tests
 // Ελέγχουν ότι το δέντρο είναι ένα σωστό AVL.
@@ -719,7 +699,7 @@ static bool node_is_btree(BTreeNode node, CompareFunc compare) {
 
 	// Όλες οι τιμές του κόμβου είναι σε σωστή διάταξη.
 	for (int i = 0; i < node->count-1; i++) {
-		if (compare(node->set_nodes[i].value, node->set_nodes[i+1].value) >= 0)
+		if (compare(node->set_nodes[i]->value, node->set_nodes[i+1]->value) >= 0)
 			return false;
 	}
 
@@ -738,14 +718,14 @@ static bool node_is_btree(BTreeNode node, CompareFunc compare) {
 		SetNode right_min = node_find_min(node->children[i+1]);  // Ελάχιστο παιδί δεξιού υποδέντρου.
 
 		Pointer left_last  = (node->children[i] != NULL)  // Μεγαλύτερο στοιχείο αριστερού παιδιού.
-			? node->children[i]->set_nodes[ node->children[i]->count-1 ].value
+			? node->children[i]->set_nodes[ node->children[i]->count-1 ]->value
 			: NULL;
 
 		Pointer right_first = (node->children[i+1] != NULL)  // Μικρότερο στοιχείο δεξιού παιδιού.
-			? node->children[i+1]->set_nodes[0].value 
+			? node->children[i+1]->set_nodes[0]->value 
 			: NULL;
 
-		Pointer val = node->set_nodes[i].value;  // Τιμή που ελέγχεται.
+		Pointer val = node->set_nodes[i]->value;  // Τιμή που ελέγχεται.
 
 		bool correct = 
 			(left_last   == NULL || compare(left_last, val)   < 0) &&  // Μεγαλύτερη από την μεγαλύτερη τιμή του αριστερού παιδιού.
