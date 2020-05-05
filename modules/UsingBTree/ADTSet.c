@@ -46,10 +46,9 @@ static BTreeNode new_root; // Καθολική μεταβλητή για την 
 // Βοηθητικές συναρτήσεις
 static BTreeNode node_create(Pointer value);
 static BTreeNode node_find_equal(BTreeNode node, CompareFunc compare, Pointer value, int* index);
-static BTreeNode node_find_min(BTreeNode node);
-static BTreeNode node_find_max(BTreeNode node);
-static BTreeNode node_find_equal(BTreeNode node, CompareFunc compare, Pointer value, int* index);
 
+static SetNode node_find_min(BTreeNode node);
+static SetNode node_find_max(BTreeNode node);
 static SetNode node_find_previous(SetNode node, CompareFunc compare);
 static SetNode node_find_next(SetNode node, CompareFunc compare);
 
@@ -457,19 +456,24 @@ static BTreeNode node_find_equal(BTreeNode node, CompareFunc compare, Pointer va
 	return node_find_equal(node->children[node->count], compare, value, index);  
 }
 
-// Επιστρέφει τον μικρότερο κόμβο του υποδέντρου με ρίζα node.
-static BTreeNode node_find_min(BTreeNode node) {
+// Επιστρέφει τον μικρότερο set κόμβο του υποδέντρου με ρίζα node.
+static SetNode node_find_min(BTreeNode node) {
+	if (node == NULL)
+		return NULL;
 
-	return node != NULL && node->children[0] != NULL
-		? node_find_min(node->children[0])  // Υπάρχει το πιο αριστερό υποδέντρο, η μικρότερη τιμή βρίσκεται εκεί.
-		: node;                             // Αλλιώς η μικρότερη τιμή είναι στο ίδιο το node.
+	return node->children[0] != NULL
+		? node_find_min(node->children[0])		// Υπάρχει το πιο αριστερό υποδέντρο, η μικρότερη τιμή βρίσκεται εκεί.
+		: &node->set_nodes[0];					// Αλλιώς ο μικρότερος set κόμβος είναι ο πρώτος σε αυτόν τον btree κόμβο
 }
 
 // Επιστρέφει τον μεγαλύτερο κόμβο του υποδέντρου με ρίζα node.
-static BTreeNode node_find_max(BTreeNode node) {
-	return (node != NULL && node->children[node->count] != NULL)
-		? node_find_max(node->children[node->count] ) // Υπάρχει το πιο δεξί υποδέντρο, η μεγαλύτερη τιμή βρίσκεται εκεί.
-		: node;                                       // Αλλιώς η μεγαλύτερη τιμή είναι στο ίδιο το node.
+static SetNode node_find_max(BTreeNode node) {
+	if (node == NULL)
+		return NULL;
+
+	return node->children[node->count] != NULL
+		? node_find_max(node->children[node->count] )	// Υπάρχει το πιο δεξί υποδέντρο, η μεγαλύτερη τιμή βρίσκεται εκεί.
+		: &node->set_nodes[node->count-1];				// Αλλιώς ο μεγαλύτερος set κόμβος είναι ο τελευταίος σε αυτόν τον btree κόμβο
 }
 
 // Καταστρέφει όλο το υποδέντρο με ρίζα node.
@@ -500,10 +504,8 @@ static SetNode node_find_previous(SetNode set_node, CompareFunc compare) {
 		;
 	assert(index < MAX_VALUES);		// βρέθηκε
 
-	if (!is_leaf(btree_node)) {												// Αν είναι εσωτερικός κόμβος, βρες τον μέγιστο κόμβο 
-		BTreeNode max_node = node_find_max(btree_node->children[index]); 		// από το αριστερό παιδί της διαχωριστική τιμής, που είναι ο set_node.
-		return &max_node->set_nodes[max_node->count-1];					// Επέστρεψε τον μέγιστο set node του κόμβου.
-	}
+	if (!is_leaf(btree_node))								// Αν είναι εσωτερικός κόμβος, επέστρεψε τον μέγιστο κόμβο 
+		return node_find_max(btree_node->children[index]);	// από το αριστερό παιδί της διαχωριστική τιμής, που είναι ο set_node.
 
 	// Ο κόμβος είναι φύλλο.
 
@@ -534,11 +536,8 @@ static SetNode node_find_next(SetNode set_node, CompareFunc compare) {
 		;
 	assert(index < MAX_VALUES);		// βρέθηκε
 
-	if (!is_leaf(btree_node)) {
-		// Εσωτερικός κόμβος, βρες και επέστρεψε τον μικρότερο κόμβο του αντίστοιχου παιδιού.
-		BTreeNode min_node = node_find_min(btree_node->children[index+1]);
-		return &min_node->set_nodes[0];
-	}
+	if (!is_leaf(btree_node))		// Αν είναι εσωτερικός κόμβος, βρες και επέστρεψε τον μικρότερο κόμβο του αντίστοιχου παιδιού.
+		return node_find_min(btree_node->children[index+1]);
 
 	// Ο κόμβος είναι φύλλο.
 
@@ -610,13 +609,11 @@ bool set_remove(Set set, Pointer value) {
 }
 
 SetNode set_first(Set set) {
-	BTreeNode node = node_find_min(set->root);
-	return node ? &node->set_nodes[0] : NULL;
+	return node_find_min(set->root);
 }
 
 SetNode set_last(Set set) {
-	BTreeNode node = node_find_max(set->root);
-	return node ? &node->set_nodes[node->count-1] : NULL;
+	return node_find_max(set->root);
 }
 
 void set_destroy(Set set) {
@@ -737,8 +734,8 @@ static bool node_is_btree(BTreeNode node, CompareFunc compare) {
 	// Για όλες τις τιμές του κόμβου.
 	for (int i = 0; i < node->count; i++) {
 
-		BTreeNode left_max = node_find_max(node->children[i]);  // Μέγιστο παιδί αριστερού υποδέντρου.
-		BTreeNode right_min = node_find_min(node->children[i+1]);  // Ελάχιστο παιδί δεξιού υποδέντρου.
+		SetNode left_max = node_find_max(node->children[i]);  // Μέγιστο παιδί αριστερού υποδέντρου.
+		SetNode right_min = node_find_min(node->children[i+1]);  // Ελάχιστο παιδί δεξιού υποδέντρου.
 
 		Pointer left_last  = (node->children[i] != NULL)  // Μεγαλύτερο στοιχείο αριστερού παιδιού.
 			? node->children[i]->set_nodes[ node->children[i]->count-1 ].value
@@ -753,8 +750,8 @@ static bool node_is_btree(BTreeNode node, CompareFunc compare) {
 		bool correct = 
 			(left_last   == NULL || compare(left_last, val)   < 0) &&  // Μεγαλύτερη από την μεγαλύτερη τιμή του αριστερού παιδιού.
 			(right_first == NULL || compare(right_first, val) > 0) &&  // Μικρότερη από την μικρότερη του δεξιού παιδιού.
-			(left_max  == NULL || compare(left_max->set_nodes[left_max->count-1].value, val) < 0) &&  // Μεγαλύτερη από τη μέγιστη του αριστερού υποδέντρου
-			(right_min == NULL || compare(right_min->set_nodes[0].value, val) > 0) &&  // Μικρότερη από τη ελάχιστη του δεξιού υποδέντρου
+			(left_max  == NULL || compare(left_max->value, val) < 0) &&  // Μεγαλύτερη από τη μέγιστη του αριστερού υποδέντρου
+			(right_min == NULL || compare(right_min->value, val) > 0) &&  // Μικρότερη από τη ελάχιστη του δεξιού υποδέντρου
 			node_is_btree(node->children[i], compare);  // Έλεγξε και το αριστερό υποδέντρο.
 
 		if (i == node->count-1)  // Εαν είναι η τελευταία διαχωριστική τιμή, έλεγξε και το δεξί υποδέντρο.
