@@ -288,7 +288,7 @@ bool set_remove(Set set, Pointer value) {
 			set->destroy_value(old_value);
 	}
 
-	return old_value != NULL;
+	return removed;
 }
 
 Pointer set_find(Set set, Pointer value) {

@@ -589,7 +589,7 @@ bool set_remove(Set set, Pointer value) {
 			set->destroy_value(old_value);
 	}
 
-	return old_value != NULL;
+	return removed;
 }
 
 SetNode set_first(Set set) {
