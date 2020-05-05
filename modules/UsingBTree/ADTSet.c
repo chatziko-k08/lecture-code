@@ -28,6 +28,7 @@ struct set {
 // Κόμβος του set, περιέχει μία μόνο τιμή. Κάθε btree_node περιέχει πολλά set_nodes!
 struct set_node {
 	Pointer value;				// Η τιμή του κόμβου.
+	BTreeNode owner;			// Ο btree_node στον οποίο ανήκει αυτό το set_node
 };
 
 // Το struct btree_node είναι ο κόμβος ενός Β-Δέντρου.
@@ -49,8 +50,8 @@ static BTreeNode node_find_min(BTreeNode node);
 static BTreeNode node_find_max(BTreeNode node);
 static BTreeNode node_find_equal(BTreeNode node, CompareFunc compare, Pointer value, int* index);
 
-static SetNode node_find_previous(BTreeNode node, CompareFunc compare, SetNode target);
-static SetNode node_find_next(BTreeNode node, CompareFunc compare, SetNode target);
+static SetNode node_find_previous(SetNode node, CompareFunc compare);
+static SetNode node_find_next(SetNode node, CompareFunc compare);
 
 static void btree_destroy(BTreeNode node, DestroyFunc destroy_value);
 
@@ -425,6 +426,10 @@ static BTreeNode node_create(Pointer value) {
 		node->count = 1;
 	}
 
+	// Ορίζουμε τον owner σε όλα τα set_nodes που περιέχει αυτό το btree_node
+	for (int i = 0; i < MAX_VALUES+1; i++)
+		node->set_nodes[i].owner = node;
+
 	return node;  // Το BTreeNode είναι struct btree_node * .
 }
 
@@ -485,77 +490,73 @@ static void btree_destroy(BTreeNode node, DestroyFunc destroy_value) {
 }
 
 
-// Επιστρέφει τον προηγούμενο (στη σειρά διάταξης) του κόμβου target στο υποδέντρο με ρίζα node,
-// ή NULL αν ο target είναι ο μικρότερος του υποδέντρου.
-static SetNode node_find_previous(BTreeNode node, CompareFunc compare, SetNode target) {  
-	if (node == NULL)
-		return NULL;   // Kενό υποδέντρο, δεν υπάρχει ο κόμβος.
-	
-	int index;     // Βρες τον κόμβο του Β-δέντρου που περιέχει τον target.
-	BTreeNode curr = node_find_equal(node, compare, target->value, &index);
+// Επιστρέφει τον προηγούμενο (στη σειρά διάταξης) του set_node,
+// ή NULL αν ο node είναι ο μικρότερος του υποδέντρου.
+static SetNode node_find_previous(SetNode set_node, CompareFunc compare) {  
+	// Βρίσκουμε σε ποιον btree_node ανήκει ο set_node, και το index του μέσα σε αυτόν
+	BTreeNode btree_node = set_node->owner;
+	int index;
+	for (index = 0; index < MAX_VALUES && &btree_node->set_nodes[index] != set_node; index++)
+		;
+	assert(index < MAX_VALUES);		// βρέθηκε
 
-	if (curr == NULL)    // O target δεν υπάρχει στο υποδέντρο.
-		return NULL;  
-
-	if (!is_leaf(curr)) {                                         // Αν είναι εσωτερικός κόμβος, βρες τον μέγιστο κόμβο 
-		BTreeNode max_node = node_find_max(curr->children[index]);  // από το αριστερό παιδί της διαχωριστική τιμής, που είναι ο target.
-		return &max_node->set_nodes[max_node->count-1]; 			  // Επέστρεψε τον μέγιστο set_node του κόμβου.
+	if (!is_leaf(btree_node)) {												// Αν είναι εσωτερικός κόμβος, βρες τον μέγιστο κόμβο 
+		BTreeNode max_node = node_find_max(btree_node->children[index]); 		// από το αριστερό παιδί της διαχωριστική τιμής, που είναι ο set_node.
+		return &max_node->set_nodes[max_node->count-1];					// Επέστρεψε τον μέγιστο set node του κόμβου.
 	}
 
 	// Ο κόμβος είναι φύλλο.
 
-	if (curr->set_nodes[0].value == target->value) {    // Άν το πρώτο δεδομένο του κόμβου είναι το target.
-		// Ψάξε για κάποιον πρόγονο του κόμβου που να έχει τουλάχιστον 1 τιμή μικρότερη από την target.
-		while (curr->parent != NULL && compare(target->value, curr->parent->set_nodes[0].value) < 0)
-			curr = curr->parent;
+	if (index == 0) {    			// Ο set_node είναι πρώτος μέσα στο btree node
+		// Ψάξε για κάποιον πρόγονο του κόμβου που να έχει τουλάχιστον 1 τιμή μικρότερη από την set_node.
+		while (btree_node->parent != NULL && compare(set_node->value, btree_node->parent->set_nodes[0].value) < 0)
+			btree_node = btree_node->parent;
 
-		if (curr->parent == NULL)  // Φτάσαμε στη ρίζα, οπότε ο target είναι η μικρότερη τιμή του δέντρου.
+		if (btree_node->parent == NULL)  // Φτάσαμε στη ρίζα, οπότε ο set_node είναι η μικρότερη τιμή του δέντρου.
 			return NULL;
 
-		for (int i = curr->parent->count-1; i >= 0 ; --i)
-			if (compare(target->value, curr->parent->set_nodes[i].value) > 0)
-				return &curr->parent->set_nodes[i]; 		// Βρες & επέστρεψε τον set_node του προγόνου, που είναι αμέσως μικρότερος από το target.
+		for (int i = btree_node->parent->count-1; i >= 0 ; --i)
+			if (compare(set_node->value, btree_node->parent->set_nodes[i].value) > 0)
+				return &btree_node->parent->set_nodes[i]; 		// Βρες & επέστρεψε τον set node του προγόνου, που είναι αμέσως μικρότερος από το set_node.
 	}
 
 	// Επέστρεψε τον αμέσως προηγούμενο set_node του φύλλου.
-	return &curr->set_nodes[index-1];
+	return &btree_node->set_nodes[index-1];
 }
 
-// Επιστρέφει τον επόμενο (στη σειρά διάταξης) του κόμβου target στο υποδέντρο με ρίζα node,
-// ή NULL αν ο target είναι ο μεγαλύτερος του υποδέντρου.
-static SetNode node_find_next(BTreeNode node, CompareFunc compare, SetNode target) {
-	if (node == NULL)
-		return NULL;  // Kενό υποδέντρο, δεν υπάρχει ο κόμβος.
+// Επιστρέφει τον επόμενο (στη σειρά διάταξης) του κόμβου set_node,
+// ή NULL αν ο node είναι ο μεγαλύτερος του υποδέντρου.
+static SetNode node_find_next(SetNode set_node, CompareFunc compare) {
+	// Βρίσκουμε σε ποιον btree_node ανήκει ο set_node, και το index του μέσα σε αυτόν
+	BTreeNode btree_node = set_node->owner;
+	int index;
+	for (index = 0; index < MAX_VALUES && &btree_node->set_nodes[index] != set_node; index++)
+		;
+	assert(index < MAX_VALUES);		// βρέθηκε
 
-	int index;    // Βρες τον κόμβο του Β-δέντρου που περιέχει τον target.
-	BTreeNode curr = node_find_equal(node, compare, target->value, &index);
-
-	if (curr == NULL)   // O target δεν υπάρχει στο υποδέντρο.
-		return NULL;
-
-	if (!is_leaf(curr)) {
+	if (!is_leaf(btree_node)) {
 		// Εσωτερικός κόμβος, βρες και επέστρεψε τον μικρότερο κόμβο του αντίστοιχου παιδιού.
-		BTreeNode min_node = node_find_min(curr->children[index+1]);
+		BTreeNode min_node = node_find_min(btree_node->children[index+1]);
 		return &min_node->set_nodes[0];
 	}
 
 	// Ο κόμβος είναι φύλλο.
 
-	if (curr->set_nodes[curr->count-1].value == target->value) {   // Άν το τελευταίο δεδομένο του κόμβου είναι το target.
-		// Ψάξε για κάποιον πρόγονο του κόμβου που να έχει τουλάχιστον 1 τιμή μεγαλύτερη από την target.
-		while (curr->parent != NULL && compare(target->value, curr->parent->set_nodes[curr->parent->count-1].value) > 0)
-			curr = curr->parent;
+	if (index == btree_node->count-1) {			// Ο set_node είναι τελευταίος μέσα στο btree node
+		// Ψάξε για κάποιον πρόγονο του κόμβου που να έχει τουλάχιστον 1 τιμή μεγαλύτερη από την node.
+		while (btree_node->parent != NULL && compare(set_node->value, btree_node->parent->set_nodes[btree_node->parent->count-1].value) > 0)
+			btree_node = btree_node->parent;
 
-		if (curr->parent == NULL) // Φτάσαμε στη ρίζα, οπότε ο target είναι η μεγαλύτερη τιμή του δέντρου.
+		if (btree_node->parent == NULL)			// Φτάσαμε στη ρίζα, οπότε ο set_node είναι η μεγαλύτερη τιμή του δέντρου.
 			return NULL;
 
-		for (int i = 0; i < curr->parent->count; i++)
-			if (compare(target->value, curr->parent->set_nodes[i].value) < 0)
-				return &curr->parent->set_nodes[i];    // Βρες & επέστρεψε την τιμή του προγόνου, που είναι αμέσως μεγαλύτερη από την target.
+		for (int i = 0; i < btree_node->parent->count; i++)
+			if (compare(set_node->value, btree_node->parent->set_nodes[i].value) < 0)
+				return &btree_node->parent->set_nodes[i];		// Βρες & επέστρεψε την τιμή του προγόνου, που είναι αμέσως μεγαλύτερη από την set_node.
 	}
 	
 	// Επέστρεψε τον αμέσως προηγούμενο set_node του φύλλου.
-	return &curr->set_nodes[index+1];
+	return &btree_node->set_nodes[index+1];
 }
 
 
@@ -651,11 +652,11 @@ void set_insert(Set set, Pointer value) {
 }
 
 SetNode set_previous(Set set, SetNode node) {
-	return node_find_previous(set->root, set->compare, node);
+	return node_find_previous(node, set->compare);
 }
 
 SetNode set_next(Set set, SetNode node) {
-	return node_find_next(set->root, set->compare, node);
+	return node_find_next(node, set->compare);
 }
 
 Pointer set_node_value(Set set, SetNode node) {
