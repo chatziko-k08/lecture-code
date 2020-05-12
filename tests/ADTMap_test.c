@@ -126,8 +126,8 @@ void test_remove(void) {
 			TEST_ASSERT(map_remove(map, key_array[i]));
 	}
 
-	// Δοκιμάζουμε, πριν διαγράψουμε κανονικά τους κόμβους, ότι η map_remove διαχειρίζεται 
-	// σωστά ένα κλειδί που δεν υπάρχει στο Map και γυρνάει NULL 
+	// Δοκιμάζουμε, πριν διαγράψουμε κανονικά τους κόμβους, ότι η map_remove
+	// διαχειρίζεται σωστά ένα κλειδί που δεν υπάρχει στο Map
 	int not_exists = 2000;
 	TEST_ASSERT(!map_remove(map, &not_exists));
 

@@ -127,8 +127,8 @@ void test_remove() {
 	for (int i = 0; i < N; i++)
 		set_insert(set, value_array[i]);
 
-	// Δοκιμάζουμε, πριν διαγράψουμε κανονικά τους κόμβους, ότι η map_remove διαχειρίζεται 
-	// σωστά ένα κλειδί που δεν υπάρχει στο Map και γυρνάει NULL 
+	// Δοκιμάζουμε, πριν διαγράψουμε κανονικά τους κόμβους, ότι η set_remove
+	// διαχειρίζεται σωστά μια τιμή που δεν υπάρχει στο Set
 	int not_exists = 2000;
 	TEST_ASSERT(!set_remove(set, &not_exists));
 
