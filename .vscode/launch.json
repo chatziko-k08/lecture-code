@@ -1,12 +1,8 @@
 {
-	// Use IntelliSense to learn about possible attributes.
-	// Hover to view descriptions of existing attributes.
-	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
 	"configurations": [
-	
 		{
-			"name": "Debug C/C++",
+			"name": "Make: compile and debug",
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/${config:c_project.dir}/${config:c_project.program}",
@@ -17,20 +13,101 @@
 				"${config:c_project.arg4}",
 				"${config:c_project.arg5}",
 				"${config:c_project.arg6}",
+				"${config:c_project.arg7}",
+				"${config:c_project.arg8}"
 			],
-			"stopAtEntry": false,
+			"stopAtEntry": true,
 			"cwd": "${workspaceFolder}/${config:c_project.dir}",
 			"environment": [],
 			"externalConsole": false,
-			"MIMode": "gdb",
+			"linux": {
+				"MIMode": "gdb",
+				"internalConsoleOptions": "neverOpen"				// don't show the debugger console
+			},
+			"osx": {
+				"MIMode": "lldb",									// on macOS gdb is hard to setup
+				"internalConsoleOptions": "openOnSessionStart"		// open the debugger console, lldb sends output only there
+			},
 			"setupCommands": [
 				{
 					"description": "Enable pretty-printing for gdb",
 					"text": "-enable-pretty-printing",
-					"ignoreFailures": false
+					"ignoreFailures": true
 				}
 			],
-			"preLaunchTask": "Build <program> with make"
-		}
+			"preLaunchTask": "Make: compile",
+		},
+		{
+			"name": "Single file: compile and debug",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${fileDirname}/${fileBasenameNoExtension}",
+			"args": [
+				"${config:c_project.arg1}",
+				"${config:c_project.arg2}",
+				"${config:c_project.arg3}",
+				"${config:c_project.arg4}",
+				"${config:c_project.arg5}",
+				"${config:c_project.arg6}",
+				"${config:c_project.arg7}",
+				"${config:c_project.arg8}"
+			],
+			"stopAtEntry": true,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"externalConsole": false,
+			"linux": {
+				"MIMode": "gdb",
+				"internalConsoleOptions": "neverOpen"				// don't show the debugger console
+			},
+			"osx": {
+				"MIMode": "lldb",									// on macOS gdb is hard to setup
+				"internalConsoleOptions": "openOnSessionStart"		// open the debugger console, lldb sends output only there
+			},
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+			"preLaunchTask": "Single file: compile",
+		},
+		{
+			"name": "All files in directory: compile and debug",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${fileDirname}/${config:c_project.program}",
+			"args": [
+				"${config:c_project.arg1}",
+				"${config:c_project.arg2}",
+				"${config:c_project.arg3}",
+				"${config:c_project.arg4}",
+				"${config:c_project.arg5}",
+				"${config:c_project.arg6}",
+				"${config:c_project.arg7}",
+				"${config:c_project.arg8}"
+			],
+			"stopAtEntry": true,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"externalConsole": false,
+			"linux": {
+				"MIMode": "gdb",
+				"internalConsoleOptions": "neverOpen"				// don't show the debugger console
+			},
+			"osx": {
+				"MIMode": "lldb",									// on macOS gdb is hard to setup
+				"internalConsoleOptions": "openOnSessionStart"		// open the debugger console, lldb sends output only there
+			},
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+			"preLaunchTask": "All files in directory: compile",
+		},
 	]
 }

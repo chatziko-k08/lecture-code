@@ -1,19 +1,70 @@
 {
 	"version": "2.0.0",
 	"tasks": [
+		////////////// Compile ///////////////////////////////////
 		{
-			"label": "Build <program> with make",
 			"type": "shell",
-			"command": "make",
+			"label": "Single file: compile",
+			"command": "gcc",
+			"args": [
+				"-g",
+				"-Werror",
+				"-Wall",
+				"${fileBasename}",
+				"-lm",
+				"-o",
+				"${fileBasenameNoExtension}"
+			],
 			"options": {
-				"cwd": "${workspaceRoot}/${config:c_project.dir}"
+				"cwd": "${fileDirname}"
 			},
+			"presentation": {
+				"clear": true,
+				"showReuseMessage": false
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "All files in directory: compile",
+			"command": "gcc",
+			"args": [
+				"-g",
+				"-Werror",
+				"-Wall",
+				"*.c",
+				"-lm",
+				"-o",
+				"${config:c_project.program}"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"presentation": {
+				"clear": true,
+				"showReuseMessage": false
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "Make: compile",
+			"command": "make",
 			"args": [
 				"${config:c_project.program}"
 			],
-			"group": "build",
+			"options": {
+				"cwd": "${workspaceRoot}/${config:c_project.dir}"
+			},
 			"presentation": {
-				"clear": true
+				"clear": true,
+				"showReuseMessage": false
 			},
 			"problemMatcher": {
 				"base": "$gcc",
@@ -21,11 +72,35 @@
 					"relative",
 					"${workspaceRoot}/${config:c_project.dir}"
 				]
-			}
+			},
+			"group": "build"
+		},
+
+		////////////// Compile and run ///////////////////////////////////
+		{
+			"type": "shell",
+			"label": "Single file: compile and run",
+			"command": "./${fileBasenameNoExtension}",
+			"args": [
+				"${config:c_project.arg1}",
+				"${config:c_project.arg2}",
+				"${config:c_project.arg3}",
+				"${config:c_project.arg4}",
+				"${config:c_project.arg5}",
+				"${config:c_project.arg6}",
+				"${config:c_project.arg7}",
+				"${config:c_project.arg8}"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [],
+			"dependsOn": "Single file: compile",
+			"group": "build"
 		},
 		{
-			"label": "Execute <program> (after building it)",
 			"type": "shell",
+			"label": "All files in directory: compile and run",
 			"command": "./${config:c_project.program}",
 			"args": [
 				"${config:c_project.arg1}",
@@ -34,19 +109,145 @@
 				"${config:c_project.arg4}",
 				"${config:c_project.arg5}",
 				"${config:c_project.arg6}",
+				"${config:c_project.arg7}",
+				"${config:c_project.arg8}"
+			],
+			"options": {
+				"cwd": "${fileDirname}",
+			},
+			"problemMatcher": [],
+			"dependsOn": "All files in directory: compile",
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "Make: compile and run",
+			"command": "./${config:c_project.program}",
+			"args": [
+				"${config:c_project.arg1}",
+				"${config:c_project.arg2}",
+				"${config:c_project.arg3}",
+				"${config:c_project.arg4}",
+				"${config:c_project.arg5}",
+				"${config:c_project.arg6}",
+				"${config:c_project.arg7}",
+				"${config:c_project.arg8}"
 			],
 			"options": {
 				"cwd": "${workspaceRoot}/${config:c_project.dir}"
 			},
+			"problemMatcher": [],
+			"dependsOn": "Make: compile",
 			"group": {
 				"kind": "build",
 				"isDefault": true
-			},
-			"presentation": {
-				"clear": true
-			},
-			"dependsOn": "Build <program> with make",
-			"problemMatcher": []
+			}
 		},
+
+
+		////////////// Compile and run with valgrind ///////////////////////////////////
+		{
+			"type": "shell",
+			"label": "Single file: compile and run with valgrind",
+			"command": "valgrind",
+			"args": [
+				"--error-exitcode=1",
+				"--leak-check=full",
+				"--show-leak-kinds=all",
+				"./${fileBasenameNoExtension}",
+				"${config:c_project.arg1}",
+				"${config:c_project.arg2}",
+				"${config:c_project.arg3}",
+				"${config:c_project.arg4}",
+				"${config:c_project.arg5}",
+				"${config:c_project.arg6}",
+				"${config:c_project.arg7}",
+				"${config:c_project.arg8}"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [],
+			"dependsOn": "Single file: compile",
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "All files in directory: compile and run with valgrind",
+			"command": "valgrind",
+			"args": [
+				"--error-exitcode=1",
+				"--leak-check=full",
+				"--show-leak-kinds=all",
+				"./${config:c_project.program}",
+				"${config:c_project.arg1}",
+				"${config:c_project.arg2}",
+				"${config:c_project.arg3}",
+				"${config:c_project.arg4}",
+				"${config:c_project.arg5}",
+				"${config:c_project.arg6}",
+				"${config:c_project.arg7}",
+				"${config:c_project.arg8}"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [],
+			"dependsOn": "All files in directory: compile",
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "Make: compile and run with valgrind",
+			"command": "valgrind",
+			"args": [
+				"--error-exitcode=1",
+				"--leak-check=full",
+				"--show-leak-kinds=all",
+				"./${config:c_project.program}",
+				"${config:c_project.arg1}",
+				"${config:c_project.arg2}",
+				"${config:c_project.arg3}",
+				"${config:c_project.arg4}",
+				"${config:c_project.arg5}",
+				"${config:c_project.arg6}",
+				"${config:c_project.arg7}",
+				"${config:c_project.arg8}"
+			],
+			"options": {
+				"cwd": "${workspaceRoot}/${config:c_project.dir}"
+			},
+			"problemMatcher": [],
+			"dependsOn": "Make: compile",
+			"group": "build"
+		},
+
+		////////////// Set args ///////////////////////////////////
+		{
+			"type": "shell",
+			"label": "Set program arguments",
+			"command": "perl",
+			"args": [
+				"set_program_args.pl"
+			],
+			"presentation": {
+				"echo": false,
+			},
+			"options": {
+				"cwd": "${workspaceFolder}/.vscode",
+				"env": {
+					"ARGS": "${input:args}"
+				}
+			},
+			"problemMatcher": [],
+			"group": "build"
+		}
+	],
+	"inputs": [
+		{
+			"id": "args",
+			"type": "promptString",
+			"description": "Program arguments",
+		}
 	]
 }
