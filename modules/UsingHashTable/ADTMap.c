@@ -108,17 +108,26 @@ void map_insert(Map map, Pointer key, Pointer value) {
 	// Σκανάρουμε το Hash Table μέχρι να βρούμε διαθέσιμη θέση για να τοποθετήσουμε το ζευγάρι,
 	// ή μέχρι να βρούμε το κλειδί ώστε να το αντικαταστήσουμε.
 	bool already_in_map = false;
+	MapNode node = NULL;
 	uint pos;
 	for (pos = map->hash_function(key) % map->capacity;		// ξεκινώντας από τη θέση που κάνει hash το key
-		map->array[pos].state == OCCUPIED;					// αν φτάσουμε σε EMPTY ή DELETED σταματάμε
+		map->array[pos].state != EMPTY;						// αν φτάσουμε σε EMPTY σταματάμε
 		pos = (pos + 1) % map->capacity) {					// linear probing, γυρνώντας στην αρχή όταν φτάσουμε στη τέλος του πίνακα
 
-		if (map->compare(map->array[pos].key, key) == 0) {
+		if (map->array[pos].state == DELETED) {
+			// Βρήκαμε DELETED θέση. Θα μπορούσαμε να βάλουμε το ζευγάρι εδώ, αλλά _μόνο_ αν το key δεν υπάρχει ήδη.
+			// Οπότε σημειώνουμε τη θέση, αλλά συνεχίζουμε την αναζήτηση, το key μπορεί να βρίσκεται πιο μετά.
+			if (node == NULL)
+				node = &map->array[pos];
+
+		} else if (map->compare(map->array[pos].key, key) == 0) {
 			already_in_map = true;
-			break;
+			node = &map->array[pos];						// βρήκαμε το key, το ζευγάρι θα μπει αναγκαστικά εδώ (ακόμα και αν είχαμε προηγουμένως βρει DELETED θέση)
+			break;											// και δε χρειάζεται να συνεχίζουμε την αναζήτηση.
 		}
 	}
-	MapNode node = &map->array[pos];
+	if (node == NULL)										// αν βρήκαμε EMPTY (όχι DELETED, ούτε το key), το node δεν έχει πάρει ακόμα τιμή
+		node = &map->array[pos];
 
 	// Σε αυτό το σημείο, το node είναι ο κόμβος στον οποίο θα γίνει εισαγωγή.
 	if (already_in_map) {
