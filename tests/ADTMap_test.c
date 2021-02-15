@@ -194,7 +194,20 @@ void test_find() {
 	TEST_ASSERT(map_find_node(map, &not_exists) == MAP_EOF);
 	TEST_ASSERT(map_find(map, &not_exists) == NULL);
 
-	map_destroy(map);
+	// Δοκιμή αναζήτησης μετά από διαδοχικά inserts/deletes (στην υλοποίηση με hashtable αυτό θα γεμίσει τον πίνακα με DELETED τιμές)
+	Map map2 = map_create(compare_ints, NULL, NULL);
+	map_set_hash_function(map2, hash_int);
+
+	int M = 53;							// αρχικό μέγεθος στην υλοποίηση με hashtable
+	for (int i = 0; i < M; i++) {
+		map_insert(map2, key_array[i], value_array[i]);
+		TEST_ASSERT(map_remove(map2, key_array[i]));
+	}
+	TEST_ASSERT(map_find(map2, &key_array[M]) == NULL);
+
+	map_destroy(map);		// frees keys/values
+	map_destroy(map2);
+
 	free(key_array);
 	free(value_array);
 }
