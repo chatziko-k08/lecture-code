@@ -7,7 +7,7 @@ use strict;
 my @args = split / +/, $ENV{ARGS};
 
 s/"/\\"/g	for @args;	# escape double quotes in json
-push @args, '#';		# end the list with #
+push @args, ('#')x10;	# fill with '#' at the end
 
 # read settings.json
 $/ = undef;		# read the whole file at once
