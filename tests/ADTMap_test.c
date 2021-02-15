@@ -104,6 +104,24 @@ void test_insert(void) {
 	map_destroy(map2);
 	free(key_array);
 	free(value_array);
+
+	// Δοκιμάζουμε ότι η συμπεριφορά είναι σωστή όταν 2 keys κάνουν hash στην ίδια τιμή,
+	// ακόμα και μετά από διαγραφή του ενός.
+	Map map3 = map_create(compare_ints, NULL, NULL);
+	map_set_hash_function(map3, hash_int);
+
+	key1 = 1;
+	key2 = 54;
+
+	map_insert(map3, &key1, &value1);			// Τα key1,key2 κάνουν hash στην ίδια τιμή (σε hash table μεγέθους 53)
+	map_insert(map3, &key2, &value1);
+	TEST_ASSERT(map_remove(map3, &key1));
+	map_insert(map3, &key2, &value2);			// πρέπει να αντικαταστήσει το key2
+	TEST_ASSERT(map_size(map3) == 1);
+	TEST_ASSERT(map_remove(map3, &key2));
+	TEST_ASSERT(map_find(map3, &key2) == NULL);
+
+	map_destroy(map3);
 }
 
 
