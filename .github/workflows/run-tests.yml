@@ -14,7 +14,7 @@ jobs:
       run: make run CFLAGS=-fPIC
 
     - name: make valgrind
-      if: matrix.os == 'ubuntu-16.04'
+      if: matrix.os == 'ubuntu-20.04'
       run: |
         sudo apt install valgrind
         make valgrind CFLAGS=-fPIC
