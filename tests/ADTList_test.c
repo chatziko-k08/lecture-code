@@ -108,7 +108,7 @@ int compare_ints(Pointer a, Pointer b) {
 }
 
 
-void test_find() {
+void test_find(void) {
 	List list = list_create(NULL);
 	int N = 1000;
 	int* array = malloc(N * sizeof(*array));					
@@ -135,7 +135,7 @@ void test_find() {
 }
 
 
-void test_find_node() {
+void test_find_node(void) {
 	List list = list_create(NULL);
 
 	// Εισαγωγή τιμών στον πίνακα

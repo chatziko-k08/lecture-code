@@ -25,6 +25,6 @@ int fibonacci(int n) {
 	return int_vector_get_at(memory, n);
 }
 
-void fibonacci_destroy() {
+void fibonacci_destroy(void) {
 	int_vector_destroy(memory);
 }

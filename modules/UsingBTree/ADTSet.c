@@ -377,7 +377,7 @@ static void split(BTreeNode node, CompareFunc compare) {
 /* ================================= set_insert_end ======================================== */
 
 // Δημιουργεί και επιστρέφει έναν κόμβο χωρίς παιδιά ή πατέρα (όλα τα πεδία είναι NULL).
-static BTreeNode node_create() {
+static BTreeNode node_create(void) {
 	struct btree_node* node = calloc(1, sizeof(struct btree_node));
 	return node;
 }

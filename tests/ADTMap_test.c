@@ -165,7 +165,7 @@ void test_remove(void) {
 }
 
 
-void test_find() {
+void test_find(void) {
 
 	Map map = map_create(compare_ints, free, free);
 	map_set_hash_function(map, hash_int);
@@ -212,7 +212,7 @@ void test_find() {
 	free(value_array);
 }
 
-void test_iterate() {
+void test_iterate(void) {
 	Map map = map_create(compare_ints, free, free);
 	map_set_hash_function(map, hash_int);
 	// first σε κενό map

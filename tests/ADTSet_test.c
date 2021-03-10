@@ -53,7 +53,7 @@ void shuffle(int** array, int n) {
 //  Test συναρτήσεις 
 //
 
-void test_create() {
+void test_create(void) {
 
 	// Δημιουργούμε ένα κενό set (χωρίς συνάρτηση αποδεύσμευσης)
 	Set set = set_create(compare_ints, NULL);
@@ -65,7 +65,7 @@ void test_create() {
 	set_destroy(set);
 }
 
-void test_insert() {
+void test_insert(void) {
 
 	Set set = set_create(compare_ints, free);
 
@@ -108,7 +108,7 @@ void test_insert() {
 }
 
 
-void test_remove() {
+void test_remove(void) {
 
 	Set set = set_create(compare_ints, free);
 
@@ -155,7 +155,7 @@ void test_remove() {
 }
 
 
-void test_find() {
+void test_find(void) {
 	
 	Set set = set_create(compare_ints, free);
 
@@ -219,7 +219,7 @@ void test_find() {
 	free(value_array);
 }
 
-void test_iterate() {
+void test_iterate(void) {
 	Set set = set_create(compare_ints, free);
 
 	int N = 1000;
@@ -259,7 +259,7 @@ void test_iterate() {
 	free(value_array);
 }
 
-void test_node_value() {
+void test_node_value(void) {
 	// Η συνάρτηση αυτή ελέγχει ότι ένας κόμβος περιέχει πάντα την αρχική του τιμή,
 	// χωρίς να επηρρεάζεται από άλλους κόμβους που προστίθενται ή διαγράφονται.
 

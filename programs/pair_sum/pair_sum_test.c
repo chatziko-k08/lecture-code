@@ -10,7 +10,7 @@ int* create_int(int value) {
 	return pointer;
 }
 
-void test_pair_sum() {
+void test_pair_sum(void) {
 	Vector numbers = vector_create(0, free);
 	for (int i = 0; i < 10; i++)
 		vector_insert_last(numbers, create_int(i));

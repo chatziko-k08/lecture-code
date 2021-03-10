@@ -10,7 +10,7 @@
 #include "io.h"
 
 
-void test_io_write_vector_to_file() {
+void test_io_write_vector_to_file(void) {
 	Vector vec = vector_create(0, NULL);
 	vector_insert_last(vec, "foo");
 	vector_insert_last(vec, "bar");
@@ -21,7 +21,7 @@ void test_io_write_vector_to_file() {
 	vector_destroy(vec);
 }
 
-void test_io_read_file_as_vector() {
+void test_io_read_file_as_vector(void) {
 	Vector vec = io_read_file_as_vector("io_tests_temp");
 	TEST_ASSERT(vec != NULL);
 

@@ -85,7 +85,7 @@ void test_find(void) {
 	int_vector_destroy(vec);
 }
 
-void test_destroy() {
+void test_destroy(void) {
 	// Απλά εκτελούμε την destroy, για να ελέγξουμε αν όντως δουλεύει
 	// σωστά τρέχουμε το test με valgrind.
 

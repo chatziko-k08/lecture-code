@@ -129,7 +129,7 @@ void test_find(void) {
 	free(array);
 }
 
-void test_destroy() {
+void test_destroy(void) {
 	// Απλά εκτελούμε την destroy, για να ελέγξουμε αν όντως δουλεύει
 	// σωστά τρέχουμε το test με valgrind.
 

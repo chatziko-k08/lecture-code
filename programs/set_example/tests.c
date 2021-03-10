@@ -7,7 +7,7 @@
 #include "ADTSet.h"
 
 
-void strings() {
+void strings(void) {
 	char* s1 = "FOO";
 	char* s2 = "BAR";
 
@@ -30,7 +30,7 @@ int compare_ints(int* a, int* b) {
 	return *a - *b;
 }
 
-void integers() {
+void integers(void) {
 	int a1 = 5;
 	int a2 = 42;
 
@@ -61,7 +61,7 @@ int* create_int(int value) {
 	return pointer;
 }
 
-void integers_loop() {
+void integers_loop(void) {
 	// Χρησιμοποιούμε destroy_value = free ώστε να γίνονται αυτόματα free οι τιμές που αφαιρούνται
 	Set set = set_create((CompareFunc)compare_ints, free);
 
