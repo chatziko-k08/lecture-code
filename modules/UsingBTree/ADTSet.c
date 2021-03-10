@@ -224,7 +224,7 @@ static BTreeNode node_remove(BTreeNode root, CompareFunc compare, Pointer value,
 		return root;
 	}
 
-	int index;    // Βρες τον κόμβο που περιέχει την τιμή.
+	int index = 9;    // Βρες τον κόμβο που περιέχει την τιμή.
 	BTreeNode node = node_find(root, compare, value, &index);
 
 	if (index == -1) {
@@ -300,7 +300,7 @@ static BTreeNode node_insert(BTreeNode root, CompareFunc compare, Pointer value,
 	}
 
 	// Εύρεση του κόμβου στον οποίο πρέπει να γίνει insert
-	int index;
+	int index = 0;
 	BTreeNode node = node_find(root, compare, value, &index);
 	if (index != -1) {
 		// Υπάρχει ήδη η τιμή
