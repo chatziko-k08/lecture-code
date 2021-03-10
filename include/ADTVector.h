@@ -12,8 +12,6 @@
 
 #include "common_types.h"
 
-#define VECTOR_FAIL	(Vector)0
-
 
 // Ένα vector αναπαριστάται από τον τύπο Vector. Ο χρήστης δε χρειάζεται να γνωρίζει το περιεχόμενο
 // του τύπου αυτού, απλά χρησιμοποιεί τις συναρτήσεις vector_<foo> που δέχονται και επιστρέφουν Vector.
@@ -25,7 +23,6 @@ typedef struct vector* Vector;
 
 
 // Δημιουργεί και επιστρέφει ένα νεό vector μεγέθους size, με στοιχεία αρχικοποιημένα σε NULL.
-// Αν δεν υπάρχει διαθέσιμη μνήμη επιστρέφει VECTOR_FAIL.
 // Αν destroy_value != NULL, τότε καλείται destroy_value(value) κάθε φορά που αφαιρείται (ή αντικαθίσταται) ένα στοιχείο.
 
 Vector vector_create(int size, DestroyFunc destroy_value);
