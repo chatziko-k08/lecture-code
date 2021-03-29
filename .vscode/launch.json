@@ -18,23 +18,29 @@
 			],
 			"stopAtEntry": true,
 			"cwd": "${workspaceFolder}/${config:c_project.dir}",
-			"environment": [],
 			"externalConsole": false,
 			"linux": {
 				"MIMode": "gdb",
-				"internalConsoleOptions": "neverOpen"				// don't show the debugger console
+				"internalConsoleOptions": "neverOpen",				// don't show the debugger console
+				"environment": [
+					{"name":"LD_PRELOAD", "value":"${workspaceFolder}/.vscode/visualize-c-memory.so"},
+				],
+				"setupCommands": [
+					{
+						"description": "Enable pretty-printing for gdb",
+						"text": "-enable-pretty-printing",
+						"ignoreFailures": true
+					},
+					{
+						"text": "source ${workspaceFolder}/.vscode/visualize-c-memory.py",
+						"ignoreFailures": true
+					}
+				]
 			},
 			"osx": {
 				"MIMode": "lldb",									// on macOS gdb is hard to setup
 				"internalConsoleOptions": "openOnSessionStart"		// open the debugger console, lldb sends output only there
 			},
-			"setupCommands": [
-				{
-					"description": "Enable pretty-printing for gdb",
-					"text": "-enable-pretty-printing",
-					"ignoreFailures": true
-				}
-			],
 			"preLaunchTask": "Make: compile",
 		},
 		{
@@ -58,19 +64,26 @@
 			"externalConsole": false,
 			"linux": {
 				"MIMode": "gdb",
-				"internalConsoleOptions": "neverOpen"				// don't show the debugger console
+				"internalConsoleOptions": "neverOpen",				// don't show the debugger console
+				"environment": [
+					{"name":"LD_PRELOAD", "value":"${workspaceFolder}/.vscode/visualize-c-memory.so"},
+				],
+				"setupCommands": [
+					{
+						"description": "Enable pretty-printing for gdb",
+						"text": "-enable-pretty-printing",
+						"ignoreFailures": true
+					},
+					{
+						"text": "source ${workspaceFolder}/.vscode/visualize-c-memory.py",
+						"ignoreFailures": true
+					}
+				]
 			},
 			"osx": {
 				"MIMode": "lldb",									// on macOS gdb is hard to setup
 				"internalConsoleOptions": "openOnSessionStart"		// open the debugger console, lldb sends output only there
 			},
-			"setupCommands": [
-				{
-					"description": "Enable pretty-printing for gdb",
-					"text": "-enable-pretty-printing",
-					"ignoreFailures": true
-				}
-			],
 			"preLaunchTask": "Single file: compile",
 		},
 		{
@@ -94,7 +107,21 @@
 			"externalConsole": false,
 			"linux": {
 				"MIMode": "gdb",
-				"internalConsoleOptions": "neverOpen"				// don't show the debugger console
+				"internalConsoleOptions": "neverOpen",				// don't show the debugger console
+				"environment": [
+					{"name":"LD_PRELOAD", "value":"${workspaceFolder}/.vscode/visualize-c-memory.so"},
+				],
+				"setupCommands": [
+					{
+						"description": "Enable pretty-printing for gdb",
+						"text": "-enable-pretty-printing",
+						"ignoreFailures": true
+					},
+					{
+						"text": "source ${workspaceFolder}/.vscode/visualize-c-memory.py",
+						"ignoreFailures": true
+					}
+				]
 			},
 			"osx": {
 				"MIMode": "lldb",									// on macOS gdb is hard to setup
