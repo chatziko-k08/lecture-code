@@ -331,10 +331,14 @@ def rec_of_frame(frame):
         'values': [],
     }
     for block in blocks:
-        for var_symb in block:
-            var = var_symb.name
+        for symb in block:
+            # avoid "weird" symbols, eg labels
+            if not (symb.is_variable or symb.is_argument or symb.is_function or symb.is_constant):
+                continue
+
+            var = symb.name
             rec['fields'].append(var)
-            rec['values'].append(rec_of_value(block[var].value(frame), 'stack'))
+            rec['values'].append(rec_of_value(symb.value(frame), 'stack'))
 
     return rec
 
