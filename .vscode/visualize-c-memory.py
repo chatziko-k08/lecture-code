@@ -82,7 +82,7 @@ def svg_of_memory():
     svg = subprocess.run(
         ['dot', '-T', 'svg'],
         input=dot.encode('utf-8'),
-        capture_output=True)
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     if svg.returncode != 0:
         raise Exception(f"dot failed:\n {svg.stderr.decode('utf-8')}\n\ndot source:\n{dot}")
