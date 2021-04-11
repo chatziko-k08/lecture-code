@@ -80,22 +80,28 @@ void test_get_set_at(void) {
 
 void test_iterate(void) {
 	Vector vec = vector_create(0, NULL);
+	int N = 1000;
+	int* array = malloc(N * sizeof(*array));		// Στο vector θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
 
 	// first/last σε κενό vector
 	TEST_ASSERT(vector_first(vec) == VECTOR_BOF);
 	TEST_ASSERT(vector_last(vec) == VECTOR_EOF);
 
-	// insert πολλαπλά NULL
+	// εισαγωγή στοιχείων
 	for (int i = 0; i < 1000; i++)
-		vector_insert_last(vec, NULL);
+		vector_insert_last(vec, &array[i]);
 
+	int i = 0;
 	for (VectorNode node = vector_first(vec); node != VECTOR_EOF; node = vector_next(vec, node))
-		TEST_ASSERT(vector_node_value(vec, node) == NULL);
+		TEST_ASSERT(vector_node_value(vec, node) == &array[i++]);
+	TEST_ASSERT(i == N);
 
 	for (VectorNode node = vector_last(vec); node != VECTOR_BOF; node = vector_previous(vec, node))
-		TEST_ASSERT(vector_node_value(vec, node) == NULL);
+		TEST_ASSERT(vector_node_value(vec, node) == &array[--i]);
+	TEST_ASSERT(i == 0);
 
 	vector_destroy(vec);
+	free(array);
 }
 
 int compare_ints(Pointer a, Pointer b) {
