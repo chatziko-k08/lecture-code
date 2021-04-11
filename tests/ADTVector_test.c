@@ -19,7 +19,7 @@ void test_create(void) {
 	vector_destroy(vec);
 }
 
-void test_insert(void) {
+void test_insert_last(void) {
 	Vector vec = vector_create(0, NULL);
 	int N = 1000;
 	int* array = malloc(N * sizeof(*array));		// Στο vector θα προσθέσουμε pointers προς τα στοιχεία αυτού του πίνακα
@@ -39,7 +39,7 @@ void test_insert(void) {
 	free(array);
 }
 
-void test_remove(void) {
+void test_remove_last(void) {
 	Vector vec = vector_create(1000, NULL);
 	int N = 1000;
 	int* array = malloc(N * sizeof(*array));
@@ -152,8 +152,8 @@ void test_destroy(void) {
 // Λίστα με όλα τα tests προς εκτέλεση
 TEST_LIST = {
 	{ "vector_create", test_create },
-	{ "vector_insert_last", test_insert },
-	{ "vector_remove_last", test_remove },
+	{ "vector_insert_last", test_insert_last },
+	{ "vector_remove_last", test_remove_last },
 	{ "vector_get_set_at", test_get_set_at },
 	{ "vector_iterate", test_iterate },
 	{ "vector_find", test_find },
