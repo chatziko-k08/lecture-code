@@ -43,14 +43,16 @@ void test_create(void) {
 	Vector values = vector_create(0, NULL);			// χωρίς destroy function, το destroy θα το κάνει η ουρά!
 	vector_insert_last(values, create_int(0));
 	vector_insert_last(values, create_int(1));
+	vector_insert_last(values, create_int(2));
+	vector_insert_last(values, create_int(3));
 
 	pqueue = pqueue_create(compare_ints, free, values);
 	TEST_ASSERT(pqueue != NULL);
-	TEST_ASSERT(pqueue_size(pqueue) == 2);
+	TEST_ASSERT(pqueue_size(pqueue) == 4);
 
-	TEST_ASSERT(*(int*)pqueue_max(pqueue) == 1);
+	TEST_ASSERT(*(int*)pqueue_max(pqueue) == 3);
 	pqueue_remove_max(pqueue);
-	TEST_ASSERT(*(int*)pqueue_max(pqueue) == 0);
+	TEST_ASSERT(*(int*)pqueue_max(pqueue) == 2);
 
 	vector_destroy(values);
 	pqueue_destroy(pqueue);
