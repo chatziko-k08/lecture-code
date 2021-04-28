@@ -12,11 +12,16 @@
 
 void test_create(void) {
 	Vector vec = vector_create(0, NULL);
+	Vector vec2 = vector_create(10, NULL);	// 10 αρχικά στοιχεία
+
 	vector_set_destroy_value(vec, NULL);
+	vector_set_destroy_value(vec2, NULL);
 
 	TEST_ASSERT(vector_size(vec) == 0);
+	TEST_ASSERT(vector_size(vec2) == 10);
 
 	vector_destroy(vec);
+	vector_destroy(vec2);
 }
 
 void test_insert_last(void) {
@@ -60,15 +65,16 @@ void test_remove_last(void) {
 }
 
 void test_get_set_at(void) {
-	Vector vec = vector_create(0, NULL);
 	int N = 1000;
-	int* array = malloc(N * sizeof(*array));
+	Vector vec = vector_create(N/2, NULL);		// αρχικοποίηση με N/2 NULLs
+	TEST_ASSERT(vector_size(vec) == N/2);
 
-	// insert πολλαπλά NULL, θα τα αλλάξουμε μετά με replace
-	for (int i = 0; i < 1000; i++)
+	// insert επιπλέον N/2 NULLs, θα τα αλλάξουμε μετά με replace
+	for (int i = 0; i < N/2; i++)
 		vector_insert_last(vec, NULL);
 
-	for (int i = 0; i < 1000; i++) {
+	int* array = malloc(N * sizeof(*array));
+	for (int i = 0; i < N; i++) {
 		TEST_ASSERT(vector_get_at(vec, i) == NULL);
 		vector_set_at(vec, i, &array[i]);
 		TEST_ASSERT(vector_get_at(vec, i) == &array[i]);
