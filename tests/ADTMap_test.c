@@ -228,6 +228,7 @@ void test_iterate(void) {
 	for (int i = 0; i < N; i++)
 		seen[i] = false;
 
+	int count = 0;
 	for (MapNode node = map_first(map); node != MAP_EOF; node = map_next(map, node)) {
 		int* key = map_node_key(map, node);
 		int* value = map_node_value(map, node);
@@ -236,7 +237,11 @@ void test_iterate(void) {
 		TEST_ASSERT(*value == 2 * *key);
 
 		seen[*key] = true;
+		count++;
 	}
+
+	// Αν κάναμε N επαναλήψεις, τότε σίγουρα βρήκαμε όλους τους αριθμούς
+	TEST_ASSERT(count == N);
 
 	map_destroy(map);
 }
