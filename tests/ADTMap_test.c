@@ -160,6 +160,24 @@ void test_remove(void) {
 	int key1 = 100;
 	TEST_ASSERT(!map_remove(map, &key1));
 	map_destroy(map);
+
+
+	// Σειριακή εισαγωγή στοιχείων και αμέσως διαγραφή. Αυτό σε έναν πίνακα κατακερματισμού
+	// μπορεί να προκαλέσει όλα τα κελιά να είναι μαρκαρισμένα ως DELETED.
+	map = map_create(compare_ints, free, free);
+	map_set_hash_function(map, hash_int);
+
+	for (int i = 0; i < N; i++) {
+		key_array[i] = create_int(i);
+		value_array[i] = create_int(i);
+
+		map_insert(map, key_array[i], value_array[i]);
+		map_remove(map, key_array[i]);
+
+		TEST_ASSERT(map_size(map) == 0);
+	}
+	map_destroy(map);
+
 	free(key_array);
 	free(value_array);
 }

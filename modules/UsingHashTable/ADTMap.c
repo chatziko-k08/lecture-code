@@ -38,6 +38,7 @@ struct map {
 	MapNode array;				// Ο πίνακας που θα χρησιμοποιήσουμε για το map (remember, φτιάχνουμε ένα hash table)
 	int capacity;				// Πόσο χώρο έχουμε δεσμεύσει.
 	int size;					// Πόσα στοιχεία έχουμε προσθέσει
+	int deleted;				// Πόσα κελιά είναι DELETED
 	CompareFunc compare;		// Συνάρτηση για σύγκριση δεικτών, που πρέπει να δίνεται απο τον χρήστη
 	HashFunc hash_function;		// Συνάρτηση για να παίρνουμε το hash code του κάθε αντικειμένου.
 	DestroyFunc destroy_key;	// Συναρτήσεις που καλούνται όταν διαγράφουμε έναν κόμβο απο το map.
@@ -56,6 +57,7 @@ Map map_create(CompareFunc compare, DestroyFunc destroy_key, DestroyFunc destroy
 		map->array[i].state = EMPTY;
 
 	map->size = 0;
+	map->deleted = 0;
 	map->compare = compare;
 	map->destroy_key = destroy_key;
 	map->destroy_value = destroy_value;
@@ -141,6 +143,9 @@ void map_insert(Map map, Pointer key, Pointer value) {
 	} else {
 		// Νέο στοιχείο, αυξάνουμε τα συνολικά στοιχεία του map
 		map->size++;
+
+		if (node->state == DELETED)							// αν βρήκαμε DELETED, θα αλλάξει σε OCCUPIED
+			map->deleted--;
 	}
 
 	// Προσθήκη τιμών στον κόμβο
@@ -148,8 +153,9 @@ void map_insert(Map map, Pointer key, Pointer value) {
 	node->key = key;
 	node->value = value;
 
-	// Αν με την νέα εισαγωγή ξεπερνάμε το μέγιστο load factor, πρέπει να κάνουμε rehash
-	float load_factor = (float)map->size / map->capacity;
+	// Αν με την νέα εισαγωγή ξεπερνάμε το μέγιστο load factor, πρέπει να κάνουμε rehash.
+	// Στο load factor μετράμε και τα DELETED, γιατί και αυτά επηρρεάζουν τις αναζητήσεις.
+	float load_factor = (float)(map->size + map->deleted) / map->capacity;
 	if (load_factor > MAX_LOAD_FACTOR)
 		rehash(map);
 }
@@ -168,6 +174,7 @@ bool map_remove(Map map, Pointer key) {
 
 	// θέτουμε ως "deleted", ώστε να μην διακόπτεται η αναζήτηση, αλλά ταυτόχρονα να γίνεται ομαλά η εισαγωγή
 	node->state = DELETED;
+	map->deleted++;
 	map->size--;
 
 	return true;
