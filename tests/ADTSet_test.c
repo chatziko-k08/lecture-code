@@ -32,11 +32,12 @@ int compare_ints(Pointer a, Pointer b) {
 }
 
 // Έλεγχος της insert σε λιγότερο χώρο
-void insert_and_test(Set set, Pointer value) {
+void insert_and_test(Set set, int* value) {
 
 	set_insert(set, value);
 	TEST_ASSERT(set_is_proper(set));
-	TEST_ASSERT(set_find(set, value) == value);
+	int search = *value;
+	TEST_ASSERT(set_find(set, &search) == value);
 }
 
 // Βοηθητική συνάρτηση για το ανακάτεμα του πίνακα τιμών
