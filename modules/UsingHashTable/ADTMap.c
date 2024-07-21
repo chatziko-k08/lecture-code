@@ -248,7 +248,6 @@ Pointer map_node_value(Map map, MapNode node) {
 
 MapNode map_find_node(Map map, Pointer key) {
 	// Διασχίζουμε τον πίνακα, ξεκινώντας από τη θέση που κάνει hash το key, και για όσο δε βρίσκουμε EMPTY
-	int count = 0;
 	for (uint pos = map->hash_function(key) % map->capacity;		// ξεκινώντας από τη θέση που κάνει hash το key
 		map->array[pos].state != EMPTY;							// αν φτάσουμε σε EMPTY σταματάμε
 		pos = (pos + 1) % map->capacity) {						// linear probing, γυρνώντας στην αρχή όταν φτάσουμε στη τέλος του πίνακα
@@ -256,12 +255,6 @@ MapNode map_find_node(Map map, Pointer key) {
 		// Μόνο σε OCCUPIED θέσεις (όχι DELETED), ελέγχουμε αν το key είναι εδώ
 		if (map->array[pos].state == OCCUPIED && map->compare(map->array[pos].key, key) == 0)
 			return &map->array[pos];
-
-		// Αν διασχίσουμε ολόκληρο τον πίνακα σταματάμε. Εφόσον ο πίνακας δεν μπορεί να είναι όλος OCCUPIED,
-		// αυτό μπορεί να συμβεί μόνο στην ακραία περίπτωση που ο πίνακας έχει γεμίσει DELETED τιμές!
-		count++;
-		if (count == map->capacity)
-			break;
 	}
 
 	return MAP_EOF;
