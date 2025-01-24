@@ -8,13 +8,13 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, macos-13, windows-latest]
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
 
     - name: make run
       run: make run CFLAGS=-fPIC
 
     - name: make valgrind
-      if: matrix.os == 'ubuntu-20.04'
+      if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt install valgrind
         make valgrind CFLAGS=-fPIC
