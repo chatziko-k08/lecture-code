@@ -28,6 +28,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: mymindstorm/setup-emsdk@v14
+      with:
+        version: 4.0.1
 
     - name: make lib
       run: make lib WASM=1
