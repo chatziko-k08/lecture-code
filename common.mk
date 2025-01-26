@@ -62,7 +62,13 @@ ifneq (,$(findstring coverage,$(MAKECMDGOALS)))
 endif
 
 # compiler
-CC = gcc
+ifdef WASM
+	# compile to webassembly
+	CC = emcc
+	CFLAGS += -DWASM
+else
+	CC = gcc
+endif
 
 # Λίστα με όλα τα εκτελέσιμα & βιβλιοθήκες <foo> για τα οποία υπάρχει μια μεταβλητή <foo>_OBJS
 WITH_OBJS := $(subst _OBJS,,$(filter %_OBJS,$(.VARIABLES)))
