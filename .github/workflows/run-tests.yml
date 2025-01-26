@@ -2,25 +2,106 @@ name: run-tests
 on: [push, pull_request]
 
 jobs:
-  build-deploy:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, macos-13, windows-latest]
+  # Note: use a separate entry for each arch, instead of a matrix, cause there are several small differences between the archs
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: make run
+      run: |
+        make run CFLAGS=-fPIC
+
+        sudo apt install valgrind
+        make valgrind CFLAGS=-fPIC
+
+    # note: this can be made into anchor when they are supported. See https://github.com/actions/runner/issues/1182
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ github.job }}
+        path: .
+
+  build-wasm:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: mymindstorm/setup-emsdk@v14
+
+    - name: make lib
+      run: make lib WASM=1
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ github.job }}
+        path: .
+
+  build-win:
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
 
     - name: make run
       run: make run CFLAGS=-fPIC
 
-    - name: make valgrind
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        sudo apt install valgrind
-        make valgrind CFLAGS=-fPIC
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ github.job }}
+        path: .
+
+  build-macos-intel:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: make run
+      run: make run CFLAGS=-fPIC
 
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
-        name: compiled-${{ matrix.os }}
+        name: ${{ github.job }}
         path: .
+
+  build-macos-arm64:
+    needs: build-macos-intel  # to build multi-arch lib
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/download-artifact@v4
+      name: build-macos-intel
+
+    - name: make run
+      run: |-
+        make run CFLAGS=-fPIC
+
+        # create muilti-arch lib
+        lipo -create ./build-macos-intel/lib/k08.a ./lib/k08.a -output lib/k08_macos.a
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ github.job }}
+        path: .
+
+  collect-libs:
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-wasm, build-win, build-macos-arm64]
+    steps:
+    - uses: actions/download-artifact@v4
+    - name: copy libs
+      run: |
+        mkdir lib
+        cp ./build-linux/lib/k08.a             lib/k08_linux.a
+        cp ./build-wasm/lib/k08.a              lib/k08_wasm.a
+        cp ./build-win/lib/k08.a               lib/k08_win.a
+        cp ./build-macos-arm64/lib/k08_macos.a lib/k08_macos.a  # multi-arch
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: all-libs
+        path: lib
