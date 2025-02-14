@@ -40,9 +40,9 @@ UsingHashTable_ADTMap_test_OBJS	= ADTMap_test.o $(MODULES)/UsingHashTable/ADTMap
 # Πέρα από το .o της κάθε υλοποίησης (πχ ADTMap.o), χρειάζεται και μια υλοποίηση του ίδιου του ADTSet.
 # Οπότε μπορούμενα φτιάξουμε πολλαπλά tests, για διαφορετικές υλοποιήσεις του ADTSet, ώστε να τις τεστάρουμε όλες.
 #
-UsingADTSet_ADTMap_test1_OBJS          = ADTMap_test.o   $(MODULES)/UsingADTSet/ADTMap.o    $(MODULES)/UsingBinarySearchTree/ADTSet.o
-UsingADTSet_ADTMap_test2_OBJS          = ADTMap_test.o   $(MODULES)/UsingADTSet/ADTMap.o    $(MODULES)/UsingAVL/ADTSet.o
-UsingADTSet_ADTMap_test3_OBJS          = ADTMap_test.o   $(MODULES)/UsingADTSet/ADTMap.o    $(MODULES)/UsingBTree/ADTSet.o
+UsingADTSet1_ADTMap_test_OBJS          = ADTMap_test.o   $(MODULES)/UsingADTSet/ADTMap.o    $(MODULES)/UsingBinarySearchTree/ADTSet.o
+UsingADTSet2_ADTMap_test_OBJS          = ADTMap_test.o   $(MODULES)/UsingADTSet/ADTMap.o    $(MODULES)/UsingAVL/ADTSet.o
+UsingADTSet3_ADTMap_test_OBJS          = ADTMap_test.o   $(MODULES)/UsingADTSet/ADTMap.o    $(MODULES)/UsingBTree/ADTSet.o
 
 # Ο βασικός κορμός του Makefile
 include ../common.mk
