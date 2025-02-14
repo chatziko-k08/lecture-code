@@ -3,7 +3,7 @@
 	"tasks": [
 		////////////// Compile ///////////////////////////////////
 		{
-			"type": "shell",
+			"type": "cppbuild",				// avoids 1 second delay after the task. Not sure about other differences from "shell"
 			"label": "Single file: compile",
 			"command": "gcc",
 			"args": [
@@ -28,7 +28,7 @@
 			"group": "build"
 		},
 		{
-			"type": "shell",
+			"type": "cppbuild",
 			"label": "All files in directory: compile",
 			"command": "gcc",
 			"args": [
@@ -53,7 +53,7 @@
 			"group": "build"
 		},
 		{
-			"type": "shell",
+			"type": "cppbuild",
 			"label": "Make: compile",
 			"command": "make",
 			"args": [
@@ -80,19 +80,19 @@
 		{
 			"type": "shell",
 			"label": "Single file: compile and run",
-			"command": "./${fileBasenameNoExtension}",
-			"args": [
-				"${config:c_project.arg1}",
-				"${config:c_project.arg2}",
-				"${config:c_project.arg3}",
-				"${config:c_project.arg4}",
-				"${config:c_project.arg5}",
-				"${config:c_project.arg6}",
-				"${config:c_project.arg7}",
-				"${config:c_project.arg8}"
-			],
+			"command": "./run.sh",
 			"options": {
-				"cwd": "${fileDirname}"
+				"cwd": "${workspaceRoot}/.vscode",
+				"env": {
+					"CODE_DIR": "${fileDirname}",
+					"CODE_RUN": "./${fileBasenameNoExtension} ${config:c_project.args}",
+				},
+				"shell": {
+					"executable": "bash",
+				}
+			},
+			"presentation": {
+				"echo": false,
 			},
 			"problemMatcher": [],
 			"dependsOn": "Single file: compile",
@@ -101,19 +101,19 @@
 		{
 			"type": "shell",
 			"label": "All files in directory: compile and run",
-			"command": "./${config:c_project.program}",
-			"args": [
-				"${config:c_project.arg1}",
-				"${config:c_project.arg2}",
-				"${config:c_project.arg3}",
-				"${config:c_project.arg4}",
-				"${config:c_project.arg5}",
-				"${config:c_project.arg6}",
-				"${config:c_project.arg7}",
-				"${config:c_project.arg8}"
-			],
+			"command": "./run.sh",
 			"options": {
-				"cwd": "${fileDirname}",
+				"cwd": "${workspaceRoot}/.vscode",
+				"env": {
+					"CODE_DIR": "${fileDirname}",
+					"CODE_RUN": "./${config:c_project.program} ${config:c_project.args}",
+				},
+				"shell": {
+					"executable": "bash",
+				}
+			},
+			"presentation": {
+				"echo": false,
 			},
 			"problemMatcher": [],
 			"dependsOn": "All files in directory: compile",
@@ -122,19 +122,19 @@
 		{
 			"type": "shell",
 			"label": "Make: compile and run",
-			"command": "./${config:c_project.program}",
-			"args": [
-				"${config:c_project.arg1}",
-				"${config:c_project.arg2}",
-				"${config:c_project.arg3}",
-				"${config:c_project.arg4}",
-				"${config:c_project.arg5}",
-				"${config:c_project.arg6}",
-				"${config:c_project.arg7}",
-				"${config:c_project.arg8}"
-			],
+			"command": "./run.sh",
 			"options": {
-				"cwd": "${workspaceRoot}/${config:c_project.dir}"
+				"cwd": "${workspaceRoot}/.vscode",
+				"env": {
+					"CODE_DIR": "${workspaceRoot}/${config:c_project.dir}",
+					"CODE_RUN": "./${config:c_project.program} ${config:c_project.args}",
+				},
+				"shell": {
+					"executable": "bash",
+				}
+			},
+			"presentation": {
+				"echo": false,
 			},
 			"problemMatcher": [],
 			"dependsOn": "Make: compile",
@@ -149,23 +149,19 @@
 		{
 			"type": "shell",
 			"label": "Single file: compile and run with valgrind",
-			"command": "valgrind",
-			"args": [
-				"--error-exitcode=1",
-				"--leak-check=full",
-				"--show-leak-kinds=all",
-				"./${fileBasenameNoExtension}",
-				"${config:c_project.arg1}",
-				"${config:c_project.arg2}",
-				"${config:c_project.arg3}",
-				"${config:c_project.arg4}",
-				"${config:c_project.arg5}",
-				"${config:c_project.arg6}",
-				"${config:c_project.arg7}",
-				"${config:c_project.arg8}"
-			],
+			"command": "./run.sh",
 			"options": {
-				"cwd": "${fileDirname}"
+				"cwd": "${workspaceRoot}/.vscode",
+				"env": {
+					"CODE_DIR": "${fileDirname}",
+					"CODE_RUN": "valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all ./${fileBasenameNoExtension} ${config:c_project.args}",
+				},
+				"shell": {
+					"executable": "bash",
+				}
+			},
+			"presentation": {
+				"echo": false,
 			},
 			"problemMatcher": [],
 			"dependsOn": "Single file: compile",
@@ -174,23 +170,19 @@
 		{
 			"type": "shell",
 			"label": "All files in directory: compile and run with valgrind",
-			"command": "valgrind",
-			"args": [
-				"--error-exitcode=1",
-				"--leak-check=full",
-				"--show-leak-kinds=all",
-				"./${config:c_project.program}",
-				"${config:c_project.arg1}",
-				"${config:c_project.arg2}",
-				"${config:c_project.arg3}",
-				"${config:c_project.arg4}",
-				"${config:c_project.arg5}",
-				"${config:c_project.arg6}",
-				"${config:c_project.arg7}",
-				"${config:c_project.arg8}"
-			],
+			"command": "./run.sh",
 			"options": {
-				"cwd": "${fileDirname}"
+				"cwd": "${workspaceRoot}/.vscode",
+				"env": {
+					"CODE_DIR": "${fileDirname}",
+					"CODE_RUN": "valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all ./${config:c_project.program} ${config:c_project.args}",
+				},
+				"shell": {
+					"executable": "bash",
+				}
+			},
+			"presentation": {
+				"echo": false,
 			},
 			"problemMatcher": [],
 			"dependsOn": "All files in directory: compile",
@@ -199,23 +191,19 @@
 		{
 			"type": "shell",
 			"label": "Make: compile and run with valgrind",
-			"command": "valgrind",
-			"args": [
-				"--error-exitcode=1",
-				"--leak-check=full",
-				"--show-leak-kinds=all",
-				"./${config:c_project.program}",
-				"${config:c_project.arg1}",
-				"${config:c_project.arg2}",
-				"${config:c_project.arg3}",
-				"${config:c_project.arg4}",
-				"${config:c_project.arg5}",
-				"${config:c_project.arg6}",
-				"${config:c_project.arg7}",
-				"${config:c_project.arg8}"
-			],
+			"command": "./run.sh",
 			"options": {
-				"cwd": "${workspaceRoot}/${config:c_project.dir}"
+				"cwd": "${workspaceRoot}/.vscode",
+				"env": {
+					"CODE_DIR": "${workspaceRoot}/${config:c_project.dir}",
+					"CODE_RUN": "valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all ./${config:c_project.program} ${config:c_project.args}",
+				},
+				"shell": {
+					"executable": "bash",
+				}
+			},
+			"presentation": {
+				"echo": false,
 			},
 			"problemMatcher": [],
 			"dependsOn": "Make: compile",
@@ -226,28 +214,16 @@
 		{
 			"type": "shell",
 			"label": "Set program arguments",
-			"command": "perl",
+			"command": "code",
 			"args": [
-				"set_program_args.pl"
+				"${workspaceFolder}/.vscode/settings.json"
 			],
 			"presentation": {
 				"echo": false,
-			},
-			"options": {
-				"cwd": "${workspaceFolder}/.vscode",
-				"env": {
-					"ARGS": "${input:args}"
-				}
+				"reveal": "never"
 			},
 			"problemMatcher": [],
 			"group": "build"
 		}
 	],
-	"inputs": [
-		{
-			"id": "args",
-			"type": "promptString",
-			"description": "Program arguments",
-		}
-	]
 }

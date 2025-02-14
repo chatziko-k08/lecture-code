@@ -5,18 +5,12 @@
 			"name": "Make: compile and debug",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/${config:c_project.dir}/${config:c_project.program}",
+			"program": "/bin/bash",
 			"args": [
-				"${config:c_project.arg1}",
-				"${config:c_project.arg2}",
-				"${config:c_project.arg3}",
-				"${config:c_project.arg4}",
-				"${config:c_project.arg5}",
-				"${config:c_project.arg6}",
-				"${config:c_project.arg7}",
-				"${config:c_project.arg8}"
+				"-c",
+				"${workspaceFolder}/.vscode/run.sh",
 			],
-			"stopAtEntry": true,
+			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}/${config:c_project.dir}",
 			"externalConsole": false,
 			"linux": {
@@ -24,6 +18,7 @@
 				"internalConsoleOptions": "neverOpen",				// don't show the debugger console
 				"environment": [
 					{"name":"LD_PRELOAD", "value":"${workspaceFolder}/.vscode/visualize-c-memory.so"},
+					{"name":"CODE_DEBUG", "value":"./${config:c_project.program} ${config:c_project.args}"},
 				],
 				"setupCommands": [
 					{
@@ -39,7 +34,17 @@
 			},
 			"osx": {
 				"MIMode": "lldb",									// on macOS gdb is hard to setup
-				"internalConsoleOptions": "openOnSessionStart"		// open the debugger console, lldb sends output only there
+				"internalConsoleOptions": "openOnSessionStart",		// open the debugger console, lldb sends output only there
+				"environment": [
+					{"name":"CODE_DEBUG", "value":"./${config:c_project.program} ${config:c_project.args}"},
+				],
+				"setupCommands": [
+					{
+						"description": "Don't stop on exec",		// lldb stops execution on "exec", we need to continue since we run via bash
+						"text": "settings set target.process.stop-on-exec false",
+						"ignoreFailures": false
+					}
+				],
 			},
 			"preLaunchTask": "Make: compile",
 		},
@@ -47,18 +52,12 @@
 			"name": "Single file: compile and debug",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${fileDirname}/${fileBasenameNoExtension}",
+			"program": "/bin/bash",
 			"args": [
-				"${config:c_project.arg1}",
-				"${config:c_project.arg2}",
-				"${config:c_project.arg3}",
-				"${config:c_project.arg4}",
-				"${config:c_project.arg5}",
-				"${config:c_project.arg6}",
-				"${config:c_project.arg7}",
-				"${config:c_project.arg8}"
+				"-c",
+				"${workspaceFolder}/.vscode/run.sh",
 			],
-			"stopAtEntry": true,
+			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
 			"externalConsole": false,
@@ -67,6 +66,7 @@
 				"internalConsoleOptions": "neverOpen",				// don't show the debugger console
 				"environment": [
 					{"name":"LD_PRELOAD", "value":"${workspaceFolder}/.vscode/visualize-c-memory.so"},
+					{"name":"CODE_DEBUG", "value":"./${fileBasenameNoExtension} ${config:c_project.args}"},
 				],
 				"setupCommands": [
 					{
@@ -82,7 +82,17 @@
 			},
 			"osx": {
 				"MIMode": "lldb",									// on macOS gdb is hard to setup
-				"internalConsoleOptions": "openOnSessionStart"		// open the debugger console, lldb sends output only there
+				"internalConsoleOptions": "openOnSessionStart",		// open the debugger console, lldb sends output only there
+				"environment": [
+					{"name":"CODE_DEBUG", "value":"./${fileBasenameNoExtension} ${config:c_project.args}"},
+				],
+				"setupCommands": [
+					{
+						"description": "Don't stop on exec",		// lldb stops execution on "exec", we need to continue since we run via bash
+						"text": "settings set target.process.stop-on-exec false",
+						"ignoreFailures": false
+					}
+				],
 			},
 			"preLaunchTask": "Single file: compile",
 		},
@@ -90,18 +100,12 @@
 			"name": "All files in directory: compile and debug",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${fileDirname}/${config:c_project.program}",
+			"program": "/bin/bash",
 			"args": [
-				"${config:c_project.arg1}",
-				"${config:c_project.arg2}",
-				"${config:c_project.arg3}",
-				"${config:c_project.arg4}",
-				"${config:c_project.arg5}",
-				"${config:c_project.arg6}",
-				"${config:c_project.arg7}",
-				"${config:c_project.arg8}"
+				"-c",
+				"${workspaceFolder}/.vscode/run.sh",
 			],
-			"stopAtEntry": true,
+			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
 			"externalConsole": false,
@@ -110,6 +114,7 @@
 				"internalConsoleOptions": "neverOpen",				// don't show the debugger console
 				"environment": [
 					{"name":"LD_PRELOAD", "value":"${workspaceFolder}/.vscode/visualize-c-memory.so"},
+					{"name":"CODE_DEBUG", "value":"./${config:c_project.program} ${config:c_project.args}"},
 				],
 				"setupCommands": [
 					{
@@ -125,15 +130,18 @@
 			},
 			"osx": {
 				"MIMode": "lldb",									// on macOS gdb is hard to setup
-				"internalConsoleOptions": "openOnSessionStart"		// open the debugger console, lldb sends output only there
+				"internalConsoleOptions": "openOnSessionStart",		// open the debugger console, lldb sends output only there
+				"environment": [
+					{"name":"CODE_DEBUG", "value":"./${config:c_project.program} ${config:c_project.args}"},
+				],
+				"setupCommands": [
+					{
+						"description": "Don't stop on exec",		// lldb stops execution on "exec", we need to continue since we run via bash
+						"text": "settings set target.process.stop-on-exec false",
+						"ignoreFailures": false
+					}
+				],
 			},
-			"setupCommands": [
-				{
-					"description": "Enable pretty-printing for gdb",
-					"text": "-enable-pretty-printing",
-					"ignoreFailures": true
-				}
-			],
 			"preLaunchTask": "All files in directory: compile",
 		},
 	]
