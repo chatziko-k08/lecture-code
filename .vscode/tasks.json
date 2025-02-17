@@ -3,7 +3,8 @@
 	"tasks": [
 		////////////// Compile ///////////////////////////////////
 		{
-			"type": "cppbuild",				// avoids 1 second delay after the task. Not sure about other differences from "shell"
+			// "cppbuild" is more verbose that "shell" (outputs the command) but avoids 1 second delat (maybe there are other differences?)
+			"type": "cppbuild",
 			"label": "Single file: compile",
 			"command": "gcc",
 			"args": [
@@ -60,7 +61,7 @@
 				"${config:c_project.program}"
 			],
 			"options": {
-				"cwd": "${workspaceRoot}/${config:c_project.dir}"
+				"cwd": "${workspaceFolder}/${config:c_project.dir}"
 			},
 			"presentation": {
 				"clear": true,
@@ -70,7 +71,7 @@
 				"base": "$gcc",
 				"fileLocation": [
 					"relative",
-					"${workspaceRoot}/${config:c_project.dir}"
+					"${workspaceFolder}/${config:c_project.dir}"
 				]
 			},
 			"group": "build"
@@ -78,11 +79,12 @@
 
 		////////////// Compile and run ///////////////////////////////////
 		{
-			"type": "shell",
+			"type": "shell", // less verbose
 			"label": "Single file: compile and run",
 			"command": "./run.sh",
+			"args": [],
 			"options": {
-				"cwd": "${workspaceRoot}/.vscode",
+				"cwd": "${workspaceFolder}/.vscode",
 				"env": {
 					"CODE_DIR": "${fileDirname}",
 					"CODE_RUN": "./${fileBasenameNoExtension} ${config:c_project.args}",
@@ -102,8 +104,9 @@
 			"type": "shell",
 			"label": "All files in directory: compile and run",
 			"command": "./run.sh",
+			"args": [],
 			"options": {
-				"cwd": "${workspaceRoot}/.vscode",
+				"cwd": "${workspaceFolder}/.vscode",
 				"env": {
 					"CODE_DIR": "${fileDirname}",
 					"CODE_RUN": "./${config:c_project.program} ${config:c_project.args}",
@@ -123,10 +126,11 @@
 			"type": "shell",
 			"label": "Make: compile and run",
 			"command": "./run.sh",
+			"args": [],
 			"options": {
-				"cwd": "${workspaceRoot}/.vscode",
+				"cwd": "${workspaceFolder}/.vscode",
 				"env": {
-					"CODE_DIR": "${workspaceRoot}/${config:c_project.dir}",
+					"CODE_DIR": "${workspaceFolder}/${config:c_project.dir}",
 					"CODE_RUN": "./${config:c_project.program} ${config:c_project.args}",
 				},
 				"shell": {
@@ -150,8 +154,9 @@
 			"type": "shell",
 			"label": "Single file: compile and run with valgrind",
 			"command": "./run.sh",
+			"args": [],
 			"options": {
-				"cwd": "${workspaceRoot}/.vscode",
+				"cwd": "${workspaceFolder}/.vscode",
 				"env": {
 					"CODE_DIR": "${fileDirname}",
 					"CODE_RUN": "valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all ./${fileBasenameNoExtension} ${config:c_project.args}",
@@ -171,8 +176,9 @@
 			"type": "shell",
 			"label": "All files in directory: compile and run with valgrind",
 			"command": "./run.sh",
+			"args": [],
 			"options": {
-				"cwd": "${workspaceRoot}/.vscode",
+				"cwd": "${workspaceFolder}/.vscode",
 				"env": {
 					"CODE_DIR": "${fileDirname}",
 					"CODE_RUN": "valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all ./${config:c_project.program} ${config:c_project.args}",
@@ -192,10 +198,11 @@
 			"type": "shell",
 			"label": "Make: compile and run with valgrind",
 			"command": "./run.sh",
+			"args": [],
 			"options": {
-				"cwd": "${workspaceRoot}/.vscode",
+				"cwd": "${workspaceFolder}/.vscode",
 				"env": {
-					"CODE_DIR": "${workspaceRoot}/${config:c_project.dir}",
+					"CODE_DIR": "${workspaceFolder}/${config:c_project.dir}",
 					"CODE_RUN": "valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all ./${config:c_project.program} ${config:c_project.args}",
 				},
 				"shell": {
@@ -212,12 +219,51 @@
 
 		////////////// Set args ///////////////////////////////////
 		{
-			"type": "shell",
+			"type": "cppbuild",
 			"label": "Set program arguments",
 			"command": "code",
 			"args": [
 				"${workspaceFolder}/.vscode/settings.json"
 			],
+			"presentation": {
+				"echo": false,
+				"reveal": "never"
+			},
+			"problemMatcher": [],
+			"group": "build"
+		},
+
+		////////////// For the debugger (see launch.json) ///////////////////////////////////
+		{
+			"label": "debug-single-file",
+			"hide": true,
+			"dependsOrder": "sequence",
+			"dependsOn": ["Single file: compile", "Setup debugger"]
+		},
+		{
+			"label": "debug-all-files",
+			"hide": true,
+			"dependsOrder": "sequence",
+			"dependsOn": ["All files in directory: compile", "Setup debugger"]
+		},
+		{
+			"label": "debug-make",
+			"hide": true,
+			"dependsOrder": "sequence",
+			"dependsOn": ["Make: compile", "Setup debugger"]
+		},
+		{
+			"type": "cppbuild",
+			"label": "Setup debugger",
+			"hide": true,
+			"command": "./setup-debugger.sh",
+			"args": [],
+			"options": {
+				"cwd": "${workspaceFolder}/.vscode",
+				"shell": {
+					"executable": "bash",
+				}
+			},
 			"presentation": {
 				"echo": false,
 				"reveal": "never"

@@ -5,7 +5,7 @@
 			"name": "Make: compile and debug",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "/bin/bash",
+			"program": "${workspaceFolder}/.vscode/bash",
 			"args": [
 				"${workspaceFolder}/.vscode/run.sh",
 			],
@@ -45,13 +45,13 @@
 					}
 				],
 			},
-			"preLaunchTask": "Make: compile",
+			"preLaunchTask": "debug-make",
 		},
 		{
 			"name": "Single file: compile and debug",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "/bin/bash",
+			"program": "${workspaceFolder}/.vscode/bash",
 			"args": [
 				"${workspaceFolder}/.vscode/run.sh",
 			],
@@ -92,13 +92,13 @@
 					}
 				],
 			},
-			"preLaunchTask": "Single file: compile",
+			"preLaunchTask": "debug-single-file"
 		},
 		{
 			"name": "All files in directory: compile and debug",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "/bin/bash",
+			"program": "${workspaceFolder}/.vscode/bash",
 			"args": [
 				"${workspaceFolder}/.vscode/run.sh",
 			],
@@ -139,7 +139,7 @@
 					}
 				],
 			},
-			"preLaunchTask": "All files in directory: compile",
+			"preLaunchTask": "debug-all-files"
 		},
 	]
 }
