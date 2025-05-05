@@ -12,7 +12,7 @@
 
 // Ενα PriorityQueue είναι pointer σε αυτό το struct
 struct priority_queue {
-	Vector vector;				// Τα δεδομένα, σε Vector ώστε να έχουμε μεταβλητό μέγεθος χωρίς κόπο
+	Vector values;				// Τα δεδομένα, σε Vector ώστε να έχουμε μεταβλητό μέγεθος χωρίς κόπο
 	CompareFunc compare;		// Η διάταξη
 	DestroyFunc destroy_value;	// Συνάρτηση που καταστρέφει ένα στοιχείο του vector.
 };
@@ -30,7 +30,7 @@ struct priority_queue {
 
 static Pointer node_value(PriorityQueue pqueue, int node_id) {
 	// τα node_ids είναι 1-based, το node_id αποθηκεύεται στη θέση node_id - 1
-	return vector_get_at(pqueue->vector, node_id - 1);
+	return vector_get_at(pqueue->values, node_id - 1);
 }
 
 // Ανταλλάσει τις τιμές των κόμβων node_id1 και node_id2
@@ -40,8 +40,8 @@ static void node_swap(PriorityQueue pqueue, int node_id1, int node_id2) {
 	Pointer value1 = node_value(pqueue, node_id1);
 	Pointer value2 = node_value(pqueue, node_id2);
 
-	vector_set_at(pqueue->vector, node_id1 - 1, value2);
-	vector_set_at(pqueue->vector, node_id2 - 1, value1);
+	vector_set_at(pqueue->values, node_id1 - 1, value2);
+	vector_set_at(pqueue->values, node_id2 - 1, value1);
 }
 
 // Αποκαθιστά την ιδιότητα του σωρού.
@@ -112,7 +112,7 @@ PriorityQueue pqueue_create(CompareFunc compare, DestroyFunc destroy_value, Vect
 	// Δημιουργία του vector που αποθηκεύει τα στοιχεία.
 	// ΠΡΟΣΟΧΗ: ΔΕΝ περνάμε την destroy_value στο vector!
 	// Αν την περάσουμε θα καλείται όταν κάνουμε swap 2 στοιχεία, το οποίο δεν το επιθυμούμε.
-	pqueue->vector = vector_create(0, NULL);
+	pqueue->values = vector_create(0, NULL);
 
 	// Αν values != NULL, αρχικοποιούμε το σωρό.
 	if (values != NULL)
@@ -122,7 +122,7 @@ PriorityQueue pqueue_create(CompareFunc compare, DestroyFunc destroy_value, Vect
 }
 
 int pqueue_size(PriorityQueue pqueue) {
-	return vector_size(pqueue->vector);
+	return vector_size(pqueue->values);
 }
 
 Pointer pqueue_max(PriorityQueue pqueue) {
@@ -131,7 +131,7 @@ Pointer pqueue_max(PriorityQueue pqueue) {
 
 void pqueue_insert(PriorityQueue pqueue, Pointer value) {
 	// Προσθέτουμε την τιμή στο τέλος το σωρού
-	vector_insert_last(pqueue->vector, value);
+	vector_insert_last(pqueue->values, value);
 
  	// Ολοι οι κόμβοι ικανοποιούν την ιδιότητα του σωρού εκτός από τον τελευταίο, που μπορεί να είναι
 	// μεγαλύτερος από τον πατέρα του. Αρα μπορούμε να επαναφέρουμε την ιδιότητα του σωρού καλώντας
@@ -149,7 +149,7 @@ void pqueue_remove_max(PriorityQueue pqueue) {
 
 	// Αντικαθιστούμε τον πρώτο κόμβο με τον τελευταίο και αφαιρούμε τον τελευταίο
 	node_swap(pqueue, 1, last_node);
-	vector_remove_last(pqueue->vector);
+	vector_remove_last(pqueue->values);
 
  	// Ολοι οι κόμβοι ικανοποιούν την ιδιότητα του σωρού εκτός από τη νέα ρίζα
  	// που μπορεί να είναι μικρότερη από κάποιο παιδί της. Αρα μπορούμε να
@@ -166,8 +166,8 @@ DestroyFunc pqueue_set_destroy_value(PriorityQueue pqueue, DestroyFunc destroy_v
 void pqueue_destroy(PriorityQueue pqueue) {
 	// Αντί να κάνουμε εμείς destroy τα στοιχεία, είναι απλούστερο να
 	// προσθέσουμε τη destroy_value στο vector ώστε να κληθεί κατά το vector_destroy.
-	vector_set_destroy_value(pqueue->vector, pqueue->destroy_value);
-	vector_destroy(pqueue->vector);
+	vector_set_destroy_value(pqueue->values, pqueue->destroy_value);
+	vector_destroy(pqueue->values);
 
 	free(pqueue);
 }
