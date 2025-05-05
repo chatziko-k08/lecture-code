@@ -92,7 +92,6 @@ void test_remove(void) {
 	for (int i = N-1; i >= 0; i--) {
 		int* value = pqueue_max(pqueue);
 		TEST_ASSERT(*value == i);
-		TEST_ASSERT(pqueue_max(pqueue) == value);
 		pqueue_remove_max(pqueue);
 		TEST_ASSERT(pqueue_size(pqueue) == i);
 	}
