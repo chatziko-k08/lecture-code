@@ -16,6 +16,9 @@ jobs:
         sudo apt install valgrind
         make valgrind CFLAGS=-fPIC
 
+    - name: make lib
+      run: make lib CFLAGS=-fPIC
+
     # note: this can be made into anchor when they are supported. See https://github.com/actions/runner/issues/1182
     - name: Upload
       uses: actions/upload-artifact@v4
@@ -48,6 +51,9 @@ jobs:
     - name: make run
       run: make run CFLAGS=-fPIC
 
+    - name: make lib
+      run: make lib CFLAGS=-fPIC
+
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
@@ -61,6 +67,9 @@ jobs:
 
     - name: make run
       run: make run CFLAGS=-fPIC
+
+    - name: make lib
+      run: make lib CFLAGS=-fPIC
 
     - name: Upload
       uses: actions/upload-artifact@v4
@@ -77,8 +86,11 @@ jobs:
       name: build-macos-intel
 
     - name: make run
+      run: make run CFLAGS=-fPIC
+
+    - name: make lib
       run: |-
-        make run CFLAGS=-fPIC
+        make lib CFLAGS=-fPIC
 
         # create muilti-arch lib
         lipo -create ./build-macos-intel/lib/k08.a ./lib/k08.a -output lib/k08_macos.a
