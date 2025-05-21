@@ -3,8 +3,8 @@
 	"tasks": [
 		////////////// Compile ///////////////////////////////////
 		{
-			// "cppbuild" is more verbose that "shell" (outputs the command) but avoids 1 second delat (maybe there are other differences?)
-			"type": "cppbuild",
+			// we also tried "cppbuild". POS: no 1 second delay. NEG: more verbose, no color output, less reliable matched (ctrl-click often failed)
+			"type": "shell",
 			"label": "Single file: compile",
 			"command": "gcc",
 			"args": [
@@ -29,7 +29,7 @@
 			"group": "build"
 		},
 		{
-			"type": "cppbuild",
+			"type": "shell",
 			"label": "All files in directory: compile",
 			"command": "gcc",
 			"args": [
@@ -54,7 +54,7 @@
 			"group": "build"
 		},
 		{
-			"type": "cppbuild",
+			"type": "shell",
 			"label": "Make: compile",
 			"command": "make",
 			"args": [
@@ -213,7 +213,7 @@
 
 		////////////// Set args ///////////////////////////////////
 		{
-			"type": "cppbuild",
+			"type": "cppbuild", // no 1 second delay
 			"label": "Set program arguments",
 			"command": "code",
 			"args": [
@@ -247,7 +247,7 @@
 			"dependsOn": ["Make: compile", "Setup debugger"]
 		},
 		{
-			"type": "cppbuild",
+			"type": "cppbuild", // no 1 second delay
 			"label": "Setup debugger",
 			"hide": true,
 			"command": "./setup-debugger.sh",
