@@ -81,12 +81,11 @@
 		{
 			"type": "shell", // less verbose
 			"label": "Single file: compile and run",
-			"command": "./run.sh",
+			"command": "${workspaceFolder}/.vscode/run.sh",
 			"args": [],
 			"options": {
-				"cwd": "${workspaceFolder}/.vscode",
+				"cwd": "${fileDirname}", // important for line-matching in error messages
 				"env": {
-					"CODE_DIR": "${fileDirname}",
 					"CODE_RUN": "./${fileBasenameNoExtension} ${config:c_project.args}",
 				},
 				"shell": {
@@ -103,12 +102,11 @@
 		{
 			"type": "shell",
 			"label": "All files in directory: compile and run",
-			"command": "./run.sh",
+			"command": "${workspaceFolder}/.vscode/run.sh",
 			"args": [],
 			"options": {
-				"cwd": "${workspaceFolder}/.vscode",
+				"cwd": "${fileDirname}", // important for line-matching in error messages
 				"env": {
-					"CODE_DIR": "${fileDirname}",
 					"CODE_RUN": "./${config:c_project.program} ${config:c_project.args}",
 				},
 				"shell": {
@@ -125,12 +123,11 @@
 		{
 			"type": "shell",
 			"label": "Make: compile and run",
-			"command": "./run.sh",
+			"command": "${workspaceFolder}/.vscode/run.sh",
 			"args": [],
 			"options": {
-				"cwd": "${workspaceFolder}/.vscode",
+				"cwd": "${workspaceFolder}/${config:c_project.dir}", // important for line-matching in error messages
 				"env": {
-					"CODE_DIR": "${workspaceFolder}/${config:c_project.dir}",
 					"CODE_RUN": "./${config:c_project.program} ${config:c_project.args}",
 				},
 				"shell": {
@@ -153,12 +150,11 @@
 		{
 			"type": "shell",
 			"label": "Single file: compile and run with valgrind",
-			"command": "./run.sh",
+			"command": "${workspaceFolder}/.vscode/run.sh",
 			"args": [],
 			"options": {
-				"cwd": "${workspaceFolder}/.vscode",
+				"cwd": "${fileDirname}", // important for line-matching in error messages
 				"env": {
-					"CODE_DIR": "${fileDirname}",
 					"CODE_RUN": "valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all ./${fileBasenameNoExtension} ${config:c_project.args}",
 				},
 				"shell": {
@@ -175,12 +171,11 @@
 		{
 			"type": "shell",
 			"label": "All files in directory: compile and run with valgrind",
-			"command": "./run.sh",
+			"command": "${workspaceFolder}/.vscode/run.sh",
 			"args": [],
 			"options": {
-				"cwd": "${workspaceFolder}/.vscode",
+				"cwd": "${fileDirname}", // important for line-matching in error messages
 				"env": {
-					"CODE_DIR": "${fileDirname}",
 					"CODE_RUN": "valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all ./${config:c_project.program} ${config:c_project.args}",
 				},
 				"shell": {
@@ -197,12 +192,11 @@
 		{
 			"type": "shell",
 			"label": "Make: compile and run with valgrind",
-			"command": "./run.sh",
+			"command": "${workspaceFolder}/.vscode/run.sh",
 			"args": [],
 			"options": {
-				"cwd": "${workspaceFolder}/.vscode",
+				"cwd": "${workspaceFolder}/${config:c_project.dir}", // important for line-matching in error messages
 				"env": {
-					"CODE_DIR": "${workspaceFolder}/${config:c_project.dir}",
 					"CODE_RUN": "valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all ./${config:c_project.program} ${config:c_project.args}",
 				},
 				"shell": {
