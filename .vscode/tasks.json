@@ -23,9 +23,7 @@
 				"clear": true,
 				"showReuseMessage": false
 			},
-			"problemMatcher": [
-				"$gcc"
-			],
+			"problemMatcher": "$gcc",
 			"group": "build"
 		},
 		{
@@ -48,9 +46,7 @@
 				"clear": true,
 				"showReuseMessage": false
 			},
-			"problemMatcher": [
-				"$gcc"
-			],
+			"problemMatcher": "$gcc",
 			"group": "build"
 		},
 		{
@@ -67,13 +63,7 @@
 				"clear": true,
 				"showReuseMessage": false
 			},
-			"problemMatcher": {
-				"base": "$gcc",
-				"fileLocation": [
-					"relative",
-					"${workspaceFolder}/${config:c_project.dir}"
-				]
-			},
+			"problemMatcher": "$gcc",
 			"group": "build"
 		},
 
