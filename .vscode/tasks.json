@@ -23,7 +23,14 @@
 				"clear": true,
 				"showReuseMessage": false
 			},
-			"problemMatcher": "$gcc",
+			"problemMatcher": {
+				"base": "$gcc",
+				// without explicitly setting a relative fileLocation the errors on the __problems pane__ are not clickable
+				"fileLocation": [
+					"relative",
+					"${fileDirname}"
+				]
+			},
 			"group": "build"
 		},
 		{
@@ -46,7 +53,14 @@
 				"clear": true,
 				"showReuseMessage": false
 			},
-			"problemMatcher": "$gcc",
+			"problemMatcher": {
+				"base": "$gcc",
+				// without explicitly setting a relative fileLocation the errors on the __problems pane__ are not clickable
+				"fileLocation": [
+					"relative",
+					"${fileDirname}"
+				]
+			},
 			"group": "build"
 		},
 		{
@@ -63,7 +77,14 @@
 				"clear": true,
 				"showReuseMessage": false
 			},
-			"problemMatcher": "$gcc",
+			"problemMatcher": {
+				"base": "$gcc",
+				// without explicitly setting a relative fileLocation the errors on the __problems pane__ are not clickable
+				"fileLocation": [
+					"relative",
+					"${workspaceFolder}/${config:c_project.dir}"
+				]
+			},
 			"group": "build"
 		},
 
