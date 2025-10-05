@@ -133,7 +133,7 @@ void map_insert(Map map, Pointer key, Pointer value) {
 
 	// Σε αυτό το σημείο, το node είναι ο κόμβος στον οποίο θα γίνει εισαγωγή.
 	if (already_in_map) {
-		// Αν αντικαθιστούμε παλιά key/value, τa κάνουμε destropy
+		// Αν αντικαθιστούμε παλιά key/value, τα κάνουμε destroy
 		if (node->key != key && map->destroy_key != NULL)
 			map->destroy_key(node->key);
 

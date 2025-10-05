@@ -85,7 +85,7 @@ Pointer map_node_key(Map map, MapNode node);
 
 Pointer map_node_value(Map map, MapNode node);
 
-// Βρίσκει και επιστρέφεο τον κόμβο που έχει αντιστοιχιστεί στο κλειδί key,
+// Βρίσκει και επιστρέφει τον κόμβο που έχει αντιστοιχιστεί στο κλειδί key,
 // ή MAP_EOF αν το κλειδί δεν υπάρχει στο map.
 
 MapNode map_find_node(Map map, Pointer key);
