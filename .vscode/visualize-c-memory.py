@@ -59,7 +59,7 @@ def svg_of_memory():
             node [style=none, shape=none];
 
             {dot_of_stack(memory)}
-            dummy[pos="1,0!",style=invis,width=0.8];  // space
+            dummy[pos="0.4,0!",style=invis,width=0.4];  // space
             {dot_of_heap(memory)}
             {dot_of_pointers(memory)}
         }}
@@ -101,13 +101,13 @@ def dot_of_stack(memory):
     """
 
 def dot_of_heap(memory):
-    # pos="2,0" makes heap to be slightly on the right of stack/dummy.
+    # pos="..." makes heap to be slightly on the right of stack/dummy.
     # overlap = false will force it further to the right, to avoid overlap.
-    # but pos="2,0" is important to establish the relative position between the two.
+    # but pos="..." is important to establish the relative position between the two.
 
     rows = rows_of_rec(memory['heap'], memory)
     return f"""
-        heap[pos="2,0!",label=<
+        heap[pos="0.8,0!",label=<
             {table_of_rows(rows)}
         >];
     """
