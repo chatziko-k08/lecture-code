@@ -13,7 +13,7 @@
 #include "common_types.h"
 
 
-// Ενα σύνολο αναπαριστάται από τον τύπο Set
+// Ένα σύνολο αναπαριστάται από τον τύπο Set
 
 typedef struct set* Set;
 
@@ -66,12 +66,12 @@ void set_destroy(Set set);
 
 typedef struct set_node* SetNode;
 
-// Επιστρέφουν τον πρώτο και τον τελευταίο κομβο του set, ή SET_BOF / SET_EOF αντίστοιχα αν το set είναι κενό
+// Επιστρέφουν τον πρώτο και τον τελευταίο κόμβο του set, ή SET_BOF / SET_EOF αντίστοιχα αν το set είναι κενό
 
 SetNode set_first(Set set);
 SetNode set_last(Set set);
 
-// Επιστρέφουν τον επόμενο και τον προηγούμενο κομβο του node, ή SET_EOF / SET_BOF
+// Επιστρέφουν τον επόμενο και τον προηγούμενο κόμβο του node, ή SET_EOF / SET_BOF
 // αντίστοιχα αν ο node δεν έχει επόμενο / προηγούμενο.
 
 SetNode set_next(Set set, SetNode node);

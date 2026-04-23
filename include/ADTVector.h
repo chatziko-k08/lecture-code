@@ -22,7 +22,7 @@
 typedef struct vector* Vector;
 
 
-// Δημιουργεί και επιστρέφει ένα νεό vector μεγέθους size, με στοιχεία αρχικοποιημένα σε NULL.
+// Δημιουργεί και επιστρέφει ένα νέο vector μεγέθους size, με στοιχεία αρχικοποιημένα σε NULL.
 // Αν destroy_value != NULL, τότε καλείται destroy_value(value) κάθε φορά που αφαιρείται (ή αντικαθίσταται) ένα στοιχείο.
 
 Vector vector_create(int size, DestroyFunc destroy_value);
@@ -79,12 +79,12 @@ void vector_destroy(Vector vec);
 
 typedef struct vector_node* VectorNode;
 
-// Επιστρέφουν τον πρώτο και τον τελευταίο κομβο του vector, ή VECTOR_BOF / VECTOR_EOF αντίστοιχα αν το vector είναι κενό
+// Επιστρέφουν τον πρώτο και τον τελευταίο κόμβο του vector, ή VECTOR_BOF / VECTOR_EOF αντίστοιχα αν το vector είναι κενό
 
 VectorNode vector_first(Vector vec);
 VectorNode vector_last(Vector vec);
 
-// Επιστρέφουν τον επόμενο και τον προηγούμενο κομβο του node, ή VECTOR_EOF / VECTOR_BOF
+// Επιστρέφουν τον επόμενο και τον προηγούμενο κόμβο του node, ή VECTOR_EOF / VECTOR_BOF
 // αντίστοιχα αν ο node δεν έχει επόμενο / προηγούμενο.
 
 VectorNode vector_next(Vector vec, VectorNode node);
